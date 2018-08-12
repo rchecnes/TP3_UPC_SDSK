@@ -6,10 +6,19 @@ using System.Web.Mvc;
 
 namespace MVC_Indra.Controllers
 {
-    public class BaseConoController : Controller
+    public class TipoSolucionController : Controller
     {
-        // GET: BaseCono
         public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult Nuevo()
+        {
+            return View();
+        }
+
+        public ActionResult Editar()
         {
             return View();
         }

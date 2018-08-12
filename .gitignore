@@ -1,2 +1,7 @@
-MVC_Indra/.vs
-WebApiIndra/.vs
+MVC_Indra/.vs/
+WebApiIndra/.vs/
+WebApiIndra/WebApiIndra/obj/
+MVC_Indra/MVC_Indra/obj/
+WebApiIndra/WebApiIndra/bin/
+MVC_Indra/MVC_Indra/bin/
+

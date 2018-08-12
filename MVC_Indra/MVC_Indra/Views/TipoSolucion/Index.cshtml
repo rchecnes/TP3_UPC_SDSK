@@ -1,0 +1,272 @@
+﻿
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.TitlePag = "Listado de Base de Conocimiento";
+}
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<input type="hidden" id="IdEmpleado" value="@System.Configuration.ConfigurationManager.AppSettings["IdEmpleado"]" />
+<input type="hidden" id="IdRol" value="@System.Configuration.ConfigurationManager.AppSettings["IdRol"]" />
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        listarEstado = function () {
+            $.ajax({
+                url: $("#UrlServicio").val() +"/api/Ticket/ListadoEstado",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var options = "";
+                        for (var i = 0; i < data.length; i++) {
+                            $("#estado").append("<option value=" + data[i].IdEstado + ">" + data[i].NomEstado+"</option>");
+                        }
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+
+        listarPrioridad = function () {
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Ticket/ListadoPrioridad",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var options = "";
+                        for (var i = 0; i < data.length; i++) {
+                            $("#prioridad").append("<option value=" + data[i].IdPrioridad + ">" + data[i].NomPrioridad + "</option>");
+                        }
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+
+        LlenarTablaTicket = function () {
+
+            var NomCliente = $("#buscar").val();
+            var IdEstado = $("#estado").val();
+            var IdPrioridad = $("#prioridad").val();
+            var IdEmpleado = $("#IdEmpleado").val();
+            var IdRol = $("#IdRol").val();
+
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Ticket/ListadoTicket",
+                type: "POST",
+                //dataType: "json",
+                data: { "NomCliente": NomCliente, "IdEstado": IdEstado, "IdPrioridad": IdPrioridad, "IdEmpleado": IdEmpleado, IdRol: IdRol },
+                success: function (data) {
+
+                    var html = "";
+                    if (data != null) {
+                        if (data.length > 0) {
+
+                            for (var i = 0; i < data.length; i++) {
+
+                                //var IdTicket = data[i].IdTicket;
+                                var rutaticket = '@Url.Action("Editar", "Ticket", new { id = "IdTicket" })'.replace("IdTicket", parseInt(data[i].IdTicket));
+
+                                if ($("#IdRol").val() == 1) {
+                                    rutaticket = '@Url.Action("AsigResp", "Ticket", new { id = "IdTicket" })'.replace("IdTicket", parseInt(data[i].IdTicket));
+                                }
+                                html += "<tr>";
+                                html += "<td>" + data[i].IdTicket + "</td>";
+                                html += "<td>" + data[i].NomProyecto + "</td>";
+                                html += "<td>" + data[i].NomMantenimiento + "</td>";
+                                html += "<td>" + data[i].FeCreTicket + "</td>";
+                                html += "<td>" + data[i].NomCliente + "</td>";
+                                html += "<td>" + data[i].NomEmpleado + "</td>";
+                                html += "<td>" + data[i].NomEstado + "</td>";
+                                html += "<td>" + data[i].NomPrioridad + "</td>";
+                                html += "<td><a href='"+rutaticket+"'><i class='fa fa-eye'></i></a></td>";
+                                html += "</tr>";
+
+                            }
+
+                        }
+                    } else{
+                        html += "<tr><td colspan='9'>No existen tickets de atención</td></tr>";
+                    }
+
+                    $("#detalle_ticket").html(html);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+
+        listarEstado();
+        listarPrioridad();
+        LlenarTablaTicket();
+
+        $("#estado").on("change", function () {
+            LlenarTablaTicket();
+        });
+        $("#buscar").on("keyup", function () {
+            LlenarTablaTicket();
+        });
+        $("#prioridad").on("change", function () {
+            LlenarTablaTicket();
+        });
+
+
+    })
+</script>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<form role="form">
+				<div class="box-body">
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-sm-6" >
+							<div class="form-group">
+								<label for="Buscar">Buscar Por (Nro. ó Nombre)</label>
+								<input type="text" class="form-control" id="buscar" name="buscar" placeholder="Buscar">
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-3 col-sm-6 col-sm-6">
+							<div class="form-group">
+								<label for="">Categoría</label>
+								<select class="form-control" id="estado" name="estado">
+									<option value="">Todos</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<p><a href="@Url.Action("Nuevo", "TipoSolucion")" class="btn btn-primary btn-md">Nuevo</a></p>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="bbgrid" class="table table-bordered table-hover dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nro.</th>
+                                        <th>Nombre</th>
+                                        <th>Categría</th>
+                                        <th>Fecha de Creación</th>
+                                        <th colspan="2">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detalle_baseconocimiento">
+                                    <!--lista detalle ticket-->
+                                    <tr>
+                                        <td>10</td>
+                                        <td>Instalación de Skype Empresarial</td>
+                                        <td>Impresora</td>
+                                        <td>10/08/2018</td>
+                                        <td align="center"><a href="@Url.Action("Editar", "TipoSolucion")"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td>Instalación de Skype Empresarial</td>
+                                        <td>Impresora</td>
+                                        <td>09/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td>Instalación de Skype Empresarial</td>
+                                        <td>Impresora</td>
+                                        <td>08/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td>Instalación de Skype Empresarial</td>
+                                        <td>Impresora</td>
+                                        <td>07/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>Instalación de Skype Empresarial</td>
+                                        <td>Impresora</td>
+                                        <td>06/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Instalación de Access</td>
+                                        <td>Otros</td>
+                                        <td>05/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Instalación de Power Point</td>
+                                        <td>Otros</td>
+                                        <td>04/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Instalación de Outlook</td>
+                                        <td>Otros</td>
+                                        <td>03/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Instalación de Microsoft Excel</td>
+                                        <td>Otros</td>
+                                        <td>02/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Instalación de Microsoft Word</td>
+                                        <td>Otros</td>
+                                        <td>01/08/2018</td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
+                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-sm-12">
+                            <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate"><ul class="pagination"><li class="paginate_button previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0">Previous</a></li><li class="paginate_button active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0">1</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0">2</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0">3</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="4" tabindex="0">4</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="5" tabindex="0">5</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="6" tabindex="0">6</a></li><li class="paginate_button next" id="example2_next"><a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0">Next</a></li></ul></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+
+
