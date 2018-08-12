@@ -7,7 +7,7 @@ using System.Web;
 namespace WebApiIndra.Models
 {
     [DataContract]
-    public class SD_BaseConocimiento
+    public class TipoSolucion
     {
         [DataMember]
         public string NombreBC { get; set; }
