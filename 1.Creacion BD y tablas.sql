@@ -1,21 +1,41 @@
-create database Indra
-go
+/*create database Indra
+go*/
 
-USE Indra
+USE Indra;
 GO
+
+drop table HistorialTicket;
+drop table Atencion;
+drop table Resultado;
+drop table Ticket;
+drop table Encuesta;
+drop table Pregunta;
+drop table TipoEncuesta;
+drop table estado;
+drop table UsuarioResponsable;
+drop table Nivel;
+drop table Cargo;
+drop table UsuarioCliente;
+drop table Empresa;
+drop table TipoSolucion;
+drop table Categoria;
+drop table TipoProblema;
+drop table Servicio;
+drop table Prioridad;
+
 
 CREATE TABLE Prioridad
 (
 PRI_Id INTEGER PRIMARY KEY,
 Pri_Descripcion VARCHAR(45)
-)
+);
 go
 
 CREATE TABLE Servicio
 (
 SER_Id	INTEGER IDENTITY(1,1) PRIMARY KEY,
 SER_Descripcion	VARCHAR(45)
-)
+);
 go
 
 CREATE TABLE TipoProblema
@@ -23,28 +43,31 @@ CREATE TABLE TipoProblema
 PRO_Id	INTEGER IDENTITY(1,1) PRIMARY KEY,
 PRO_Descripcion	VARCHAR(45),
 SER_Id		INTEGER FOREIGN KEY REFERENCES Servicio(SER_Id)
-)
+);
 go
 
 CREATE TABLE Categoria
 (
 CAT_ID	INTEGER IDENTITY(1,1) PRIMARY KEY,
 CAT_Descripcion	VARCHAR(150)
-)
+);
 go
-
 
 CREATE TABLE TipoSolucion
 (
-SOL_Id INTEGER IDENTITY(1,1) PRIMARY KEY,
-SOL_PROD_Id	INTEGER FOREIGN KEY REFERENCES TipoProblema(PRO_Id),
-SOL_Descripcion	VARCHAR(45),
-SOL_RutaArchivo	VARCHAR(45),
-SOL_DescripcionLarga	VARCHAR(1000),
+SOL_ID INTEGER IDENTITY(1,1) PRIMARY KEY,
+SOL_PROB_ID	INTEGER FOREIGN KEY REFERENCES TipoProblema(PRO_Id),
+SOL_Nombre	VARCHAR(45),
+SOL_RutaArchivo	VARCHAR(250),
+SOL_NombreArchivo	VARCHAR(250),
+SOL_Descripcion	TEXT,
+SOL_PalabraClave TEXT,
+SOL_Comentario TEXT,
 SOL_CAT_ID INTEGER FOREIGN KEY REFERENCES Categoria(CAT_ID),
 SOL_FechaCreacion	DATETIME,
+SOL_FechaModificacion DATETIME,
 SOL_UsuarioCreacion	VARCHAR(50)
-)
+);
 go
 
 CREATE TABLE Empresa
@@ -52,7 +75,7 @@ CREATE TABLE Empresa
 EMP_Id	INTEGER IDENTITY(1,1) PRIMARY KEY,
 EMP_RUC	NUMERIC(12,0),
 EMP_RazonSocial	VARCHAR(250)
-)
+);
 go
 
 CREATE TABLE UsuarioCliente
@@ -65,21 +88,21 @@ USU_ApellidoPaterno	VARCHAR(80),
 USU_ApellidoMaterno	VARCHAR(80),
 USU_Telefono	Varchar(15),
 USU_Email		Varchar(60)
-)
+);
 go
 
 CREATE TABLE Cargo
 (
 CAR_Id INTEGER IDENTITY(1,1) PRIMARY KEY,
 CAR_Descripcion	VARCHAR(80)
-)
+);
 go
 
 CREATE TABLE Nivel
 (
 NIV_Id INTEGER IDENTITY(1,1) PRIMARY KEY,
 NIV_Descripcion	VARCHAR(80)
-)
+);
 go
 
 CREATE TABLE UsuarioResponsable
@@ -92,21 +115,21 @@ RES_ApellidoPaterno	VARCHAR(80),
 RES_ApellidoMaterno	VARCHAR(80),
 RES_Email		Varchar(60),
 RES_NIV_Id	INTEGER FOREIGN KEY REFERENCES Nivel(NIV_Id)
-)
+);
 go
 
 CREATE TABLE Estado
 (
 EST_Id SMALLINT PRIMARY KEY,
 EST_Descripcion	Varchar(50)
-)
+);
 go
 
 CREATE TABLE TipoEncuesta
 (
 TEN_Id	INTEGER IDENTITY(1,1) PRIMARY KEY,
 TEN_Nombre	VARCHAR(45)
-)
+);
 go
 
 CREATE TABLE Pregunta
@@ -116,7 +139,7 @@ PRE_Descripcion VARCHAR(200),
 PRE_TipoControl INT,
 PRE_TEN_Id INTEGER FOREIGN KEY REFERENCES TipoEncuesta(TEN_Id),
 PRE_FlagActivo	BIT
-)
+);
 go
 
 CREATE TABLE Encuesta
@@ -127,7 +150,7 @@ ENC_Descripcion VARCHAR(100),
 ENC_FlagActivo BIT,
 ENC_TEN_Id INTEGER FOREIGN KEY REFERENCES TipoEncuesta(TEN_Id),
 ENC_FlagEnvio BIT NULL
-)
+);
 go
 
 CREATE TABLE Ticket
@@ -144,7 +167,7 @@ TIC_FechaRegistro	DATETIME,
 TIC_FechaCierre	DATETIME,
 TIC_CodigoEstado	SMALLINT FOREIGN KEY REFERENCES Estado(EST_Id),
 TIC_ENC_Id	INT NULL FOREIGN KEY REFERENCES Encuesta
-)
+);
 go
 
 CREATE TABLE Resultado
@@ -152,7 +175,7 @@ CREATE TABLE Resultado
 RST_Id	INT	IDENTITY(1,1) PRIMARY KEY,
 RST_Descripcion	VARCHAR(5000),
 RST_FlagExito	BIT
-)
+);
 go
 
 CREATE TABLE Atencion
@@ -170,7 +193,7 @@ ATE_PRI_Id	INTEGER,
 ATE_TIC_Descripcion VARCHAR(5000),
 ATE_FechaRegistro	DATETIME
 PRIMARY KEY(ATE_ID,ATE_TIC_Id,ATE_RES_Id)
-)
+);
 go
 
 CREATE TABLE HistorialTicket
@@ -184,4 +207,4 @@ HIS_RES_Id	INTEGER,
 HIS_FechaCambio	DATETIME,
 HIS_Descripcion VARCHAR(500),
 HIS_RutaInforme	VARCHAR(100)
-)
+);

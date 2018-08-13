@@ -10,16 +10,16 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        listarEstado = function () {
+        listarCategoria = function () {
             $.ajax({
-                url: $("#UrlServicio").val() +"/api/Ticket/ListadoEstado",
+                url: $("#UrlServicio").val() +"/api/TipoSolucion/ListadoCategoria",
                 type: "POST",
                 dataType: "json",
                 success: function (data) {
                     if (data.length > 0) {
                         var options = "";
                         for (var i = 0; i < data.length; i++) {
-                            $("#estado").append("<option value=" + data[i].IdEstado + ">" + data[i].NomEstado+"</option>");
+                            $("#categoria").append("<option value=" + data[i].CAT_ID + ">" + data[i].CAT_Descripcion+"</option>");
                         }
                     }
 
@@ -31,30 +31,9 @@
             });
         }
 
-        listarPrioridad = function () {
-            $.ajax({
-                url: $("#UrlServicio").val() + "/api/Ticket/ListadoPrioridad",
-                type: "POST",
-                dataType: "json",
-                success: function (data) {
-                    if (data.length > 0) {
-                        var options = "";
-                        for (var i = 0; i < data.length; i++) {
-                            $("#prioridad").append("<option value=" + data[i].IdPrioridad + ">" + data[i].NomPrioridad + "</option>");
-                        }
-                    }
+        LlenarTablaTipoSolucion = function () {
 
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
-
-        LlenarTablaTicket = function () {
-
-            var NomCliente = $("#buscar").val();
+            var  = $("#buscar").val();
             var IdEstado = $("#estado").val();
             var IdPrioridad = $("#prioridad").val();
             var IdEmpleado = $("#IdEmpleado").val();
@@ -107,11 +86,11 @@
             });
         }
 
-        listarEstado();
-        listarPrioridad();
-        LlenarTablaTicket();
+        listarCategoria();
+        LlenarTablaTipoSolucion();
+        //LlenarTablaTicket();
 
-        $("#estado").on("change", function () {
+        /*$("#estado").on("change", function () {
             LlenarTablaTicket();
         });
         $("#buscar").on("keyup", function () {
@@ -119,7 +98,7 @@
         });
         $("#prioridad").on("change", function () {
             LlenarTablaTicket();
-        });
+        });*/
 
 
     })
@@ -140,7 +119,7 @@
 						<div class="col-lg-3 col-md-3 col-sm-6 col-sm-6">
 							<div class="form-group">
 								<label for="">Categoría</label>
-								<select class="form-control" id="estado" name="estado">
+								<select class="form-control" id="categoria" name="categoria">
 									<option value="">Todos</option>
 								</select>
 							</div>
