@@ -40,6 +40,9 @@ namespace WebApiMovil.Models
         public int SOL_PROB_ID { get; set; }
 
         [DataMember]
+        public string CAT_Descripcion { get; set; }
+        
+        [DataMember]
         public int SOL_CAT_ID { get; set; }
     }
 }

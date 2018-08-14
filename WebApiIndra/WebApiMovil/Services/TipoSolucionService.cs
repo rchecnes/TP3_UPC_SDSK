@@ -20,16 +20,18 @@ namespace WebApiIndra.Services
                 {
                     conection.Open();
 
-                    string query = "SELECT * FROM dbo.TipoSolucion ts WHERE ts.SOL_Id <> 0";
+                    string query = "SELECT * FROM dbo.TipoSolucion ts " +
+                                   "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) "+
+                                   "WHERE ts.SOL_Id <> 0";
 
-                    if (entidad.SOL_ID != 1)
+                    if (entidad.SOL_CAT_ID != 0)
                     {
-                        query += " AND ts.SOL_Id = " + entidad.SOL_ID;
+                        query += " AND ts.SOL_CAT_ID = " + entidad.SOL_CAT_ID;
                     }
 
                     if (entidad.SOL_Nombre != null)
                     {
-                        query += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_ID + "%')";
+                        query += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_Nombre + "%')";
                     }
 
                     using (SqlCommand command = new SqlCommand(query, conection))
@@ -43,7 +45,8 @@ namespace WebApiIndra.Services
                                 {
                                     TipoSolucion tiposol = new TipoSolucion();
                                     tiposol.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_Id"));
-                                    tiposol.SOL_Descripcion = dr.GetString(dr.GetOrdinal("SOL_Descripcion"));
+                                    tiposol.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
+                                    tiposol.CAT_Descripcion = dr.GetString(dr.GetOrdinal("CAT_Descripcion"));
                                     tiposol.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
                                     tiposol.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
                                     tiposol.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
@@ -123,8 +126,8 @@ namespace WebApiIndra.Services
                                 while (dr.Read())
                                 {
                                     TipoProblema problema = new TipoProblema();
-                                    problema.PRO_ID = dr.GetInt32(dr.GetOrdinal("PRO_Id"));
-                                    problema.PRO_Descripcion = dr.GetString(dr.GetOrdinal("PRO_Descripcion"));
+                                    problema.PROB_ID = dr.GetInt32(dr.GetOrdinal("PROB_Id"));
+                                    problema.PROB_Descripcion = dr.GetString(dr.GetOrdinal("PROB_Descripcion"));
                                     ListaTipoProblema.Add(problema);
                                 }
                             }
@@ -158,7 +161,7 @@ namespace WebApiIndra.Services
                         command.Parameters.AddWithValue("@SOL_PalabraClave", entidad.SOL_PalabraClave);
                         command.Parameters.AddWithValue("@SOL_Comentario", entidad.SOL_Comentario);
                         command.Parameters.AddWithValue("@SOL_FechaCreacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", entidad.SOL_UsuarioCreacion);
+                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", "RCHECNES");
                         command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
                         command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
                         command.ExecuteNonQuery();

@@ -18,7 +18,7 @@
                     if (data.length > 0) {
                         var options = "";
                         for (var i = 0; i < data.length; i++) {
-                            $("#categoria").append("<option value=" + data[i].CAT_ID + ">" + data[i].CAT_Descripcion+"</option>");
+							$("#SOL_CAT_ID").append("<option value=" + data[i].CAT_ID + ">" + data[i].CAT_Descripcion+"</option>");
                         }
                     }
 
@@ -32,19 +32,16 @@
 
         LlenarTablaTipoSolucion = function () {
 
-            var buscar = $("#buscar").val();
-            var IdEstado = $("#estado").val();
-            var IdPrioridad = $("#prioridad").val();
-            var IdEmpleado = $("#IdEmpleado").val();
-            var IdRol = $("#IdRol").val();
+			var SOL_Nombre = $("#SOL_Nombre").val();
+			var SOL_CAT_ID = $("#SOL_CAT_ID").val();
 
             $.ajax({
-                url: $("#UrlServicio").val() + "/api/Ticket/ListadoTicket",
+				url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoTipoSolucion",
                 type: "POST",
                 dataType: "json",
-                data: { "NomCliente": NomCliente, "IdEstado": IdEstado, "IdPrioridad": IdPrioridad, "IdEmpleado": IdEmpleado, IdRol: IdRol },
+				data: { "SOL_Nombre": SOL_Nombre, "SOL_CAT_ID": SOL_CAT_ID},
                 success: function (data) {
-
+					//console.log(data);
                     var html = "";
                     if (data != null) {
                         if (data.length > 0) {
@@ -52,21 +49,16 @@
                             for (var i = 0; i < data.length; i++) {
 
                                 //var IdTicket = data[i].IdTicket;
-                                var rutaticket = '@Url.Action("Editar", "Ticket", new { id = "IdTicket" })'.replace("IdTicket", parseInt(data[i].IdTicket));
+								var editar = '@Url.Action("Editar", "TipoSolucion", new { id = "SOL_ID" })'.replace("SOL_ID", parseInt(data[i].SOL_ID));
+								var emilinar = '@Url.Action("Eliminar", "TipoSolucion", new { id = "SOL_ID" })'.replace("SOL_ID", parseInt(data[i].SOL_ID));
 
-                                if ($("#IdRol").val() == 1) {
-                                    rutaticket = '@Url.Action("AsigResp", "Ticket", new { id = "IdTicket" })'.replace("IdTicket", parseInt(data[i].IdTicket));
-                                }
                                 html += "<tr>";
-                                html += "<td>" + data[i].IdTicket + "</td>";
-                                html += "<td>" + data[i].NomProyecto + "</td>";
-                                html += "<td>" + data[i].NomMantenimiento + "</td>";
-                                html += "<td>" + data[i].FeCreTicket + "</td>";
-                                html += "<td>" + data[i].NomCliente + "</td>";
-                                html += "<td>" + data[i].NomEmpleado + "</td>";
-                                html += "<td>" + data[i].NomEstado + "</td>";
-                                html += "<td>" + data[i].NomPrioridad + "</td>";
-                                html += "<td><a href='"+rutaticket+"'><i class='fa fa-eye'></i></a></td>";
+								html += "<td>" + data[i].SOL_ID + "</td>";
+								html += "<td>" + data[i].SOL_Nombre + "</td>";
+								html += "<td>" + data[i].CAT_Descripcion + "</td>";
+								html += "<td>" + data[i].SOL_FechaCreacion + "</td>";
+								html += "<td><a href='" + editar + "'</a><i class='fa fa-eye'></i></a></td>";
+								html += "<td><a href='" + emilinar + "'><i class='fa fa-eye'></i></a></td>";
                                 html += "</tr>";
 
                             }
@@ -76,7 +68,7 @@
                         html += "<tr><td colspan='9'>No existen tickets de atención</td></tr>";
                     }
 
-                    $("#detalle_ticket").html(html);
+					$("#detalle_tipo_solucion").html(html);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     console.log(xhr.status);
@@ -86,18 +78,16 @@
         }
 
         listarCategoria();
-        //LlenarTablaTipoSolucion();
+        LlenarTablaTipoSolucion();
         //LlenarTablaTicket();
 
-        /*$("#estado").on("change", function () {
-            LlenarTablaTicket();
+        
+        $("#SOL_Nombre").on("keyup", function () {
+			LlenarTablaTipoSolucion();
         });
-        $("#buscar").on("keyup", function () {
-            LlenarTablaTicket();
+        $("#SOL_CAT_ID").on("change", function () {
+			LlenarTablaTipoSolucion();
         });
-        $("#prioridad").on("change", function () {
-            LlenarTablaTicket();
-        });*/
 
 
     })
@@ -112,13 +102,13 @@
 						<div class="col-lg-6 col-md-6 col-sm-6 col-sm-6" >
 							<div class="form-group">
 								<label for="Buscar">Buscar Por (Nro. ó Nombre)</label>
-								<input type="text" class="form-control" id="buscar" name="buscar" placeholder="Buscar">
+								<input type="text" class="form-control" id="SOL_Nombre" name="SOL_Nombre" placeholder="Buscar">
 							</div>
 						</div>
 						<div class="col-lg-3 col-md-3 col-sm-6 col-sm-6">
 							<div class="form-group">
 								<label for="">Categoría</label>
-								<select class="form-control" id="categoria" name="categoria">
+								<select class="form-control" id="SOL_CAT_ID" name="SOL_CAT_ID">
 									<option value="">Todos</option>
 								</select>
 							</div>
@@ -147,88 +137,9 @@
                                         <th colspan="2">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="detalle_baseconocimiento">
-                                    <!--lista detalle ticket-->
-                                    <tr>
-                                        <td>10</td>
-                                        <td>Instalación de Skype Empresarial</td>
-                                        <td>Impresora</td>
-                                        <td>10/08/2018</td>
-                                        <td align="center"><a href="@Url.Action("Editar", "TipoSolucion")"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>9</td>
-                                        <td>Instalación de Skype Empresarial</td>
-                                        <td>Impresora</td>
-                                        <td>09/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>8</td>
-                                        <td>Instalación de Skype Empresarial</td>
-                                        <td>Impresora</td>
-                                        <td>08/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>7</td>
-                                        <td>Instalación de Skype Empresarial</td>
-                                        <td>Impresora</td>
-                                        <td>07/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>6</td>
-                                        <td>Instalación de Skype Empresarial</td>
-                                        <td>Impresora</td>
-                                        <td>06/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>5</td>
-                                        <td>Instalación de Access</td>
-                                        <td>Otros</td>
-                                        <td>05/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>Instalación de Power Point</td>
-                                        <td>Otros</td>
-                                        <td>04/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Instalación de Outlook</td>
-                                        <td>Otros</td>
-                                        <td>03/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Instalación de Microsoft Excel</td>
-                                        <td>Otros</td>
-                                        <td>02/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Instalación de Microsoft Word</td>
-                                        <td>Otros</td>
-                                        <td>01/08/2018</td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-edit fa-lg"></span></a></td>
-                                        <td align="center"><a href="#"><span class="glyphicon glyphicon-trash fa-lg"></span></a></td>
-                                    </tr>
+                                <tbody id="detalle_tipo_solucion">
+                                    <!--lista detalle tipo solucion-->
+                                    
                                 </tbody>
                             </table>
                         </div>

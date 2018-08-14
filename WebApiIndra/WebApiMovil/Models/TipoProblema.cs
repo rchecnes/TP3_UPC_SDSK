@@ -10,10 +10,10 @@ namespace WebApiMovil.Models
     public class TipoProblema
     {
         [DataMember]
-        public int PRO_ID { get; set; }
+        public int PROB_ID { get; set; }
 
         [DataMember]
-        public string PRO_Descripcion { get; set; }
+        public string PROB_Descripcion { get; set; }
 
         [DataMember]
         public int SER_ID { get; set; }

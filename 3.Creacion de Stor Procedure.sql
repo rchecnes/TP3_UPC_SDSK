@@ -33,8 +33,8 @@ CREATE PROCEDURE InsertarTipoSolucion
 @SOL_PalabraClave text,
 @SOL_Comentario text,
 @SOL_CAT_ID int,
-@SOL_FechaCreacion date,
-@SOL_UsuarioCreacion date
+@SOL_FechaCreacion datetime,
+@SOL_UsuarioCreacion nvarchar(60)
 AS
 BEGIN   
 
@@ -57,7 +57,7 @@ CREATE PROCEDURE ActualizarTipoSolucion
 @SOL_PalabraClave text,
 @SOL_Comentario text,
 @SOL_CAT_ID int,
-@SOL_FechaCreacion date
+@SOL_FechaCreacion datetime
 AS
 BEGIN   
 
@@ -75,4 +75,7 @@ BEGIN
 
 END 
 GO
+
+select * from Categoria;
+SELECT * FROM dbo.TipoSolucion ts INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) WHERE ts.SOL_Id <> 0 AND ts.SOL_Id = 0
 
