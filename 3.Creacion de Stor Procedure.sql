@@ -11,10 +11,20 @@ AS
     SELECT * FROM Categoria  
 GO
 
-IF (OBJECT_ID('CrearTipoSolucion') IS NOT NULL)
-  DROP PROCEDURE CrearTipoSolucion
+IF (OBJECT_ID('TipoProblemaLista') IS NOT NULL)
+  DROP PROCEDURE TipoProblemaLista
 GO
-CREATE PROCEDURE CrearTipoSolucion
+CREATE PROCEDURE TipoProblemaLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM TipoProblema  
+GO
+
+IF (OBJECT_ID('InsertarTipoSolucion') IS NOT NULL)
+  DROP PROCEDURE InsertarTipoSolucion
+GO
+CREATE PROCEDURE InsertarTipoSolucion
 @SOL_PROB_ID int,
 @SOL_Nombre	nvarchar(250),
 @SOL_RutaArchivo nvarchar(250),

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
 	ViewBag.Title = "Index";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.TitlePag = "Listado de Base de Conocimiento";
@@ -33,7 +32,7 @@
 
         LlenarTablaTipoSolucion = function () {
 
-            var  = $("#buscar").val();
+            var buscar = $("#buscar").val();
             var IdEstado = $("#estado").val();
             var IdPrioridad = $("#prioridad").val();
             var IdEmpleado = $("#IdEmpleado").val();
@@ -42,7 +41,7 @@
             $.ajax({
                 url: $("#UrlServicio").val() + "/api/Ticket/ListadoTicket",
                 type: "POST",
-                //dataType: "json",
+                dataType: "json",
                 data: { "NomCliente": NomCliente, "IdEstado": IdEstado, "IdPrioridad": IdPrioridad, "IdEmpleado": IdEmpleado, IdRol: IdRol },
                 success: function (data) {
 
@@ -87,7 +86,7 @@
         }
 
         listarCategoria();
-        LlenarTablaTipoSolucion();
+        //LlenarTablaTipoSolucion();
         //LlenarTablaTicket();
 
         /*$("#estado").on("change", function () {

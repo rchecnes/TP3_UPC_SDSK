@@ -21,11 +21,11 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [ActionName("ListadoTipoSolucion")]
-        public List<TipoSolucion> ListadoTipoSolucion()
+        public List<TipoSolucion> ListadoTipoSolucion(TipoSolucion entidad)
         {
             try
             {
-                return tiposolucion.ListadoTipoSolucion();
+                return tiposolucion.ListadoTipoSolucion(entidad);
             }
             catch (Exception ex)
             {
@@ -46,5 +46,47 @@ namespace WebApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [ActionName("ListadoTipoProblema")]
+        public List<TipoProblema> ListadoTipoProblema()
+        {
+            try
+            {
+                return tiposolucion.ListadoTipoProblema();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("InsertarTipoSolucion")]
+        public string InsertarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+               return tiposolucion.InsertarTipoSolucion(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        /*[HttpPost]
+        [ActionName("ActualizarTipoSolucion")]
+        public void ActualizarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                return tiposolucion.ActualizarTipoSolucion(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }*/
     }
 }

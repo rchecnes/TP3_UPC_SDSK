@@ -5,6 +5,7 @@
     ViewBag.TitlePag = "Nuevo Base de Conocimiento";
 }
 
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
 <div class="row">
     <div class="col-lg-12">
         <div class="box box-primary">
@@ -84,9 +85,66 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
+    listarCategoria = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoCategoria",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#SOL_CAT_ID").append("<option value=" + data[i].CAT_ID + ">" + data[i].CAT_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarTipoProblema = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoTipoProblema",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#SOL_PROB_ID").append("<option value=" + data[i].PRO_ID + ">" + data[i].PRO_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarCategoria();
+    listarTipoProblema();
+
     $("#form_tipo_solucion").submit(function (event) {
         event.preventDefault();
-        console.log("hola");
+
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/InsertarTipoSolucion",
+            type: "POST",
+            data: $("#form_tipo_solucion").serialize(),
+            success: function (data) {
+                window.location.href = "@Url.Action("Index", "TipoSolucion")";
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
     })
 
 });

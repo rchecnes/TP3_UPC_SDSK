@@ -102,5 +102,77 @@ namespace WebApiIndra.Services
                 throw (ex);
             }
         }
+        public List<TipoProblema> ListadoTipoProblema()
+        {
+            List<TipoProblema> ListaTipoProblema = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("TipoProblemaLista", conection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                ListaTipoProblema = new List<TipoProblema>();
+                                while (dr.Read())
+                                {
+                                    TipoProblema problema = new TipoProblema();
+                                    problema.PRO_ID = dr.GetInt32(dr.GetOrdinal("PRO_Id"));
+                                    problema.PRO_Descripcion = dr.GetString(dr.GetOrdinal("PRO_Descripcion"));
+                                    ListaTipoProblema.Add(problema);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return ListaTipoProblema;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public string InsertarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("InsertarTipoSolucion", conection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SOL_Nombre", entidad.SOL_Nombre);
+                        command.Parameters.AddWithValue("@SOL_RutaArchivo", "/PRUAB");
+                        command.Parameters.AddWithValue("@SOL_NombreArchivo", "PRUEBA");
+                        command.Parameters.AddWithValue("@SOL_Descripcion", entidad.SOL_Descripcion);
+                        command.Parameters.AddWithValue("@SOL_PalabraClave", entidad.SOL_PalabraClave);
+                        command.Parameters.AddWithValue("@SOL_Comentario", entidad.SOL_Comentario);
+                        command.Parameters.AddWithValue("@SOL_FechaCreacion", DateTime.Now);
+                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", entidad.SOL_UsuarioCreacion);
+                        command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
+                        command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
+                        command.ExecuteNonQuery();
+                    }
+                    conection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return "ok";
+        }
     }
 }
