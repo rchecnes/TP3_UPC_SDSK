@@ -7,7 +7,7 @@ using System.Web;
 namespace WebApiMovil.Models
 {
     [DataContract]
-    public class TipoSolucion
+    public class TipoSolucion: Paginacion
     {
         [DataMember]
         public int SOL_ID { get; set; }

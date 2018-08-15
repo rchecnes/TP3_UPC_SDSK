@@ -20,7 +20,7 @@ namespace WebApiMovil.Models
         [DataMember]
         public string pvSortOrder { get; set; }
         [DataMember]
-        public int piPageSize { get; set; }
+        public int iPageSize { get; set; }
         [DataMember]
         public int sEcho { get; set; }
         [DataMember]

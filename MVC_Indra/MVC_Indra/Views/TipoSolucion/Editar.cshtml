@@ -121,7 +121,7 @@ $(document).ready(function () {
                 $("#SOL_NombreArchivo").html(data[0].SOL_NombreArchivo);                
 
                 $("#SOL_UsuarioCreacion").html(data[0].SOL_UsuarioCreacion + " " + data[0].SOL_FechaCreacion);
-                $("#SOL_UsuarioModificacion").html(data[0].SOL_UsuarioModificacion + " " + data[0].SOL_UsuarioModificacion);
+				$("#SOL_UsuarioModificacion").html(data[0].SOL_UsuarioModificacion + " " + data[0].SOL_FechaModificacion);
 
                 $("#SOL_Comentario").html(data[0].SOL_Comentario);
                 
@@ -195,7 +195,7 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+	});
 })
 </script>
 

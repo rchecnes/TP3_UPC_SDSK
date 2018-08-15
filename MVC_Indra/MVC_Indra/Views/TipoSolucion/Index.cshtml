@@ -78,7 +78,7 @@
         }
 
         listarCategoria();
-        LlenarTablaTipoSolucion();
+        //LlenarTablaTipoSolucion();
         //LlenarTablaTicket();
 
         
@@ -89,7 +89,145 @@
 			LlenarTablaTipoSolucion();
         });
 
+		//Datatable
+		/*$("#divTableAccesorio").html('<table id="tblAccesorioDev" class="table table-bordered" cellspacing="0" />');
+		if ($.fn.DataTable.isDataTable('#tblAccesorioDev')) {
+			//$('#example').dataTable();
+			tblAccesorioDev.destroy();
+		}
+		llenarTablaAccesorio();*/
 
+		function llenarTablaAccesorio() {
+			tblAccesorioDev = $("#tblAccesorioDev")
+				.DataTable({
+					"bLengthChange": false,
+					"bFilter": false,
+					"PaginationType": "full_numbers",
+					"processing": true,
+					"bServerSide": true,
+					"sAjaxSource": $("#UrlServicio").val() + '/api/TipoSolucion/ListadoTipoSolucion',
+					"select": true,
+					"pageLength": 20,
+					responsive: true,
+					language: {
+						"sProcessing": "Procesando...",
+						"sLengthMenu": "Mostrar _MENU_ registros",
+						"sZeroRecords": "No se encontraron resultados",
+						"sEmptyTable": "Ningún dato disponible en esta tabla",
+						"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+						"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+						"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+						"sInfoPostFix": "",
+						"sSearch": "Buscar:",
+						"sUrl": "",
+						"sInfoThousands": ",",
+						"sLoadingRecords": "Cargando...",
+						"oPaginate": {
+							"sFirst": "Primero",
+							"sLast": "Último",
+							"sNext": "Next",
+							"sPrevious": "Prev"
+						},
+						"oAria": {
+							"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+							"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+						}
+					},
+					"fnServerData": function (url, odata, callback) {
+						//debugger;
+						entidad = {};
+						var PageSize = 10;
+						var PrimerRegistro = odata[3].value;;
+						var CurrentPage = PrimerRegistro / PageSize;
+
+						entidad.iPageSize = PageSize;
+						entidad.iCurrentPage = CurrentPage + 1;
+						entidad.vSortColumn = "SOL_ID";
+						entidad.vSortOrder = "DESC";
+
+						$.ajax({
+							"url": url,
+							"dataSrc": "",
+							"data": entidad,
+							"success":
+								function (response) {
+									//debugger;
+									console.log(response);
+									if (response.length == 0) {
+										callback({
+											data: response,
+											recordsTotal: 0,
+											recordsFiltered: 0,
+
+										})
+									} else {
+										callback({
+											data: response,
+											recordsTotal: response[0].iTotalRecords,
+											recordsFiltered: response[0].iTotalRecords,
+
+										})
+									};
+
+									$(".ver").click(function () {
+										var id = $(this).data("id");
+										var url = $("#AgregarEditar").val();
+										window.location.href = url + '?id=' + id + '&accion=1&iCodUsuario=' + iCodUsuario;
+									});
+
+									$(".editar").click(function () {
+										var id = $(this).data("id");
+										var url = $("#AgregarEditar").val();
+										window.location.href = url + '?id=' + id + '&accion=2&iCodUsuario=' + iCodUsuario;
+									});
+
+									$(".eliminar").click(function () {
+										id = $(this).data("id");
+										entidad = {};
+										entidad.idCodEquipoDet = id;
+										entidad.iOpcion = 3;
+
+										$.confirm({
+											title: 'Confirmación!',
+											content: 'Esta seguro que desea elimiar este registro',
+											type: 'red',
+											animation: 'zoom',
+											buttons: {
+												Ok: function () {
+													$("#modalEliminar").modal().show();
+												},
+												cancelar: function () {
+												}
+											}
+										});
+									});
+								},
+							//,
+							"contentType": "application/x-www-form-urlencoded; charset=utf-8",
+							"dataType": "json",
+							"type": "POST",
+							"cache": false,
+							"error": function (resultado) {
+								console.log(resultado);
+								alert("DataTables warning: JSON data from server failed to load or be parsed. " +
+									"This is most likely to be caused by a JSON formatting error.");
+							},
+						});
+					},
+
+					"aoColumns": [
+						{ "title": "SOL_ID", "bSortable": false, bVisible: true, "data": "SOL_ID" },
+						{ "title": "SOL_Nombre", "bSortable": false, bVisible: true, "data": "SOL_Nombre" },
+						{ "title": "CAT_Descripcion", "bSortable": false, bVisible: true, "data": "CAT_Descripcion" },
+						{ "title": "SOL_FechaCreacion", "bSortable": false, bVisible: true, "data": "SOL_FechaCreacion" }
+					],
+					"columnDefs": [
+
+					]
+				});
+		}
+
+		llenarTablaAccesorio();
     })
 </script>
 
@@ -127,29 +265,10 @@
                 <div class="dataTables_wrapper form-inline dt-bootstrap">
                     <div class="row">
                         <div class="col-sm-12">
-                            <table id="bbgrid" class="table table-bordered table-hover dataTable">
-                                <thead>
-                                    <tr>
-                                        <th>Nro.</th>
-                                        <th>Nombre</th>
-                                        <th>Categría</th>
-                                        <th>Fecha de Creación</th>
-                                        <th colspan="2">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="detalle_tipo_solucion">
-                                    <!--lista detalle tipo solucion-->
-                                    
-                                </tbody>
-                            </table>
+							<table id="tblAccesorioDev" class="table table-bordered" cellspacing="0" />
                         </div>
                     </div>
-                    <div class="row">
-                        
-                        <div class="col-sm-12">
-                            <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate"><ul class="pagination"><li class="paginate_button previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0">Previous</a></li><li class="paginate_button active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0">1</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0">2</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0">3</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="4" tabindex="0">4</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="5" tabindex="0">5</a></li><li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="6" tabindex="0">6</a></li><li class="paginate_button next" id="example2_next"><a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0">Next</a></li></ul></div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
 			<!-- /.box-body -->

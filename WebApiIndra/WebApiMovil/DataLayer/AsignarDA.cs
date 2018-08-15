@@ -23,7 +23,7 @@ namespace WebApiMovil.DataLayer
                     using (SqlCommand command = new SqlCommand("Listar", conection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@piPageSize", entidad.piPageSize);
+                        command.Parameters.AddWithValue("@piPageSize", entidad.iPageSize);
                         command.Parameters.AddWithValue("@piCurrentPage", entidad.iCurrentPage);
                         command.Parameters.AddWithValue("@pvSortColumn", entidad.pvSortColumn);
                         command.Parameters.AddWithValue("@pvSortOrder", entidad.pvSortOrder);
