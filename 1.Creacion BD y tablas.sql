@@ -66,7 +66,8 @@ SOL_Comentario TEXT,
 SOL_CAT_ID INTEGER FOREIGN KEY REFERENCES Categoria(CAT_ID),
 SOL_FechaCreacion	DATETIME,
 SOL_FechaModificacion DATETIME,
-SOL_UsuarioCreacion	VARCHAR(50)
+SOL_UsuarioCreacion	VARCHAR(50),
+SOL_UsuarioModificacion VARCHAR(50)
 )
 go
 

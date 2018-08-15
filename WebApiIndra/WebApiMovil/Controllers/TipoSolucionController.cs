@@ -75,9 +75,23 @@ namespace WebApi.Controllers
             }
         }
 
-        /*[HttpPost]
+        [HttpPost]
+        [ActionName("EditarTipoSolucion")]
+        public List<TipoSolucion> EditarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                return tiposolucion.EditarTipoSolucion(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
         [ActionName("ActualizarTipoSolucion")]
-        public void ActualizarTipoSolucion(TipoSolucion entidad)
+        public string ActualizarTipoSolucion(TipoSolucion entidad)
         {
             try
             {
@@ -87,6 +101,6 @@ namespace WebApi.Controllers
             {
                 throw;
             }
-        }*/
+        }
     }
 }

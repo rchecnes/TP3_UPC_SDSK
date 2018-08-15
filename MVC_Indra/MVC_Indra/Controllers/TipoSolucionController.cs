@@ -18,8 +18,10 @@ namespace MVC_Indra.Controllers
             return View();
         }
 
-        public ActionResult Editar()
+        public ActionResult Editar(int id)
         {
+            ViewBag.SOL_ID = id;
+
             return View();
         }
     }

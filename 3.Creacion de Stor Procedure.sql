@@ -44,37 +44,44 @@ BEGIN
 END 
 GO
 
+IF (OBJECT_ID('EditarTipoSolucion') IS NOT NULL)
+  DROP PROCEDURE EditarTipoSolucion
+GO
+CREATE PROCEDURE EditarTipoSolucion
+@SOL_ID int
+AS
+BEGIN   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM TipoSolucion WHERE SOL_ID=@SOL_ID
+END 
+GO
+
 IF (OBJECT_ID('ActualizarTipoSolucion') IS NOT NULL)
   DROP PROCEDURE ActualizarTipoSolucion
 GO
 CREATE PROCEDURE ActualizarTipoSolucion
 @SOL_ID int,
 @SOL_PROB_ID int,
-@SOL_Nombre	nvarchar(250),
-@SOL_RutaArchivo nvarchar(250),
-@SOL_NombreArchivo nvarchar(250),
 @SOL_Descripcion text,
 @SOL_PalabraClave text,
-@SOL_Comentario text,
-@SOL_CAT_ID int,
-@SOL_FechaCreacion datetime
+@SOL_FechaModificacion datetime,
+@SOL_UsuarioModificacion varchar(50),
+@SOL_CAT_ID int
 AS
-BEGIN   
-
+BEGIN
     SET NOCOUNT ON;
-	UPDATE [dbo].[TipoSolucion] SET SOL_Nombre=@SOL_Nombre,
-	SOL_RutaArchivo=@SOL_RutaArchivo,
-	SOL_NombreArchivo=@SOL_NombreArchivo,
+	UPDATE [dbo].[TipoSolucion] SET 
 	SOL_Descripcion=@SOL_Descripcion,
 	SOL_PalabraClave=@SOL_PalabraClave,
-	SOL_Comentario=@SOL_Comentario,
-	SOL_FechaModificacion=@SOL_FechaCreacion,
+	SOL_FechaModificacion=@SOL_FechaModificacion,
+	SOL_UsuarioModificacion=@SOL_UsuarioModificacion,
 	SOL_CAT_ID=@SOL_CAT_ID,
 	SOL_PROB_ID=@SOL_PROB_ID
 	WHERE SOL_ID=@SOL_ID
-
 END 
 GO
+
 
 select * from Categoria;
 SELECT * FROM dbo.TipoSolucion ts INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) WHERE ts.SOL_Id <> 0 AND ts.SOL_Id = 0

@@ -177,5 +177,116 @@ namespace WebApiIndra.Services
 
             return "ok";
         }
+        public List<TipoSolucion> EditarTipoSolucion(TipoSolucion entidad)
+        {
+            List<TipoSolucion> ListaTipoSolucion = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("EditarTipoSolucion", conection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
+
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                ListaTipoSolucion = new List<TipoSolucion>();
+                                while (dr.Read())
+                                {
+                                    TipoSolucion tiposol = new TipoSolucion();
+                                    tiposol.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_ID"));
+                                    tiposol.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Descripcion")))
+                                    {
+                                        tiposol.SOL_Descripcion = dr.GetString(dr.GetOrdinal("SOL_Descripcion"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_PalabraClave")))
+                                    {
+                                        tiposol.SOL_PalabraClave = dr.GetString(dr.GetOrdinal("SOL_PalabraClave"));
+                                    }
+                                    tiposol.SOL_CAT_ID = dr.GetInt32(dr.GetOrdinal("SOL_CAT_ID"));
+                                    tiposol.SOL_PROB_ID = dr.GetInt32(dr.GetOrdinal("SOL_PROB_ID"));
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_RutaArchivo")))
+                                    {
+                                        tiposol.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_NombreArchivo")))
+                                    {
+                                        tiposol.SOL_NombreArchivo = dr.GetString(dr.GetOrdinal("SOL_NombreArchivo"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Comentario")))
+                                    {
+                                        tiposol.SOL_Comentario = dr.GetString(dr.GetOrdinal("SOL_Comentario"));
+                                    }
+
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_FechaCreacion")))
+                                    {
+                                        tiposol.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_FechaModificacion")))
+                                    {
+                                        tiposol.SOL_FechaModificacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaModificacion")).ToString("dd/MM/yyyy");
+                                    }
+
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_UsuarioCreacion")))
+                                    {
+                                        tiposol.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_UsuarioModificacion")))
+                                    {
+                                        tiposol.SOL_UsuarioModificacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioModificacion"));
+                                    }
+
+                                    ListaTipoSolucion.Add(tiposol);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return ListaTipoSolucion;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public string ActualizarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("ActualizarTipoSolucion", conection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
+                        command.Parameters.AddWithValue("@SOL_Descripcion", entidad.SOL_Descripcion);
+                        command.Parameters.AddWithValue("@SOL_PalabraClave", entidad.SOL_PalabraClave);
+                        command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
+                        command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
+                        command.Parameters.AddWithValue("@SOL_FechaModificacion", DateTime.Now);
+                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", "RCHECNES");
+                        command.ExecuteNonQuery();
+                    }
+                    conection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return "ok";
+        }
     }
 }

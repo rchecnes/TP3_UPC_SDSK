@@ -34,7 +34,13 @@ namespace WebApiMovil.Models
         public string SOL_FechaCreacion { get; set; }
 
         [DataMember]
+        public string SOL_FechaModificacion { get; set; }
+
+        [DataMember]
         public string SOL_UsuarioCreacion { get; set; }
+
+        [DataMember]
+        public string SOL_UsuarioModificacion { get; set; }
 
         [DataMember]
         public int SOL_PROB_ID { get; set; }

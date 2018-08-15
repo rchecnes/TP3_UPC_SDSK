@@ -5,24 +5,26 @@
     ViewBag.TitlePag = "Editar Base de Conocimiento";
 }
 
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
 <div class="row">
     <div class="col-lg-12">
         <div class="box box-primary">
 
             <!-- form start -->
-            <form role="form">
+            <form role="form" id="form_tipo_solucion">
                 <div class="box-body">
                     <div class="row">
                         <div class="col-lg-1 col-md-2 col-sm-3 col-xs-3">
                             <div class="form-group">
-                                <label for="codigo">Código</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Nombre" value="10" disabled style="text-align: center">
+                                <label for="nombre">Código</label>
+                                <input type="text" class="form-control" id="SOL_ID_DIS" name="SOL_ID_DIS" autocomplete="off" placeholder="ID" disabled>
+                                <input type="hidden" class="form-control" id="SOL_ID" name="SOL_ID" autocomplete="off" placeholder="SOL_ID">
                             </div>
                         </div>
                         <div class="col-lg-11 col-sm-10 col-sm-9 col-xs-9">
                             <div class="form-group">
                                 <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Nombre" value="Instalación de Skype Empresarial">
+                                <input type="text" class="form-control" id="SOL_Nombre" name="SOL_Nombre" autocomplete="off" placeholder="Nombre" disabled>
                             </div>
                         </div>
                     </div>
@@ -30,7 +32,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Descripción de la solución</label>
-                                <textarea class="form-control" rows="3" placeholder="Enter ...">Prueba vdv dv df vdf vdf  d v dfv d</textarea>
+                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="SOL_Descripcion" name="SOL_Descripcion" autocomplete="off"></textarea>
                             </div>
                         </div>
                     </div>
@@ -38,7 +40,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Palabras Claves</label>
-                                <textarea class="form-control" rows="2" placeholder="Enter ...">Palabra clave</textarea>
+                                <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_PalabraClave" name="SOL_PalabraClave" autocomplete="off"></textarea>
                             </div>
                         </div>
                     </div>
@@ -46,32 +48,43 @@
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>Categoría</label>
-                                <select class="form-control">
-                                    <option>Impresora</option>
+                                <select class="form-control" id="SOL_CAT_ID" name="SOL_CAT_ID" required>
+                                    <option value="">[Sleccionar]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>Problema</label>
-                                <select class="form-control">
-                                    <option>Office</option>
+                                <select class="form-control" id="SOL_PROB_ID" name="SOL_PROB_ID" required>
+                                    <option value="">[Sleccionar]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label for="exampleInputFile">Documento Adjunto</label>
-                                <input type="file" id="exampleInputFile">
-                                <p><b>Manual.xls</b></p>
+                                <div id="SOL_NombreArchivo"></div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Creado Por</label>
+                                <div id="SOL_UsuarioCreacion"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Modificado Por</label>
+                                <div id="SOL_UsuarioModificacion"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Comentario</label>
-                                <textarea class="form-control" rows="2" placeholder="Enter ...">Prueba de comentarios</textarea>
+                                <div id="SOL_Comentario"></div>
                             </div>
                         </div>
                     </div>
@@ -81,10 +94,108 @@
 
                 <div class="box-footer" style="text-align: center">
                     <button type="submit" class="btn btn-primary btn-lg">Grabar</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-default btn-lg">Cancelar</button>
+                    <a href="@Url.Action("Index", "TipoSolucion")" class="btn btn-default btn-lg">Cancelar</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function () {
+
+    editarTipoSolucion = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/EditarTipoSolucion",
+            type: "POST",
+            dataType: "json",
+            data: {SOL_ID:@ViewBag.SOL_ID},
+            success: function (data) {
+                $("#SOL_ID").val(data[0].SOL_ID);
+                $("#SOL_ID_DIS").val(data[0].SOL_ID);                
+                $("#SOL_Nombre").val(data[0].SOL_Nombre);
+                $("#SOL_Descripcion").val(data[0].SOL_Descripcion);
+                $("#SOL_PalabraClave").val(data[0].SOL_PalabraClave);
+                $("#SOL_CAT_ID").val(data[0].SOL_CAT_ID);
+                $("#SOL_PROB_ID").val(data[0].SOL_PROB_ID);                
+
+                $("#SOL_NombreArchivo").html(data[0].SOL_NombreArchivo);                
+
+                $("#SOL_UsuarioCreacion").html(data[0].SOL_UsuarioCreacion + " " + data[0].SOL_FechaCreacion);
+                $("#SOL_UsuarioModificacion").html(data[0].SOL_UsuarioModificacion + " " + data[0].SOL_UsuarioModificacion);
+
+                $("#SOL_Comentario").html(data[0].SOL_Comentario);
+                
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarCategoria = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoCategoria",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#SOL_CAT_ID").append("<option value=" + data[i].CAT_ID + ">" + data[i].CAT_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarTipoProblema = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoTipoProblema",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#SOL_PROB_ID").append("<option value=" + data[i].PROB_ID + ">" + data[i].PROB_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarCategoria();
+    listarTipoProblema();
+    editarTipoSolucion();
+
+    $("#form_tipo_solucion").submit(function (event) {
+        event.preventDefault();
+        if (confirm("¿Está seguro de Grabar?")) {
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/TipoSolucion/ActualizarTipoSolucion",
+                type: "POST",
+                data: $("#form_tipo_solucion").serialize(),
+                success: function (data) {
+                    window.location.href = "@Url.Action("Index", "TipoSolucion")";
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+    });
+})
+</script>
 
