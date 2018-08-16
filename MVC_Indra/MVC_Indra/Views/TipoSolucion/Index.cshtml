@@ -30,53 +30,6 @@
             });
         }
 
-        LlenarTablaTipoSolucion = function () {
-
-			var SOL_Nombre = $("#SOL_Nombre").val();
-			var SOL_CAT_ID = $("#SOL_CAT_ID").val();
-
-            $.ajax({
-				url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoTipoSolucion",
-                type: "POST",
-                dataType: "json",
-				data: { "SOL_Nombre": SOL_Nombre, "SOL_CAT_ID": SOL_CAT_ID},
-                success: function (data) {
-					//console.log(data);
-                    var html = "";
-                    if (data != null) {
-                        if (data.length > 0) {
-
-                            for (var i = 0; i < data.length; i++) {
-
-                                //var IdTicket = data[i].IdTicket;
-								var editar = '@Url.Action("Editar", "TipoSolucion", new { id = "SOL_ID" })'.replace("SOL_ID", parseInt(data[i].SOL_ID));
-								var emilinar = '@Url.Action("Eliminar", "TipoSolucion", new { id = "SOL_ID" })'.replace("SOL_ID", parseInt(data[i].SOL_ID));
-
-                                html += "<tr>";
-								html += "<td>" + data[i].SOL_ID + "</td>";
-								html += "<td>" + data[i].SOL_Nombre + "</td>";
-								html += "<td>" + data[i].CAT_Descripcion + "</td>";
-								html += "<td>" + data[i].SOL_FechaCreacion + "</td>";
-                                html += "<td><a alt='Editar' href='" + editar + "'</a><span class='glyphicon glyphicon-edit fa-2x'></span></a></td>";
-                                html += "<td><a alt='Eliminar' href='" + emilinar + "'><span class='glyphicon glyphicon-trash fa-2x'></span></a></td>";
-                                html += "</tr>";
-
-                            }
-
-                        }
-                    } else{
-                        html += "<tr><td colspan='9'>No existen tickets de atención</td></tr>";
-                    }
-
-					$("#detalle_tipo_solucion").html(html);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
-
         listarCategoria();
 
         $("#SOL_Nombre").on("keyup",function () {
@@ -104,7 +57,7 @@
 					"bServerSide": true,
 					"sAjaxSource": $("#UrlServicio").val() + '/api/TipoSolucion/ListadoTipoSolucion',
 					"select": true,
-					"pageLength": 20,
+					"pageLength": 10,
 					responsive: true,
 					language: {
 						"sProcessing": "Procesando...",

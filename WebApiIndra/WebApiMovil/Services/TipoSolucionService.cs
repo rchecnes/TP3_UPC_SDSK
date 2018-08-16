@@ -11,62 +11,6 @@ namespace WebApiIndra.Services
 {
     public class TipoSolucionService
     {
-        /*public List<TipoSolucion> ListadoTipoSolucion(TipoSolucion entidad)
-        {
-            List<TipoSolucion> ListaBase = null;
-            try
-            {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conection.Open();
-
-                    string query = "SELECT * FROM dbo.TipoSolucion ts " +
-                                   "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) "+
-                                   "WHERE ts.SOL_Id <> 0";
-
-                    if (entidad.SOL_CAT_ID != 0)
-                    {
-                        query += " AND ts.SOL_CAT_ID = " + entidad.SOL_CAT_ID;
-                    }
-
-                    if (entidad.SOL_Nombre != null)
-                    {
-                        query += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_Nombre + "%')";
-                    }
-
-                    using (SqlCommand command = new SqlCommand(query, conection))
-                    {
-                        using (SqlDataReader dr = command.ExecuteReader())
-                        {
-                            if (dr.HasRows)
-                            {
-                                ListaBase = new List<TipoSolucion>();
-                                while (dr.Read())
-                                {
-                                    TipoSolucion tiposol = new TipoSolucion();
-                                    tiposol.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_Id"));
-                                    tiposol.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
-                                    tiposol.CAT_Descripcion = dr.GetString(dr.GetOrdinal("CAT_Descripcion"));
-                                    tiposol.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
-                                    tiposol.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
-                                    tiposol.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
-
-                                    ListaBase.Add(tiposol);
-                                }
-                            }
-                        }
-
-                    }
-
-                    conection.Close();
-                }
-                return ListaBase;
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-        }*/
         public List<TipoSolucion> ListadoTipoSolucion(TipoSolucion entidad)
         {
             List<TipoSolucion> Lista = null;
@@ -80,17 +24,47 @@ namespace WebApiIndra.Services
                                    "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) " +
                                    "WHERE ts.SOL_Id <> 0 AND ts.SOL_Eliminado=0";
 
+                    string condition = "";
                     if (entidad.SOL_CAT_ID != 0)
                     {
-                        query += " AND ts.SOL_CAT_ID = " + entidad.SOL_CAT_ID;
+                        condition += " AND ts.SOL_CAT_ID = " + entidad.SOL_CAT_ID;
                     }
 
                     if (entidad.SOL_Nombre != null)
                     {
-                        query += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_Nombre + "%')";
+                        condition += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_Nombre + "%')";
                     }
-                    
-                    string finquery = "SELECT * FROM ("+ query+ ")a WHERE a.row >" + entidad.iCurrentPage + " and a.row <= " + entidad.iPageSize;
+
+                    int inicio = 0;
+                    int final = 0;
+                    if (entidad.iCurrentPage==0)
+                    {
+                        inicio = entidad.iCurrentPage * entidad.iPageSize;
+                        final = entidad.iPageSize;
+                    }
+                    else
+                    {
+                        inicio = (entidad.iCurrentPage - 1) * entidad.iPageSize;
+                        final = entidad.iCurrentPage * entidad.iPageSize;
+                    }
+                    string finquery = "SELECT * FROM ("+ query + condition +")a WHERE a.row >" + inicio + " and a.row <= " + final;
+
+                    //Hacemos un conteo de los registro
+                    int totRecord = 0;
+                    string querytot = "SELECT COUNT(ts.SOL_ID)AS Cantidad FROM dbo.TipoSolucion ts " +
+                                      "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) " +
+                                      "WHERE ts.SOL_Id <> 0 AND ts.SOL_Eliminado=0 ";
+                    using (SqlCommand command = new SqlCommand(querytot + condition, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                totRecord = dr.GetInt32(dr.GetOrdinal("Cantidad"));
+                            }
+                        }
+                    }
+                    //Fin totalizado
 
                     using (SqlCommand command = new SqlCommand(finquery, conection))
                     {
@@ -109,16 +83,16 @@ namespace WebApiIndra.Services
                                     item.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
                                     item.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
 
-                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-edit fa-2x'></span></a>"; ;
-                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-trash fa-2x'></span></a>"; ;
+                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>"; ;
+                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>"; ;
 
                                     item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar;
 
                                     //Paginado
                                     item.sEcho = 2;
                                     item.draw = 0;//dr.GetInt32(dr.GetOrdinal("iCurrentPage"));
-                                    item.iTotalRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
-                                    item.iTotalDisplayRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.iTotalRecords = totRecord;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.iTotalDisplayRecords = totRecord;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
 
                                     Lista.Add(item);
                                 }
