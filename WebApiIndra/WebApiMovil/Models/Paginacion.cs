@@ -29,5 +29,7 @@ namespace WebApiMovil.Models
         public int iTotalRecords { get; set; }
         [DataMember]
         public int iTotalDisplayRecords { get; set; }
+        [DataMember]
+        public string ltAcciones { get; set; }
     }
 }

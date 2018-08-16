@@ -78,15 +78,12 @@
         }
 
         listarCategoria();
-        //LlenarTablaTipoSolucion();
-        //LlenarTablaTicket();
 
-        
-        $("#SOL_Nombre").on("keyup", function () {
-			LlenarTablaTipoSolucion();
+        $("#SOL_Nombre").on("keyup",function () {
+            $("#tblAccesorioDev").dataTable().api().ajax.reload();
         });
-        $("#SOL_CAT_ID").on("change", function () {
-			LlenarTablaTipoSolucion();
+        $("#SOL_CAT_ID").on("change",function () {
+            $("#tblAccesorioDev").dataTable().api().ajax.reload();
         });
 
 		//Datatable
@@ -134,16 +131,21 @@
 						}
 					},
 					"fnServerData": function (url, odata, callback) {
-						//debugger;
+                        //debugger;
+                        //console.log(odata);
+                        //console.log(callback);
 						entidad = {};
 						var PageSize = 10;
 						var PrimerRegistro = odata[3].value;;
 						var CurrentPage = PrimerRegistro / PageSize;
 
+
 						entidad.iPageSize = PageSize;
-						entidad.iCurrentPage = CurrentPage + 1;
-						entidad.vSortColumn = "SOL_ID";
-						entidad.vSortOrder = "DESC";
+                        entidad.iCurrentPage = (CurrentPage>0)?CurrentPage + 1:0;
+                        entidad.pvSortColumn = "SOL_ID";
+                        entidad.pvSortOrder = "DESC";
+                        entidad.SOL_Nombre = $("#SOL_Nombre").val();
+                        entidad.SOL_CAT_ID = $("#SOL_CAT_ID").val();
 
 						$.ajax({
 							"url": url,
@@ -151,8 +153,6 @@
 							"data": entidad,
 							"success":
 								function (response) {
-									//debugger;
-									console.log(response);
 									if (response.length == 0) {
 										callback({
 											data: response,
@@ -168,26 +168,35 @@
 
 										})
 									};
-
-									$(".ver").click(function () {
-										var id = $(this).data("id");
-										var url = $("#AgregarEditar").val();
-										window.location.href = url + '?id=' + id + '&accion=1&iCodUsuario=' + iCodUsuario;
-									});
-
+								
 									$(".editar").click(function () {
-										var id = $(this).data("id");
-										var url = $("#AgregarEditar").val();
-										window.location.href = url + '?id=' + id + '&accion=2&iCodUsuario=' + iCodUsuario;
+										var id = $(this).attr("id");
+										window.location.href = '/TipoSolucion/Editar/' + id;
 									});
 
 									$(".eliminar").click(function () {
-										id = $(this).data("id");
-										entidad = {};
-										entidad.idCodEquipoDet = id;
-										entidad.iOpcion = 3;
+										id = $(this).attr("id");
+										//entidad = {};
+										//entidad.idCodEquipoDet = id;
+										//entidad.iOpcion = 3;
 
-										$.confirm({
+                                        if (confirm("¿Estas seguro que deseas eliminar la solución?")) {
+
+                                            $.ajax({
+                                                url: $("#UrlServicio").val() + "/api/TipoSolucion/EliminarTipoSolucion",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: { SOL_ID: id },
+                                                success: function (data) {
+                                                    window.location.href = '/TipoSolucion/Index';
+                                                },
+                                                error: function (xhr, ajaxOptions, thrownError) {
+                                                    console.log(xhr.status);
+                                                    console.log(thrownError);
+                                                }
+                                            });
+                                        }
+										/*$.confirm({
 											title: 'Confirmación!',
 											content: 'Esta seguro que desea elimiar este registro',
 											type: 'red',
@@ -199,7 +208,7 @@
 												cancelar: function () {
 												}
 											}
-										});
+										});*/
 									});
 								},
 							//,
@@ -216,10 +225,11 @@
 					},
 
 					"aoColumns": [
-						{ "title": "SOL_ID", "bSortable": false, bVisible: true, "data": "SOL_ID" },
-						{ "title": "SOL_Nombre", "bSortable": false, bVisible: true, "data": "SOL_Nombre" },
-						{ "title": "CAT_Descripcion", "bSortable": false, bVisible: true, "data": "CAT_Descripcion" },
-						{ "title": "SOL_FechaCreacion", "bSortable": false, bVisible: true, "data": "SOL_FechaCreacion" }
+						{ "title": "Nro.", "bSortable": true, bVisible: true, "data": "SOL_ID" },
+						{ "title": "Nombre", "bSortable": false, bVisible: true, "data": "SOL_Nombre" },
+						{ "title": "Categoría", "bSortable": false, bVisible: true, "data": "CAT_Descripcion" },
+                        { "title": "Fecha de creacion", "bSortable": false, bVisible: true, "data": "SOL_FechaCreacion" },
+                        { "title": "Acciones", "bSortable": false, bVisible: true, "data": "ltAcciones" }
 					],
 					"columnDefs": [
 
@@ -265,10 +275,9 @@
                 <div class="dataTables_wrapper form-inline dt-bootstrap">
                     <div class="row">
                         <div class="col-sm-12">
-							<table id="tblAccesorioDev" class="table table-bordered" cellspacing="0" />
+							<table id="tblAccesorioDev" class="table table-bordered" cellspacing="0" /></table>
                         </div>
                     </div>
-                    
                 </div>
             </div>
 			<!-- /.box-body -->

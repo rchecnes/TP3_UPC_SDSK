@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "Nuevo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Editar Técnico";
+}
+
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_actualizar">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">
+                            <div class="form-group">
+                                <label for="codigo">Código</label>
+                                <input type="text" class="form-control" id="RES_ID_DS" name="RES_ID_DS" autocomplete="off" placeholder="ID" disabled>
+                                <input type="hidden" class="form-control" id="RES_ID" name="RES_ID" autocomplete="off" placeholder="ID">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="nombre">Nombres</label>
+                                <input type="text" class="form-control" id="RES_Nombre" name="RES_Nombre" autocomplete="off" placeholder="Nombres" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Apellido Paterno</label>
+                                <input type="text" class="form-control" id="RES_ApellidoPaterno" name="RES_ApellidoPaterno" autocomplete="off" placeholder="Apellido Paterno" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Apellido Materno</label>
+                                <input type="text" class="form-control" id="RES_ApellidoMaterno" name="RES_ApellidoMaterno" autocomplete="off" placeholder="Apellido Materno" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Email</label>
+                                <input type="text" class="form-control" id="RES_Email" name="RES_Email" autocomplete="off" placeholder="Email" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Nivel</label>
+                                <select class="form-control" id="RES_NIV_ID" name="RES_NIV_ID" required>
+                                    <option value="">[Sleccionar]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Cargo</label>
+                                <select class="form-control" id="RES_CAR_ID" name="RES_CAR_ID" required>
+                                    <option value="">[Sleccionar]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary btn-lg">Aceptar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="@Url.Action("Index", "Responsable")" class="btn btn-default btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    editarTipoSolucion = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Responsable/EditarUsuarioResponsable",
+            type: "POST",
+            dataType: "json",
+            data: {RES_ID:@ViewBag.RES_ID},
+            success: function (data) {
+                $("#RES_ID").val(data[0].RES_ID);
+                $("#RES_ID_DS").val(data[0].RES_ID);                
+                $("#RES_Nombre").val(data[0].RES_Nombre);
+                $("#RES_ApellidoPaterno").val(data[0].RES_ApellidoPaterno);
+                $("#RES_ApellidoMaterno").val(data[0].RES_ApellidoMaterno);
+                $("#RES_Email").val(data[0].RES_Email);
+                $("#RES_NIV_ID").val(data[0].RES_NIV_ID);
+                $("#RES_CAR_ID").val(data[0].RES_CAR_ID); 
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarNivel = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Responsable/ListadoNivel",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#RES_NIV_ID").append("<option value=" + data[i].NIV_ID + ">" + data[i].NIV_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarCargo = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Responsable/ListadoCargo",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#RES_CAR_ID").append("<option value=" + data[i].CAR_ID + ">" + data[i].CAR_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarNivel();
+    listarCargo();
+    editarTipoSolucion();
+
+    $("#form_actualizar").submit(function (event) {
+        event.preventDefault();
+        if (confirm("¿Estas seguro que deseas guardar los cambios?")) {
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Responsable/ActualizarUsuarioResponsable",
+                type: "POST",
+                data: $("#form_actualizar").serialize(),
+                success: function (data) {
+                    window.location.href = "@Url.Action("Index", "Responsable")";
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+    });
+
+});
+</script>

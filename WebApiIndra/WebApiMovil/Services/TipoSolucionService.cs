@@ -76,9 +76,9 @@ namespace WebApiIndra.Services
                 {
                     conection.Open();
 
-                    string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY CAT_ID asc) as row FROM dbo.TipoSolucion ts " +
+                    string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY "+ entidad.pvSortColumn + " "+ entidad.pvSortOrder + ") as row FROM dbo.TipoSolucion ts " +
                                    "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) " +
-                                   "WHERE ts.SOL_Id <> 0";
+                                   "WHERE ts.SOL_Id <> 0 AND ts.SOL_Eliminado=0";
 
                     if (entidad.SOL_CAT_ID != 0)
                     {
@@ -89,7 +89,7 @@ namespace WebApiIndra.Services
                     {
                         query += " AND (ts.SOL_Nombre LIKE '%" + entidad.SOL_Nombre + "%' OR ts.SOL_ID LIKE '%" + entidad.SOL_Nombre + "%')";
                     }
-
+                    
                     string finquery = "SELECT * FROM ("+ query+ ")a WHERE a.row >" + entidad.iCurrentPage + " and a.row <= " + entidad.iPageSize;
 
                     using (SqlCommand command = new SqlCommand(finquery, conection))
@@ -109,11 +109,16 @@ namespace WebApiIndra.Services
                                     item.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
                                     item.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
 
+                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-edit fa-2x'></span></a>"; ;
+                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='" + item.SOL_ID + "'><span class='glyphicon glyphicon-trash fa-2x'></span></a>"; ;
+
+                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar;
+
                                     //Paginado
-                                    item.sEcho = 1;
-                                    item.draw = 2;//dr.GetInt32(dr.GetOrdinal("iCurrentPage"));
-                                    item.iTotalRecords = 20;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
-                                    item.iTotalDisplayRecords = 20;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.sEcho = 2;
+                                    item.draw = 0;//dr.GetInt32(dr.GetOrdinal("iCurrentPage"));
+                                    item.iTotalRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.iTotalDisplayRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
 
                                     Lista.Add(item);
                                 }
@@ -226,15 +231,20 @@ namespace WebApiIndra.Services
 
                     using (SqlCommand command = new SqlCommand("InsertarTipoSolucion", conection))
                     {
+
+                        string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
+                        string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
+                        string comentario = (entidad.SOL_Comentario != null) ? entidad.SOL_Comentario : "";
+
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@SOL_Nombre", entidad.SOL_Nombre);
                         command.Parameters.AddWithValue("@SOL_RutaArchivo", "/PRUAB");
                         command.Parameters.AddWithValue("@SOL_NombreArchivo", "PRUEBA");
-                        command.Parameters.AddWithValue("@SOL_Descripcion", entidad.SOL_Descripcion);
-                        command.Parameters.AddWithValue("@SOL_PalabraClave", entidad.SOL_PalabraClave);
-                        command.Parameters.AddWithValue("@SOL_Comentario", entidad.SOL_Comentario);
+                        command.Parameters.AddWithValue("@SOL_Descripcion", descripcion);
+                        command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
+                        command.Parameters.AddWithValue("@SOL_Comentario", comentario);
                         command.Parameters.AddWithValue("@SOL_FechaCreacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", "RCHECNES");
+                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", "DGUTIERREZ");
                         command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
                         command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
                         command.ExecuteNonQuery();
@@ -340,14 +350,43 @@ namespace WebApiIndra.Services
 
                     using (SqlCommand command = new SqlCommand("ActualizarTipoSolucion", conection))
                     {
+                        string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
+                        string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
+
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
-                        command.Parameters.AddWithValue("@SOL_Descripcion", entidad.SOL_Descripcion);
-                        command.Parameters.AddWithValue("@SOL_PalabraClave", entidad.SOL_PalabraClave);
+                        command.Parameters.AddWithValue("@SOL_Descripcion", descripcion);
+                        command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
                         command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
                         command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
                         command.Parameters.AddWithValue("@SOL_FechaModificacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", "RCHECNES");
+                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", "EGUTIERREZ");
+                        command.ExecuteNonQuery();
+                    }
+                    conection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return "ok";
+        }
+
+        public string EliminarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("EliminarTipoSolucion", conection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
                         command.ExecuteNonQuery();
                     }
                     conection.Close();

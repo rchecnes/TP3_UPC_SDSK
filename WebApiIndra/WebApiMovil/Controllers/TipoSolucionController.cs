@@ -102,5 +102,19 @@ namespace WebApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [ActionName("EliminarTipoSolucion")]
+        public string EliminarTipoSolucion(TipoSolucion entidad)
+        {
+            try
+            {
+                return tiposolucion.EliminarTipoSolucion(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

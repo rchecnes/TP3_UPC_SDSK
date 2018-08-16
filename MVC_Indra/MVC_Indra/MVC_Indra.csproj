@@ -148,6 +148,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\PruebaController.cs" />
+    <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\TipoSolucionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -244,6 +245,9 @@
     <Content Include="Views\TipoSolucion\Index.cshtml" />
     <Content Include="Views\TipoSolucion\Nuevo.cshtml" />
     <Content Include="Views\TipoSolucion\Editar.cshtml" />
+    <Content Include="Views\Responsable\Index.cshtml" />
+    <Content Include="Views\Responsable\Nuevo.cshtml" />
+    <Content Include="Views\Responsable\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

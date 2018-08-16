@@ -67,7 +67,8 @@ SOL_CAT_ID INTEGER FOREIGN KEY REFERENCES Categoria(CAT_ID),
 SOL_FechaCreacion	DATETIME,
 SOL_FechaModificacion DATETIME,
 SOL_UsuarioCreacion	VARCHAR(50),
-SOL_UsuarioModificacion VARCHAR(50)
+SOL_UsuarioModificacion VARCHAR(50),
+SOL_Eliminado char(1) DEFAULT 0
 )
 go
 
@@ -109,13 +110,14 @@ go
 CREATE TABLE UsuarioResponsable
 (
 RES_ID	INTEGER IDENTITY PRIMARY KEY,
-RES_IDLogin	VARCHAR(45),
+RES_Login	VARCHAR(45),
 RES_CAR_ID	INTEGER FOREIGN KEY REFERENCES Cargo(CAR_ID),
 RES_Nombre	Varchar(80),
 RES_ApellidoPaterno	VARCHAR(80),
 RES_ApellidoMaterno	VARCHAR(80),
 RES_Email		Varchar(60),
-RES_NIV_ID	INTEGER FOREIGN KEY REFERENCES Nivel(NIV_ID)
+RES_NIV_ID	INTEGER FOREIGN KEY REFERENCES Nivel(NIV_ID),
+RES_Eliminado char(1) DEFAULT 0
 )
 go
 

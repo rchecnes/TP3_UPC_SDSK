@@ -21,6 +21,26 @@ AS
     SELECT * FROM TipoProblema  
 GO
 
+IF (OBJECT_ID('CargoLista') IS NOT NULL)
+  DROP PROCEDURE CargoLista
+GO
+CREATE PROCEDURE CargoLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM Cargo  
+GO
+
+IF (OBJECT_ID('NivelLista') IS NOT NULL)
+  DROP PROCEDURE NivelLista
+GO
+CREATE PROCEDURE NivelLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM Nivel  
+GO
+
 IF (OBJECT_ID('InsertarTipoSolucion') IS NOT NULL)
   DROP PROCEDURE InsertarTipoSolucion
 GO
@@ -82,6 +102,90 @@ BEGIN
 END 
 GO
 
+IF (OBJECT_ID('EliminarTipoSolucion') IS NOT NULL)
+  DROP PROCEDURE EliminarTipoSolucion
+GO
+CREATE PROCEDURE EliminarTipoSolucion
+@SOl_ID int
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    UPDATE TipoSolucion SET SOL_Eliminado=1 WHERE SOl_ID=@SOl_ID
+END 
+GO
+
+IF (OBJECT_ID('InsertarUsuarioResponsable') IS NOT NULL)
+  DROP PROCEDURE InsertarUsuarioResponsable
+GO
+CREATE PROCEDURE InsertarUsuarioResponsable
+@RES_Login	VARCHAR(45),
+@RES_Nombre	Varchar(80),
+@RES_ApellidoPaterno VARCHAR(80),
+@RES_ApellidoMaterno VARCHAR(80),
+@RES_Email Varchar(60),
+@RES_CAR_ID int,
+@RES_NIV_ID int
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    INSERT INTO [dbo].[UsuarioResponsable](RES_Login,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno,RES_Email,RES_CAR_ID,RES_NIV_ID)
+	values(@RES_Login,@RES_Nombre,@RES_ApellidoPaterno, @RES_ApellidoMaterno,@RES_Email,@RES_CAR_ID,@RES_NIV_ID)
+END 
+GO
+
+IF (OBJECT_ID('EditarUsuarioResponsable') IS NOT NULL)
+  DROP PROCEDURE EditarUsuarioResponsable
+GO
+CREATE PROCEDURE EditarUsuarioResponsable
+@RES_ID int
+AS
+BEGIN   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM UsuarioResponsable WHERE RES_ID=@RES_ID
+END 
+GO
+
+
+IF (OBJECT_ID('ActualizarUsuarioResponsable') IS NOT NULL)
+  DROP PROCEDURE ActualizarUsuarioResponsable
+GO
+CREATE PROCEDURE ActualizarUsuarioResponsable
+@RES_ID int,
+@RES_Login	VARCHAR(45),
+@RES_Nombre	Varchar(80),
+@RES_ApellidoPaterno VARCHAR(80),
+@RES_ApellidoMaterno VARCHAR(80),
+@RES_Email Varchar(60),
+@RES_CAR_ID int,
+@RES_NIV_ID int
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    UPDATE [dbo].[UsuarioResponsable] SET
+	RES_Login = @RES_Login,
+	RES_Nombre=@RES_Nombre,
+	RES_ApellidoPaterno=@RES_ApellidoPaterno,
+	RES_ApellidoMaterno=@RES_ApellidoMaterno,
+	RES_Email=@RES_Email,
+	RES_CAR_ID=@RES_CAR_ID,
+	RES_NIV_ID=@RES_NIV_ID
+	WHERE RES_ID=@RES_ID
+END 
+GO
+
+IF (OBJECT_ID('EliminarUsuarioResponsable') IS NOT NULL)
+  DROP PROCEDURE EliminarUsuarioResponsable
+GO
+CREATE PROCEDURE EliminarUsuarioResponsable
+@RES_ID int
+AS
+BEGIN   
+
+    SET NOCOUNT ON;
+	UPDATE UsuarioResponsable SET RES_Eliminado=1 WHERE RES_ID=@RES_ID
+END 
+GO
 
 select * from Categoria;
 SELECT * FROM dbo.TipoSolucion ts INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) WHERE ts.SOL_Id <> 0 AND ts.SOL_Id = 0
