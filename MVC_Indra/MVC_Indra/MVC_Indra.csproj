@@ -165,6 +165,7 @@
     <Content Include="Content\AdminTL\dataTables.bootstrap.min.css" />
     <Content Include="Content\AdminTL\font-awesome.min.css" />
     <Content Include="Content\AdminTL\ionicons.min.css" />
+    <Content Include="Content\AdminTL\jquery-confirm.css" />
     <Content Include="Content\AdminTL\_all-skins.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -204,6 +205,7 @@
     <Content Include="Scripts\AdminTL\demo.js" />
     <Content Include="Scripts\AdminTL\fastclick.js" />
     <Content Include="Scripts\AdminTL\icheck.min.js" />
+    <Content Include="Scripts\AdminTL\jquery-confirm.js" />
     <Content Include="Scripts\AdminTL\jquery.dataTables.min.js" />
     <Content Include="Scripts\AdminTL\jquery.min.js" />
     <Content Include="Scripts\bootstrap.js" />

@@ -119,20 +119,38 @@ $(document).ready(function () {
 
     $("#form_registro").submit(function (event) {
         event.preventDefault();
-        if (confirm("¿Estas seguro que deseas agregar un nuevo técnico?")) {
-            $.ajax({
-                url: $("#UrlServicio").val() + "/api/Responsable/InsertarUsuarioResponsable",
-                type: "POST",
-                data: $("#form_registro").serialize(),
-                success: function (data) {
-                    window.location.href = "@Url.Action("Index", "Responsable")";
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
+        
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+			content: "¿Estas seguro que deseas agregar un nuevo técnico?",
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+					action: function () {
+						$.ajax({
+							url: $("#UrlServicio").val() + "/api/Responsable/InsertarUsuarioResponsable",
+							type: "POST",
+							data: $("#form_registro").serialize(),
+							success: function (data) {
+								window.location.href = "@Url.Action("Index", "Responsable")";
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								console.log(xhr.status);
+								console.log(thrownError);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblGrilla").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});
     });
 
 });

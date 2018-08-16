@@ -150,20 +150,38 @@ $(document).ready(function () {
 
     $("#form_actualizar").submit(function (event) {
         event.preventDefault();
-        if (confirm("¿Estas seguro que deseas guardar los cambios?")) {
-            $.ajax({
-                url: $("#UrlServicio").val() + "/api/Responsable/ActualizarUsuarioResponsable",
-                type: "POST",
-                data: $("#form_actualizar").serialize(),
-                success: function (data) {
-                    window.location.href = "@Url.Action("Index", "Responsable")";
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
+        
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+			content: "¿Estas seguro que deseas guardar los cambios?",
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+					action: function () {
+						$.ajax({
+							url: $("#UrlServicio").val() + "/api/Responsable/ActualizarUsuarioResponsable",
+							type: "POST",
+							data: $("#form_actualizar").serialize(),
+							success: function (data) {
+								window.location.href = "@Url.Action("Index", "Responsable")";
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								console.log(xhr.status);
+								console.log(thrownError);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblGrilla").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});
     });
 
 });

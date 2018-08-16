@@ -25,7 +25,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Descripción de la solución</label>
-                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="SOL_Descripcion"  name="SOL_Descripcion" autocomplete="off"></textarea>
+                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="SOL_Descripcion"  name="SOL_Descripcion" autocomplete="off" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Palabras Claves</label>
-                                <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_PalabraClave" name="SOL_PalabraClave" autocomplete="off"></textarea>
+                                <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_PalabraClave" name="SOL_PalabraClave" autocomplete="off" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Comentario</label>
-                                <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_Comentario" name="SOL_Comentario" autocomplete="off"></textarea>
+                                <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_Comentario" name="SOL_Comentario" autocomplete="off" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -131,21 +131,39 @@ $(document).ready(function () {
     listarTipoProblema();
 
     $("#form_tipo_solucion").submit(function (event) {
-        event.preventDefault();
-        if (confirm("¿Está seguro de Grabar?")) {
-            $.ajax({
-                url: $("#UrlServicio").val() + "/api/TipoSolucion/InsertarTipoSolucion",
-                type: "POST",
-                data: $("#form_tipo_solucion").serialize(),
-                success: function (data) {
-                    window.location.href = "@Url.Action("Index", "TipoSolucion")";
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
+		event.preventDefault();
+
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+			content: '¿Está seguro de Grabar?',
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+					action: function () {
+						$.ajax({
+							url: $("#UrlServicio").val() + "/api/TipoSolucion/InsertarTipoSolucion",
+							type: "POST",
+							data: $("#form_tipo_solucion").serialize(),
+							success: function (data) {
+								window.location.href = "@Url.Action("Index", "TipoSolucion")";
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								console.log(xhr.status);
+								console.log(thrownError);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblAccesorioDev").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});       
     });
 
 });

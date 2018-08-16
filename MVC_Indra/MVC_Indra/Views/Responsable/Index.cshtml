@@ -105,39 +105,39 @@
 
 									$(".eliminar").click(function () {
 										id = $(this).attr("id");
-										//entidad = {};
-										//entidad.idCodEquipoDet = id;
-                                        //entidad.iOpcion = 3;
-                                        if (confirm("¿Estas seguro que deseas eliminar el técnico?")) {
-
-                                            $.ajax({
-                                                url: $("#UrlServicio").val() + "/api/Responsable/EliminarUsuarioResponsable",
-                                                type: "POST",
-                                                dataType: "json",
-                                                data: {RES_ID:id},
-                                                success: function (data) {
-                                                    window.location.href = '/Responsable/Index';
-                                                },
-                                                error: function (xhr, ajaxOptions, thrownError) {
-                                                    console.log(xhr.status);
-                                                    console.log(thrownError);
-                                                }
-                                            });
-                                        }
-
-										/*$.confirm({
-											title: 'Confirmación!',
-											content: 'Esta seguro que desea elimiar este registro',
-											type: 'red',
-											animation: 'zoom',
+										
+										$.confirm({
+											title: 'Mensaje de confirmación!',
+											content: "¿Estas seguro que deseas eliminar el técnico <b>Nro. "+id+"</b>?",
 											buttons: {
-												Ok: function () {
-													$("#modalEliminar").modal().show();
+												confirm: {
+													text: "SI",
+													btnClass: 'btn-blue',
+													action: function () {
+														$.ajax({
+															url: $("#UrlServicio").val() + "/api/Responsable/EliminarUsuarioResponsable",
+															type: "POST",
+															dataType: "json",
+															data: { RES_ID: id },
+															success: function (data) {
+																$("#tblGrilla").dataTable().api().ajax.reload();
+															},
+															error: function (xhr, ajaxOptions, thrownError) {
+																console.log(xhr.status);
+																console.log(thrownError);
+															}
+														});
+													}
 												},
-												cancelar: function () {
+												cancel: {
+													text: "NO",
+													btnClass: 'btn-danger',
+													action: function () {
+														$("#tblGrilla").dataTable().api().ajax.reload();
+													}
 												}
 											}
-										});*/
+										});
 									});
 								},
 							//,
@@ -189,7 +189,7 @@
         </div>
     </div>
 </div>
-<p><a href="@Url.Action("Nuevo", "Responsable")" class="btn btn-primary btn-md">Nuevo</a></p>
+<p><a href="@Url.Action("Nuevo", "Responsable")" class="btn btn-primary btn-md">Nuevo&nbsp;<span class="glyphicon glyphicon-plus"></span></a></p>
 <div class="row">
     <div class="col-xs-12">
         <div class="box">
