@@ -110,7 +110,7 @@ CREATE PROCEDURE EliminarTipoSolucion
 AS
 BEGIN
     SET NOCOUNT ON;  
-    UPDATE TipoSolucion SET SOL_Eliminado=1 WHERE SOl_ID=@SOl_ID
+    UPDATE TipoSolucion SET SOL_FlagActivo=0 WHERE SOl_ID=@SOl_ID
 END 
 GO
 
@@ -183,7 +183,7 @@ AS
 BEGIN   
 
     SET NOCOUNT ON;
-	UPDATE UsuarioResponsable SET RES_Eliminado=1 WHERE RES_ID=@RES_ID
+	UPDATE UsuarioResponsable SET RES_FlagActivo=0 WHERE RES_ID=@RES_ID
 END 
 GO
 

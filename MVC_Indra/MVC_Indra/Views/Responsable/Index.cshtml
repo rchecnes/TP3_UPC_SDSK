@@ -32,7 +32,7 @@
 					"bServerSide": true,
                     "sAjaxSource": $("#UrlServicio").val() + '/api/Responsable/ListadoUsuarioResponsable',
 					"select": true,
-					"pageLength": 20,
+					"pageLength": 10,
 					responsive: true,
 					language: {
 						"sProcessing": "Procesando...",
@@ -154,7 +154,7 @@
 					},
 
 					"aoColumns": [
-						{ "title": "Código.", "bSortable": true, bVisible: true, "data": "RES_ID" },
+						{ "title": "Código.", "bSortable": false, bVisible: true, "data": "RES_ID" },
 						{ "title": "Nombre del técnico", "bSortable": false, bVisible: true, "data": "RES_Nombre" },
 						{ "title": "Cargo", "bSortable": false, bVisible: true, "data": "CAR_Descripcion" },
                         { "title": "Nivel", "bSortable": false, bVisible: true, "data": "NIV_Descripcion" },
@@ -180,7 +180,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-6 col-sm-6">
                             <div class="form-group">
                                 <label for="Buscar">Buscar Por (Nombre)</label>
-                                <input type="text" class="form-control" id="RES_Nombre" name="RES_Nombre" placeholder="Buscar">
+                                <input type="text" class="form-control" id="RES_Nombre" name="RES_Nombre" placeholder="Buscar" autocomplete="off">
                             </div>
                         </div>
                     </div>

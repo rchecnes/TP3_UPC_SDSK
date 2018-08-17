@@ -22,7 +22,7 @@ namespace WebApiIndra.Services
 
                     string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY "+ entidad.pvSortColumn + " "+ entidad.pvSortOrder + ") as row FROM dbo.TipoSolucion ts " +
                                    "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) " +
-                                   "WHERE ts.SOL_Id <> 0 AND ts.SOL_Eliminado=0";
+                                   "WHERE ts.SOL_Id <> 0 AND ts.SOL_FlagActivo=1";
 
                     string condition = "";
                     if (entidad.SOL_CAT_ID != 0)
@@ -53,7 +53,7 @@ namespace WebApiIndra.Services
                     int totRecord = 0;
                     string querytot = "SELECT COUNT(ts.SOL_ID)AS Cantidad FROM dbo.TipoSolucion ts " +
                                       "INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) " +
-                                      "WHERE ts.SOL_Id <> 0 AND ts.SOL_Eliminado=0 ";
+                                      "WHERE ts.SOL_Id <> 0 AND ts.SOL_FlagActivo=1 ";
                     using (SqlCommand command = new SqlCommand(querytot + condition, conection))
                     {
                         using (SqlDataReader dr = command.ExecuteReader())
@@ -209,11 +209,13 @@ namespace WebApiIndra.Services
                         string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
                         string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
                         string comentario = (entidad.SOL_Comentario != null) ? entidad.SOL_Comentario : "";
+                        string rutaarchivo = (entidad.SOL_RutaArchivo != null) ? entidad.SOL_RutaArchivo : "";
+                        string nombrearchivo = (entidad.SOL_NombreArchivo != null) ? entidad.SOL_NombreArchivo : "";
 
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@SOL_Nombre", entidad.SOL_Nombre);
-                        command.Parameters.AddWithValue("@SOL_RutaArchivo", "/PRUAB");
-                        command.Parameters.AddWithValue("@SOL_NombreArchivo", "PRUEBA");
+                        command.Parameters.AddWithValue("@SOL_RutaArchivo", rutaarchivo);
+                        command.Parameters.AddWithValue("@SOL_NombreArchivo", nombrearchivo);
                         command.Parameters.AddWithValue("@SOL_Descripcion", descripcion);
                         command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
                         command.Parameters.AddWithValue("@SOL_Comentario", comentario);

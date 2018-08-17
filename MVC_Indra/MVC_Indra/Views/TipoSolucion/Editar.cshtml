@@ -16,14 +16,14 @@
                     <div class="row">
                         <div class="col-lg-1 col-md-2 col-sm-3 col-xs-3">
                             <div class="form-group">
-                                <label for="nombre">Código</label>
+                                <label for="nombre">Código:</label>
                                 <input type="text" class="form-control" id="SOL_ID_DIS" name="SOL_ID_DIS" autocomplete="off" placeholder="ID" disabled>
                                 <input type="hidden" class="form-control" id="SOL_ID" name="SOL_ID" autocomplete="off" placeholder="SOL_ID">
                             </div>
                         </div>
                         <div class="col-lg-11 col-sm-10 col-sm-9 col-xs-9">
                             <div class="form-group">
-                                <label for="nombre">Nombre</label>
+                                <label for="nombre">Nombre:</label>
                                 <input type="text" class="form-control" id="SOL_Nombre" name="SOL_Nombre" autocomplete="off" placeholder="Nombre" disabled>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
-                                <label>Descripción de la solución</label>
+                                <label>Descripción de la solución:</label>
                                 <textarea class="form-control" rows="3" placeholder="Enter ..." id="SOL_Descripcion" name="SOL_Descripcion" autocomplete="off" required></textarea>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
-                                <label>Palabras Claves</label>
+                                <label>Palabras Claves:</label>
                                 <textarea class="form-control" rows="2" placeholder="Enter ..." id="SOL_PalabraClave" name="SOL_PalabraClave" autocomplete="off" required></textarea>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>Categoría</label>
+                                <label>Categoría:</label>
                                 <select class="form-control" id="SOL_CAT_ID" name="SOL_CAT_ID" required>
                                     <option value="">[Sleccionar]</option>
                                 </select>
@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>Problema</label>
+                                <label>Problema:</label>
                                 <select class="form-control" id="SOL_PROB_ID" name="SOL_PROB_ID" required>
                                     <option value="">[Sleccionar]</option>
                                 </select>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label for="exampleInputFile">Documento Adjunto</label>
+                                <label for="exampleInputFile">Documento Adjunto:</label>
                                 <div id="SOL_NombreArchivo"></div>
                             </div>
                         </div>
@@ -71,19 +71,19 @@
                     <div class="row">
                         <div class="col-lg-3">
                             <div class="form-group">
-                                <label>Creado Por</label>
+                                <label>Creado Por:</label>
                                 <div id="SOL_UsuarioCreacion"></div>
                             </div>
                         </div>
                         <div class="col-lg-3">
                             <div class="form-group">
-                                <label>Modificado Por</label>
+                                <label>Modificado Por:</label>
                                 <div id="SOL_UsuarioModificacion"></div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Comentario</label>
+                                <label>Comentario:</label>
                                 <div id="SOL_Comentario"></div>
                             </div>
                         </div>
@@ -118,12 +118,18 @@ $(document).ready(function () {
                 $("#SOL_CAT_ID").val(data[0].SOL_CAT_ID);
                 $("#SOL_PROB_ID").val(data[0].SOL_PROB_ID);                
 
-                $("#SOL_NombreArchivo").html(data[0].SOL_NombreArchivo);                
+                if (data[0].SOL_RutaArchivo != null && data[0].SOL_NombreArchivo != null && data[0].SOL_RutaArchivo != "" && data[0].SOL_NombreArchivo != "") {
+                    var href = "<a style='font-size:14px' href='/Files/" + data[0].SOL_NombreArchivo + "' target='_blank'><b><span class='glyphicon glyphicon-paperclip'></span>&nbsp;" + data[0].SOL_NombreArchivo+"</b></a>"
+                    $("#SOL_NombreArchivo").html(href);
+                } else {
+                    $("#SOL_NombreArchivo").html("- Sin adjunto");
+                }                           
 
                 $("#SOL_UsuarioCreacion").html(data[0].SOL_UsuarioCreacion + " " + data[0].SOL_FechaCreacion);
 				$("#SOL_UsuarioModificacion").html(data[0].SOL_UsuarioModificacion + " " + data[0].SOL_FechaModificacion);
 
                 $("#SOL_Comentario").html(data[0].SOL_Comentario);
+
                 
             },
             error: function (xhr, ajaxOptions, thrownError) {

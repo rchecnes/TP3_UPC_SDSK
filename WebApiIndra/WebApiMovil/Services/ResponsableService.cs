@@ -99,14 +99,49 @@ namespace WebApiMovil.Services
                     string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY ur." + entidad.pvSortColumn + " " + entidad.pvSortOrder + ") as row FROM UsuarioResponsable ur " +
                                    "INNER JOIN Cargo c ON(ur.RES_CAR_ID=c.CAR_ID) " +
                                    "INNER JOIN Nivel n ON(ur.RES_NIV_ID=n.NIV_ID) " +
-                                   "WHERE ur.RES_ID <> 0 AND ur.RES_Eliminado=0";
+                                   "WHERE ur.RES_ID <> 0 AND ur.RES_FlagActivo=1";
 
+                    string condition = "";
                     if (entidad.RES_Nombre != null)
                     {
-                        query += " AND (ur.RES_Nombre LIKE '%" + entidad.RES_Nombre + "%')";
+                        condition += " AND (ur.RES_Nombre LIKE '%" + entidad.RES_Nombre + "%')";
                     }
 
-                    string finquery = "SELECT * FROM (" + query + ")a WHERE a.row >" + entidad.iCurrentPage + " and a.row <= " + entidad.iPageSize;
+                    //Paginado
+                    int inicio = 0;
+                    int final = 0;
+                    if (entidad.iCurrentPage == 0)
+                    {
+                        inicio = entidad.iCurrentPage * entidad.iPageSize;
+                        final = entidad.iPageSize;
+                    }
+                    else
+                    {
+                        inicio = (entidad.iCurrentPage - 1) * entidad.iPageSize;
+                        final = entidad.iCurrentPage * entidad.iPageSize;
+                    }
+                    //Fin paginado
+
+                    string finquery = "SELECT * FROM (" + query + condition + ")a WHERE a.row >" + inicio + " and a.row <= " + final;
+
+                    //Hacemos un conteo de los registro
+                    int totRecord = 0;
+                    string querytot = "SELECT COUNT(ur.RES_ID)AS Cantidad FROM UsuarioResponsable ur " +
+                                   "INNER JOIN Cargo c ON(ur.RES_CAR_ID=c.CAR_ID) " +
+                                   "INNER JOIN Nivel n ON(ur.RES_NIV_ID=n.NIV_ID) " +
+                                   "WHERE ur.RES_FlagActivo=1";
+
+                    using (SqlCommand command = new SqlCommand(querytot + condition, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                totRecord = dr.GetInt32(dr.GetOrdinal("Cantidad"));
+                            }
+                        }
+                    }
+                    //Fin totalizado
 
                     using (SqlCommand command = new SqlCommand(finquery, conection))
                     {
@@ -126,15 +161,16 @@ namespace WebApiMovil.Services
                                     item.CAR_Descripcion = dr.GetString(dr.GetOrdinal("CAR_Descripcion"));
                                     item.NIV_Descripcion = dr.GetString(dr.GetOrdinal("NIV_Descripcion"));
 
-                                    string editar = "<a title='Editar' href='#' class='editar' id='"+ item.RES_ID + "'><span class='glyphicon glyphicon-edit fa-2x'></span></a>"; ;
-                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='"+ item.RES_ID + "'><span class='glyphicon glyphicon-trash fa-2x'></span></a>"; ;
+                                    string editar = "<a title='Editar' href='#' class='editar' id='"+ item.RES_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>"; ;
+                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='"+ item.RES_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>"; ;
 
                                     item.ltAcciones = editar+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar;
+
                                     //Paginado
                                     item.sEcho = 2;
                                     item.draw = 0;//dr.GetInt32(dr.GetOrdinal("iCurrentPage"));
-                                    item.iTotalRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
-                                    item.iTotalDisplayRecords = 5;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.iTotalRecords = totRecord;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
+                                    item.iTotalDisplayRecords = totRecord;//dr.GetInt32(dr.GetOrdinal("iRecordCount"));
 
                                     Lista.Add(item);
                                 }

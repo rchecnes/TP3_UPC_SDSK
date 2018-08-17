@@ -7,10 +7,10 @@ INSERT INTO Prioridad(PRI_ID, Pri_Descripcion)VALUES (3,'Baja')
 GO
 SELECT * FROM Prioridad
 go
-INSERT INTO ESTADO(EST_ID, EST_Descripcion) Values(1,'Pendiente')
-INSERT INTO ESTADO(EST_ID, EST_Descripcion) Values(2,'En Proceso')
-INSERT INTO ESTADO(EST_ID, EST_Descripcion) Values(3,'Atendido')
-INSERT INTO ESTADO(EST_ID, EST_Descripcion) Values(4,'Cerrado')
+INSERT INTO Estado(EST_ID, EST_Descripcion) Values(1,'Pendiente')
+INSERT INTO Estado(EST_ID, EST_Descripcion) Values(2,'En Proceso')
+INSERT INTO Estado(EST_ID, EST_Descripcion) Values(3,'Atendido')
+INSERT INTO Estado(EST_ID, EST_Descripcion) Values(4,'Cerrado')
 go
 SELECT * FROM ESTADO
 go
@@ -30,9 +30,9 @@ go
 SELECT * FROM TipoProblema
 go
 
-INSERT INTO CATEGORIA(CAT_Descripcion) VALUES('Impresora')
-INSERT INTO CATEGORIA(CAT_Descripcion) VALUES('Router')
-INSERT INTO CATEGORIA(CAT_Descripcion) VALUES('Otros')
+INSERT INTO Categoria(CAT_Descripcion) VALUES('Impresora')
+INSERT INTO Categoria(CAT_Descripcion) VALUES('Router')
+INSERT INTO Categoria(CAT_Descripcion) VALUES('Otros')
 go
 
 INSERT INTO TipoSolucion(SOL_PROB_ID, SOL_Nombre, SOL_Descripcion, SOL_NombreArchivo, SOL_RutaArchivo,SOL_CAT_ID,SOL_FechaCreacion,SOL_UsuarioCreacion) 
@@ -47,7 +47,7 @@ go
 select * from Empresa
 go
 
-INSERT INTO USUARIOCLIENTE(USU_IDLogin,USU_EMP_ID, USU_Nombre, USU_ApellidoPaterno, USU_ApellidoMaterno, USU_Telefono, USU_Email)
+INSERT INTO UsuarioCliente(USU_IDLogin,USU_EMP_ID, USU_Nombre, USU_ApellidoPaterno, USU_ApellidoMaterno, USU_Telefono, USU_Email)
 values('RMiranda',1, 'Ricardo', 'Miranda', 'Galvez', '2523495','Ricardo.Miranda@PacificoVida.com.pe')
 go
 SELECT * FROM UsuarioCliente
@@ -60,16 +60,16 @@ go
 SELECT * FROM Cargo
 go
 
-INSERT INTO NIVEL(NIV_Descripcion) VALUES('Junior')
-INSERT INTO NIVEL(NIV_Descripcion) VALUES('Pleno')
-INSERT INTO NIVEL(NIV_Descripcion) VALUES('Sennior')
+INSERT INTO Nivel(NIV_Descripcion) VALUES('Junior')
+INSERT INTO Nivel(NIV_Descripcion) VALUES('Pleno')
+INSERT INTO Nivel(NIV_Descripcion) VALUES('Sennior')
 go
 SELECT * FROM NIVEL
 go
 
-INSERT INTO UsuarioResponsable(RES_IDLogin, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
+INSERT INTO UsuarioResponsable(RES_Login, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
 values('JCaceres', 2, 'Javier', 'Caceres', 'Gonzales', 'JavierCaceres@indra.com.pe',1)
-INSERT INTO UsuarioResponsable(RES_IDLogin, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
+INSERT INTO UsuarioResponsable(RES_Login, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
 values('JCampos', 2, 'Jorge', 'Campos', 'Medina', 'JorgeCampos@indra.com.pe',2)
 go
 SELECT * FROM UsuarioResponsable
@@ -99,9 +99,9 @@ VALUES('Se realizó la instalación del programa office sin mayores problemas',0)
 go
 select * from Resultado
 go
-
+/*
 INSERT INTO Atencion(ATE_TIC_ID, ATE_RES_ID, ATE_RST_ID,ATE_FechaAsignacion, ATE_FechaInicio, ATE_FechaFin, ATE_FechaCierre, ATE_FechaAtencion,ATE_FechaRegistro)
 VALUES(1,1,1,GETDATE()-5, GETDATE()-4, GETDATE()-3,GETDATE(), GETDATE()-1, GETDATE())
 go
 UPDATE SHMC_USUA SET COD_USUA = 'JCaceres'
-Where COD_USUA = 'ivelarde'
+Where COD_USUA = 'ivelarde'*/

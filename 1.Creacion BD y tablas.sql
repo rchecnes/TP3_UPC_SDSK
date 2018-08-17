@@ -68,7 +68,7 @@ SOL_FechaCreacion	DATETIME,
 SOL_FechaModificacion DATETIME,
 SOL_UsuarioCreacion	VARCHAR(50),
 SOL_UsuarioModificacion VARCHAR(50),
-SOL_Eliminado char(1) DEFAULT 0
+SOL_FlagActivo BIT DEFAULT 1
 )
 go
 
@@ -117,7 +117,7 @@ RES_ApellidoPaterno	VARCHAR(80),
 RES_ApellidoMaterno	VARCHAR(80),
 RES_Email		Varchar(60),
 RES_NIV_ID	INTEGER FOREIGN KEY REFERENCES Nivel(NIV_ID),
-RES_Eliminado char(1) DEFAULT 0
+RES_FlagActivo BIT DEFAULT 1
 )
 go
 
