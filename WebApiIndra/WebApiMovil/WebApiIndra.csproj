@@ -224,6 +224,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
+    <Compile Include="Controllers\TipoEncuestaController.cs" />
     <Compile Include="Controllers\TipoSolucionController.cs" />
     <Compile Include="DataLayer\AsignarDA.cs" />
     <Compile Include="DataLayer\TicketDA.cs" />
@@ -250,8 +251,11 @@
     <Compile Include="Models\Paginacion.cs" />
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\GM_Prioridad.cs" />
+    <Compile Include="Models\Pregunta.cs" />
     <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Ticket.cs" />
+    <Compile Include="Models\TipoEncuesta.cs" />
+    <Compile Include="Models\TipoEncuestaPregunta.cs" />
     <Compile Include="Models\TipoProblema.cs" />
     <Compile Include="Models\TipoSolucion.cs" />
     <Compile Include="Models\Trabajador.cs" />
@@ -263,6 +267,7 @@
     <Compile Include="Services\AsignarService.cs" />
     <Compile Include="Services\ResponsableService.cs" />
     <Compile Include="Services\TicketService.cs" />
+    <Compile Include="Services\TipoEncuestaService.cs" />
     <Compile Include="Services\TipoSolucionService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

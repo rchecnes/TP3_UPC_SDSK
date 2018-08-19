@@ -36,7 +36,7 @@ INSERT INTO Categoria(CAT_Descripcion) VALUES('Otros')
 go
 
 INSERT INTO TipoSolucion(SOL_PROB_ID, SOL_Nombre, SOL_Descripcion, SOL_NombreArchivo, SOL_RutaArchivo,SOL_CAT_ID,SOL_FechaCreacion,SOL_UsuarioCreacion) 
-VALUES(1,'Instalación de Microsoft Word','Procedimiento para realizar la instalación de Word','office','File/Office.pdf',3, getdate(),'JCaceres')
+VALUES(1,'Instalación de Microsoft Word','Procedimiento para realizar la instalación de Word',NULL,NULL,3, getdate(),'JCaceres')
 go
 select * from TipoSolucion
 go
@@ -75,17 +75,22 @@ go
 SELECT * FROM UsuarioResponsable
 go
 
-INSERT INTO TipoEncuesta(TEN_Nombre) VALUES('Encuesta General')
-INSERT INTO TipoEncuesta(TEN_Nombre) VALUES('Encuesta de Satisfacción')
+INSERT INTO TipoEncuesta(TEN_Nombre,TEN_AnioVigencia) VALUES('Encuesta General',2018)
+INSERT INTO TipoEncuesta(TEN_Nombre,TEN_AnioVigencia) VALUES('Encuesta de Satisfacción',2030)
 go
-INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_TEN_ID,PRE_FlagActivo) VALUES('¿Que tan satisfecho está con la atención?',1,1,1)
-INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_TEN_ID,PRE_FlagActivo) VALUES('Volvería utilizar la mesa de ayuda?',2,1,1)
-INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_TEN_ID,PRE_FlagActivo) VALUES('Que tan frecuente usa la mesa de ayuda?',3,2,1)
-INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_TEN_ID,PRE_FlagActivo) VALUES('Que tan amable fue la atención de la mesa de ayuda?',4,2,1)
-INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_TEN_ID,PRE_FlagActivo) VALUES('Cuantas veces ha utilizado la mesa de ayuda?',5,2,1)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('¿Que tan satisfecho está con la atención?',1,1)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Volvería utilizar la mesa de ayuda?',2,1)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Que tan frecuente usa la mesa de ayuda?',3,2)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Que tan amable fue la atención de la mesa de ayuda?',4,2)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Cuantas veces ha utilizado la mesa de ayuda?',5,2)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('¿Que tan satisfecho está con la atención de los tickets?',1,1)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Reconedarias el area de service desk a tu amigos?',2,1)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Que tan frecuente usa la mesa de ayuda por semana?',3,2)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Que tan amable fue la atención que le brindo el asistente?',4,2)
+INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Cuantas veces ha utilizado la mesa de ayuda por dia?',5,2)
 go
-INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 1','Encuesta de satisfacción generado después del ticket',1,2,NULL)
-INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 2','Encuesta de satisfacción anual',1,1,0)
+/*INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 1','Encuesta de satisfacción generado después del ticket',1,2,NULL)
+INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 2','Encuesta de satisfacción anual',1,1,0)*/
 go
 
 INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_CodigoEstado)

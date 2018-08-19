@@ -79,7 +79,20 @@ namespace WebApiIndra.Services
                                     item.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_Id"));
                                     item.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
                                     item.CAT_Descripcion = dr.GetString(dr.GetOrdinal("CAT_Descripcion"));
-                                    item.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Descripcion")))
+                                    {
+                                        item.SOL_Descripcion = dr.GetString(dr.GetOrdinal("SOL_Descripcion"));
+                                    }else {
+                                        item.CAT_Descripcion = "";
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_RutaArchivo")))
+                                    {
+                                        item.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
+                                    }
+                                    else
+                                    {
+                                        item.SOL_RutaArchivo = "";
+                                    }
                                     item.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
                                     item.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
 

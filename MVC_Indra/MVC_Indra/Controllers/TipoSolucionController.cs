@@ -27,39 +27,6 @@ namespace MVC_Indra.Controllers
             return View();
         }
 
-       /* public string UploadFile()
-        {
-
-           
-            try
-            {
-                foreach (string file in Request.Files)
-                {
-                    var fileContent = Request.Files[file];
-                    if (fileContent != null && fileContent.ContentLength > 0)
-                    {
-                        // get a stream
-                        var stream = fileContent.InputStream;
-                        // and optionally write the file to disk
-                        var fileName = Path.GetFileName(file);
-                        var path = Path.Combine(Server.MapPath("~/Files"), fileName);
-                        var fileStream = File.Create(path)
-                        //using (var fileStream = File.Create(path))
-                        //{
-                            stream.CopyTo(fileStream);
-                        //}
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                
-                return "ok";
-            }
-
-            return "ok";
-        }*/
-
         public ActionResult UploadFile()
         {
             // Checking no of files injected in Request object  

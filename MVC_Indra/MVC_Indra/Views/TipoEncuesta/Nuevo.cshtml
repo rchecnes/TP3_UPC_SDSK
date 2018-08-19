@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Nuevo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Agregar Tipo de Encuesta";
+}
+
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_registro">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" class="form-control" id="TEN_Nombre" name="TEN_Nombre" autocomplete="off" placeholder="Nombre" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label for="nombre">Año Vigencia:</label>
+                                <input type="number" min="2000" max="2050" maxlength="4" class="form-control" id="TEN_AnioVigencia" name="TEN_AnioVigencia" autocomplete="off" placeholder="Vigencia" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Descripción:</label>
+                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="TEN_Descripcion" name="TEN_Descripcion" autocomplete="off" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary btn-lg">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="@Url.Action("Index", "TipoEncuesta")" class="btn btn-default btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $("#form_registro").submit(function (event) {
+        event.preventDefault();
+
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+			content: "¿Estas seguro que deseas agregar un nuevo tipo de encuesta?",
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+					action: function () {
+						$.ajax({
+                            url: $("#UrlServicio").val() + "/api/TipoEncuesta/InsertarTipoEncuesta",
+							type: "POST",
+							data: $("#form_registro").serialize(),
+							success: function (data) {
+								window.location.href = "@Url.Action("Index", "TipoEncuesta")";
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								console.log(xhr.status);
+								console.log(thrownError);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblGrilla").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});
+    });
+
+});
+</script>

@@ -186,7 +186,69 @@ BEGIN
 	UPDATE UsuarioResponsable SET RES_FlagActivo=0 WHERE RES_ID=@RES_ID
 END 
 GO
+ 
+ /**Actualizar tipo de encuesta**/
+IF (OBJECT_ID('InsertarTipoEncuesta') IS NOT NULL)
+  DROP PROCEDURE InsertarTipoEncuesta
+GO
+CREATE PROCEDURE InsertarTipoEncuesta
+@TEN_Nombre	VARCHAR(45),
+@TEN_Descripcion	TEXT,
+@TEN_AnioVigencia	INT,
+@TEN_FechaCrecion datetime,
+@TEN_UsuarioCreacion VARCHAR(25)
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    INSERT INTO [dbo].[TipoEncuesta](TEN_Nombre,TEN_Descripcion, TEN_AnioVigencia, TEN_FechaCrecion, TEN_UsuarioCreacion)
+	values(@TEN_Nombre,@TEN_Descripcion,@TEN_AnioVigencia, @TEN_FechaCrecion, @TEN_UsuarioCreacion)
+END 
+GO
 
-select * from Categoria;
-SELECT * FROM dbo.TipoSolucion ts INNER JOIN Categoria c ON(ts.SOL_CAT_ID=c.CAT_ID) WHERE ts.SOL_Id <> 0 AND ts.SOL_Id = 0
+IF (OBJECT_ID('EditarTipoEncuesta') IS NOT NULL)
+  DROP PROCEDURE EditarTipoEncuesta
+GO
+CREATE PROCEDURE EditarTipoEncuesta
+@TEN_ID int
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    SELECT * FROM TipoEncuesta WHERE TEN_ID=@TEN_ID
+END 
+GO
 
+IF (OBJECT_ID('ActualizarTipoEncuesta') IS NOT NULL)
+  DROP PROCEDURE ActualizarTipoEncuesta
+GO
+CREATE PROCEDURE ActualizarTipoEncuesta
+@TEN_ID	INT,
+@TEN_Nombre	VARCHAR(45),
+@TEN_Descripcion	TEXT,
+@TEN_AnioVigencia	INT,
+@TEN_FechaModificacion datetime,
+@TEN_UsuarioModificacion VARCHAR(25)
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    UPDATE [dbo].[TipoEncuesta] SET
+	TEN_Nombre = @TEN_Nombre,
+	TEN_Descripcion=@TEN_Descripcion,
+	TEN_AnioVigencia=@TEN_AnioVigencia,
+	TEN_FechaModificacion=@TEN_FechaModificacion,
+	TEN_UsuarioModificacion=@TEN_UsuarioModificacion
+	WHERE TEN_ID=@TEN_ID
+END 
+GO
+
+IF (OBJECT_ID('EliminarTipoEncuesta') IS NOT NULL)
+  DROP PROCEDURE EliminarTipoEncuesta
+GO
+CREATE PROCEDURE EliminarTipoEncuesta
+@TEN_ID int
+AS
+BEGIN   
+
+    SET NOCOUNT ON;
+	UPDATE TipoEncuesta SET TEN_FlagActivo=0 WHERE TEN_ID=@TEN_ID
+END 
+GO

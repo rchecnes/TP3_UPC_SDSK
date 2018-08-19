@@ -13,15 +13,7 @@
         $("#RES_Nombre").on("keyup", function () {
             $("#tblGrilla").dataTable().api().ajax.reload();
         });
-
-		//Datatable
-		/*$("#divTableAccesorio").html('<table id="tblAccesorioDev" class="table table-bordered" cellspacing="0" />');
-		if ($.fn.DataTable.isDataTable('#tblAccesorioDev')) {
-			//$('#example').dataTable();
-			tblAccesorioDev.destroy();
-		}
-		llenarTablaAccesorio();*/
-
+    
 		function llenarTablaGrilla() {
             tblGrilla = $("#tblGrilla")
 				.DataTable({

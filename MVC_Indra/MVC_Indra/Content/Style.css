@@ -1,0 +1,8 @@
+﻿.ui-autocomplete {
+    display: block;
+    z-index: 99999 !important;
+}
+
+.fa-1x:before{
+    font-size:25px
+}
