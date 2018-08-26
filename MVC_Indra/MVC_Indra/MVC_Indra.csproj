@@ -156,6 +156,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\TicketController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\AdminTL\AdminLTE.min.css" />
@@ -254,6 +255,9 @@
     <Content Include="Views\TipoEncuesta\Index.cshtml" />
     <Content Include="Views\TipoEncuesta\Nuevo.cshtml" />
     <Content Include="Views\TipoEncuesta\Editar.cshtml" />
+    <Content Include="Views\Ticket\Index.cshtml" />
+    <Content Include="Views\Ticket\Nuevo.cshtml" />
+    <Content Include="Views\Ticket\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

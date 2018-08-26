@@ -7,18 +7,54 @@ using System.Web;
 namespace WebApiMovil.Models
 {
     [DataContract]
-    public class Ticket
+    public class Ticket: Paginacion
     {
         [DataMember]
-        public int CodigoTicket { get; set; }
+        public int TIC_ID { get; set; }
 
         [DataMember]
-        public DateTime FechaCreacion { get; set; }
+        public int TIC_PROB_ID { get; set; }
 
         [DataMember]
-        public DateTime FechaVigencia { get; set; }
+        public int TIC_SOL_ID { get; set; }
 
         [DataMember]
-        public string Descripcion { get; set; }
+        public int TIC_SER_ID { get; set; }
+
+        [DataMember]
+        public int TIC_EMP_ID { get; set; }
+
+        [DataMember]
+        public string EMP_RazonSocial { get; set; }
+
+        [DataMember]
+        public int TIC_USU_ID { get; set; }
+
+        [DataMember]
+        public string USU_Nombre { get; set; }
+
+        [DataMember]
+        public string TIC_Descripcion { get; set; }
+
+        [DataMember]
+        public string TIC_FechaRegistro { get; set; }
+
+        [DataMember]
+        public string TIC_FechaInicio { get; set; }
+
+        [DataMember]
+        public string TIC_FechaFin { get; set; }
+
+        [DataMember]
+        public string TIC_FechaCierre { get; set; }
+
+        [DataMember]
+        public int TIC_EST_ID { get; set; }
+
+        [DataMember]
+        public string EST_Descrpcion { get; set; }
+
+        [DataMember]
+        public int TIC_ENC_ID { get; set; }
     }
 }
