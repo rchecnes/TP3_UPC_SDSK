@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebApiMovil.Models;
 using WebApiMovil.Services;
+using WebApiMovil.Models;
+using WebApiIndra.Services;
 
 namespace WebApi.Controllers
 {
@@ -19,22 +20,8 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [ActionName("ListadoEstado")]
-        public List<GM_Estado> ListadoEstado()
-        {
-            try
-            {
-                return ticketService.ListadoEstado();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [HttpPost]
         [ActionName("ListadoTicket")]
-        public List<GM_Ticket> ListadoTicket(GM_Ticket entidad)
+        public List<Ticket> ListadoTicket(Ticket entidad)
         {
             try
             {
@@ -47,36 +34,8 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [ActionName("ListadoServicio")]
-        public List<GM_Empleado> ListadoServicio()
-        {
-            try
-            {
-                return ticketService.ListadoServicio();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [HttpPost]
-        [ActionName("ListadoTipoProblema")]
-        public List<GM_Empleado> ListadoTipoProblema()
-        {
-            try
-            {
-                return ticketService.ListadoTipoProblema();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [HttpPost]
         [ActionName("ListadoPrioridad")]
-        public List<GM_Prioridad> ListadoPrioridad()
+        public List<Prioridad> ListadoPrioridad()
         {
             try
             {
@@ -89,45 +48,32 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [ActionName("InsertarTicket")]
-        public void InsertarTicket(GM_Ticket entidad)
+        [ActionName("ListadoEstado")]
+        public List<Estado> ListadoEstado()
         {
             try
             {
-                ticketService.InsertarTicket(entidad);
+                return ticketService.ListadoEstado();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
         }
 
         [HttpPost]
-        [ActionName("EditarTicket")]
-        public List<GM_Ticket> EditarTicket(GM_Ticket entidad)
+        [ActionName("ListadoSolucion")]
+        public List<TipoSolucion> ListadoSolucion()
         {
             try
             {
-                return ticketService.EditarTicket(entidad);
+                return ticketService.ListadoSolucion();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
         }
 
-        [HttpPost]
-        [ActionName("ActualizarTicket")]
-        public void ActualizarTicket(GM_Ticket entidad)
-        {
-            try
-            {
-                ticketService.ActualizarTicket(entidad);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

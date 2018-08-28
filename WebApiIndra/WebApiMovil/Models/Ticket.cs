@@ -34,6 +34,12 @@ namespace WebApiMovil.Models
         public string USU_Nombre { get; set; }
 
         [DataMember]
+        public int TIC_RES_ID { get; set; }
+
+        [DataMember]
+        public string RES_Nombre { get; set; }
+
+        [DataMember]
         public string TIC_Descripcion { get; set; }
 
         [DataMember]

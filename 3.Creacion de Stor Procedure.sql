@@ -21,6 +21,36 @@ AS
     SELECT * FROM TipoProblema  
 GO
 
+IF (OBJECT_ID('EstadoLista') IS NOT NULL)
+  DROP PROCEDURE EstadoLista
+GO
+CREATE PROCEDURE EstadoLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM Estado  
+GO
+
+IF (OBJECT_ID('SolucionLista') IS NOT NULL)
+  DROP PROCEDURE SolucionLista
+GO
+CREATE PROCEDURE SolucionLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM TipoSolucion  
+GO
+
+IF (OBJECT_ID('PrioridadLista') IS NOT NULL)
+  DROP PROCEDURE PrioridadLista
+GO
+CREATE PROCEDURE PrioridadLista 
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT * FROM Prioridad  
+GO
+
 IF (OBJECT_ID('CargoLista') IS NOT NULL)
   DROP PROCEDURE CargoLista
 GO
@@ -250,5 +280,58 @@ BEGIN
 
     SET NOCOUNT ON;
 	UPDATE TipoEncuesta SET TEN_FlagActivo=0 WHERE TEN_ID=@TEN_ID
+END 
+GO
+
+/**TICKET**/
+IF (OBJECT_ID('InsertarTicket') IS NOT NULL)
+  DROP PROCEDURE InsertarTicket
+GO
+CREATE PROCEDURE InsertarTicket
+@TEN_Nombre	VARCHAR(45),
+@TEN_Descripcion	TEXT,
+@TEN_AnioVigencia	INT,
+@TEN_FechaCrecion datetime,
+@TEN_UsuarioCreacion VARCHAR(25)
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    INSERT INTO [dbo].[TipoEncuesta](TEN_Nombre,TEN_Descripcion, TEN_AnioVigencia, TEN_FechaCrecion, TEN_UsuarioCreacion)
+	values(@TEN_Nombre,@TEN_Descripcion,@TEN_AnioVigencia, @TEN_FechaCrecion, @TEN_UsuarioCreacion)
+END 
+GO
+
+IF (OBJECT_ID('EditarTicket') IS NOT NULL)
+  DROP PROCEDURE EditarTicket
+GO
+CREATE PROCEDURE EditarTicket
+@TEN_ID int
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    SELECT * FROM TipoEncuesta WHERE TEN_ID=@TEN_ID
+END 
+GO
+
+IF (OBJECT_ID('ActualizarTicket') IS NOT NULL)
+  DROP PROCEDURE ActualizarTicket
+GO
+CREATE PROCEDURE ActualizarTicket
+@TEN_ID	INT,
+@TEN_Nombre	VARCHAR(45),
+@TEN_Descripcion	TEXT,
+@TEN_AnioVigencia	INT,
+@TEN_FechaModificacion datetime,
+@TEN_UsuarioModificacion VARCHAR(25)
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    UPDATE [dbo].[TipoEncuesta] SET
+	TEN_Nombre = @TEN_Nombre,
+	TEN_Descripcion=@TEN_Descripcion,
+	TEN_AnioVigencia=@TEN_AnioVigencia,
+	TEN_FechaModificacion=@TEN_FechaModificacion,
+	TEN_UsuarioModificacion=@TEN_UsuarioModificacion
+	WHERE TEN_ID=@TEN_ID
 END 
 GO

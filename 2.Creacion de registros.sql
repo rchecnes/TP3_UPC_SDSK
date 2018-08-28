@@ -1,9 +1,9 @@
 USE Indra
 GO
 
-INSERT INTO Prioridad(PRI_ID, Pri_Descripcion)VALUES (1,'Alta')
-INSERT INTO Prioridad(PRI_ID, Pri_Descripcion)VALUES (2,'Media')
-INSERT INTO Prioridad(PRI_ID, Pri_Descripcion)VALUES (3,'Baja')
+INSERT INTO Prioridad(PRI_ID, PRI_Descripcion)VALUES (1,'Alta')
+INSERT INTO Prioridad(PRI_ID, PRI_Descripcion)VALUES (2,'Media')
+INSERT INTO Prioridad(PRI_ID, PRI_Descripcion)VALUES (3,'Baja')
 GO
 SELECT * FROM Prioridad
 go
@@ -93,7 +93,7 @@ go
 INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 2','Encuesta de satisfacción anual',1,1,0)*/
 go
 
-INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_CodigoEstado)
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
 VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,1)
 go
 SELECT * FROM Ticket

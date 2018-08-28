@@ -24,30 +24,39 @@ namespace WebApiIndra.Services
                                    "INNER JOIN TipoSolucion ts ON(t.TIC_SOL_ID=ts.SOL_ID) " +
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
+                                   "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
                                    "WHERE t.TIC_FlagActivo=1";
 
                     string condition = "";
                     if (entidad.TIC_ID != 0)
                     {
                         condition += " AND t.TIC_ID = " + entidad.TIC_ID;
-                        condition += " AND (t.TIC_ID LIKE '" + entidad.EMP_RazonSocial + "%')";
                     }
 
                     if (entidad.EMP_RazonSocial != null)
                     {
                         condition += " AND (em.EMP_RazonSocial LIKE '%" + entidad.EMP_RazonSocial + "%')";
                     }
-                    if (entidad.TIC_FechaInicio != "")
+                    
+                    if (entidad.TIC_FechaInicio != null && entidad.TIC_FechaFin != null)
                     {
-                        condition += " AND t.TIC_FechaRegistro="+ entidad.TIC_FechaInicio;
+                        condition += " AND t.TIC_FechaRegistro BETWEEN '"+ entidad.TIC_FechaInicio + "' AND '"+ entidad.TIC_FechaFin + "'";
                     }
-                    if (entidad.TIC_FechaFin != "")
+                    else
                     {
-                        condition += " AND t.TIC_FechaRegistro=" + entidad.TIC_FechaFin;
+                        if (entidad.TIC_FechaInicio != null)
+                        {
+                            condition += " AND t.TIC_FechaRegistro='" + entidad.TIC_FechaInicio + "'";
+                        }
+                        if (entidad.TIC_FechaFin != null)
+                        {
+                            condition += " AND t.TIC_FechaRegistro='" + entidad.TIC_FechaFin + "'";
+                        }
                     }
-                    if (entidad.TIC_FechaInicio != "" && entidad.TIC_FechaFin !="")
+
+                    if (entidad.TIC_EST_ID != 0)
                     {
-                        condition += " AND t.TIC_FechaRegistro BETWEEN '"+ entidad.TIC_FechaInicio + "' AND '"+ entidad.TIC_FechaFin + "')";
+                        condition += " AND t.TIC_EST_ID =" + entidad.TIC_EST_ID;
                     }
 
                     int inicio = 0;
@@ -70,6 +79,7 @@ namespace WebApiIndra.Services
                                    "INNER JOIN TipoSolucion ts ON(t.TIC_SOL_ID=ts.SOL_ID) " +
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
+                                   "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
                                    "WHERE t.TIC_FlagActivo=1";
                     using (SqlCommand command = new SqlCommand(querytot + condition, conection))
                     {
@@ -105,14 +115,15 @@ namespace WebApiIndra.Services
                                         item.CAT_Descripcion = "";
                                     }*/
                                     item.TIC_FechaRegistro = dr.GetDateTime(dr.GetOrdinal("TIC_FechaRegistro")).ToString("dd/MM/yyyy");
-                                    item.EST_Descrpcion = dr.GetString(dr.GetOrdinal("EST_Descrpcion"));
+                                    item.EST_Descrpcion = dr.GetString(dr.GetOrdinal("EST_Descripcion"));
+                                    item.RES_Nombre = "ANONIMO";
 
-                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";
-                                    string eliminar = "<a title='Eliminar' href='#' class='eliminar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>";
-                                    string abrir = "<a title='Abrir Ticket' href='#' class='abrir' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";
-                                    string historial = "<a title='Ver Historial del Ticket' href='#' class='historial' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>";
+                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";                                    
+                                    string abrir = "<a title='Abrir Ticket' href='#' class='abrir' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-ok fa-1x'></span></a>";
+                                    string atencion = "<a title='Registrar Atención' href='#' class='atencion' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-th-list fa-1x'></span></a>";
+                                    string historial = "<a title='Ver Historial del Ticket' href='#' class='historial' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-time fa-1x'></span></a>";
 
-                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + abrir + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + historial;
+                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + abrir + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + atencion + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + historial;
 
                                     //Paginado
                                     item.sEcho = 2;
@@ -145,16 +156,16 @@ namespace WebApiIndra.Services
                 throw (ex);
             }
         }
-        public List<Categoria> ListadoCategoria()
+        public List<Estado> ListadoEstado()
         {
-            List<Categoria> ListaCategoria = null;
+            List<Estado> lista = null;
             try
             {
                 using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
                     conection.Open();
 
-                    using (SqlCommand command = new SqlCommand("CategoriaLista", conection))
+                    using (SqlCommand command = new SqlCommand("EstadoLista", conection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
@@ -162,13 +173,13 @@ namespace WebApiIndra.Services
                         {
                             if (dr.HasRows)
                             {
-                                ListaCategoria = new List<Categoria>();
+                                lista = new List<Estado>();
                                 while (dr.Read())
                                 {
-                                    Categoria estado = new Categoria();
-                                    estado.CAT_ID = dr.GetInt32(dr.GetOrdinal("CAT_ID"));
-                                    estado.CAT_Descripcion = dr.GetString(dr.GetOrdinal("CAT_Descripcion"));
-                                    ListaCategoria.Add(estado);
+                                    Estado item = new Estado();
+                                    item.EST_ID = dr.GetInt32(dr.GetOrdinal("EST_ID"));
+                                    item.EST_Descripcion = dr.GetString(dr.GetOrdinal("EST_Descripcion"));
+                                    lista.Add(item);
                                 }
                             }
                         }
@@ -176,23 +187,23 @@ namespace WebApiIndra.Services
                     }
                     conection.Close();
                 }
-                return ListaCategoria;
+                return lista;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
         }
-        public List<TipoProblema> ListadoTipoProblema()
+        public List<Prioridad> ListadoPrioridad()
         {
-            List<TipoProblema> ListaTipoProblema = null;
+            List<Prioridad> lista = null;
             try
             {
                 using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
                     conection.Open();
 
-                    using (SqlCommand command = new SqlCommand("TipoProblemaLista", conection))
+                    using (SqlCommand command = new SqlCommand("PrioridadLista", conection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
@@ -200,13 +211,13 @@ namespace WebApiIndra.Services
                         {
                             if (dr.HasRows)
                             {
-                                ListaTipoProblema = new List<TipoProblema>();
+                                lista = new List<Prioridad>();
                                 while (dr.Read())
                                 {
-                                    TipoProblema problema = new TipoProblema();
-                                    problema.PROB_ID = dr.GetInt32(dr.GetOrdinal("PROB_Id"));
-                                    problema.PROB_Descripcion = dr.GetString(dr.GetOrdinal("PROB_Descripcion"));
-                                    ListaTipoProblema.Add(problema);
+                                    Prioridad item = new Prioridad();
+                                    item.PRI_ID = dr.GetInt32(dr.GetOrdinal("PRI_ID"));
+                                    item.PRI_Descripcion = dr.GetString(dr.GetOrdinal("PRI_Descripcion"));
+                                    lista.Add(item);
                                 }
                             }
                         }
@@ -214,120 +225,37 @@ namespace WebApiIndra.Services
                     }
                     conection.Close();
                 }
-                return ListaTipoProblema;
+                return lista;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
         }
-        public string InsertarTipoSolucion(TipoSolucion entidad)
+        public List<TipoSolucion> ListadoSolucion()
         {
+            List<TipoSolucion> lista = null;
             try
             {
                 using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
                     conection.Open();
 
-                    using (SqlCommand command = new SqlCommand("InsertarTipoSolucion", conection))
-                    {
-
-                        string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
-                        string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
-                        string comentario = (entidad.SOL_Comentario != null) ? entidad.SOL_Comentario : "";
-                        string rutaarchivo = (entidad.SOL_RutaArchivo != null) ? entidad.SOL_RutaArchivo : "";
-                        string nombrearchivo = (entidad.SOL_NombreArchivo != null) ? entidad.SOL_NombreArchivo : "";
-
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@SOL_Nombre", entidad.SOL_Nombre);
-                        command.Parameters.AddWithValue("@SOL_RutaArchivo", rutaarchivo);
-                        command.Parameters.AddWithValue("@SOL_NombreArchivo", nombrearchivo);
-                        command.Parameters.AddWithValue("@SOL_Descripcion", descripcion);
-                        command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
-                        command.Parameters.AddWithValue("@SOL_Comentario", comentario);
-                        command.Parameters.AddWithValue("@SOL_FechaCreacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", "DGUTIERREZ");
-                        command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
-                        command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
-                        command.ExecuteNonQuery();
-                    }
-                    conection.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-            return "ok";
-        }
-        public List<TipoSolucion> EditarTipoSolucion(TipoSolucion entidad)
-        {
-            List<TipoSolucion> ListaTipoSolucion = null;
-            try
-            {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conection.Open();
-
-                    using (SqlCommand command = new SqlCommand("EditarTipoSolucion", conection))
+                    using (SqlCommand command = new SqlCommand("SolucionLista", conection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
 
                         using (SqlDataReader dr = command.ExecuteReader())
                         {
                             if (dr.HasRows)
                             {
-                                ListaTipoSolucion = new List<TipoSolucion>();
+                                lista = new List<TipoSolucion>();
                                 while (dr.Read())
                                 {
-                                    TipoSolucion tiposol = new TipoSolucion();
-                                    tiposol.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_ID"));
-                                    tiposol.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Descripcion")))
-                                    {
-                                        tiposol.SOL_Descripcion = dr.GetString(dr.GetOrdinal("SOL_Descripcion"));
-                                    }
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_PalabraClave")))
-                                    {
-                                        tiposol.SOL_PalabraClave = dr.GetString(dr.GetOrdinal("SOL_PalabraClave"));
-                                    }
-                                    tiposol.SOL_CAT_ID = dr.GetInt32(dr.GetOrdinal("SOL_CAT_ID"));
-                                    tiposol.SOL_PROB_ID = dr.GetInt32(dr.GetOrdinal("SOL_PROB_ID"));
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_RutaArchivo")))
-                                    {
-                                        tiposol.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
-                                    }
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_NombreArchivo")))
-                                    {
-                                        tiposol.SOL_NombreArchivo = dr.GetString(dr.GetOrdinal("SOL_NombreArchivo"));
-                                    }
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Comentario")))
-                                    {
-                                        tiposol.SOL_Comentario = dr.GetString(dr.GetOrdinal("SOL_Comentario"));
-                                    }
-
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_FechaCreacion")))
-                                    {
-                                        tiposol.SOL_FechaCreacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaCreacion")).ToString("dd/MM/yyyy");
-                                    }
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_FechaModificacion")))
-                                    {
-                                        tiposol.SOL_FechaModificacion = dr.GetDateTime(dr.GetOrdinal("SOL_FechaModificacion")).ToString("dd/MM/yyyy");
-                                    }
-
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_UsuarioCreacion")))
-                                    {
-                                        tiposol.SOL_UsuarioCreacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioCreacion"));
-                                    }
-                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_UsuarioModificacion")))
-                                    {
-                                        tiposol.SOL_UsuarioModificacion = dr.GetString(dr.GetOrdinal("SOL_UsuarioModificacion"));
-                                    }
-
-                                    ListaTipoSolucion.Add(tiposol);
+                                    TipoSolucion item = new TipoSolucion();
+                                    item.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_ID"));
+                                    item.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
+                                    lista.Add(item);
                                 }
                             }
                         }
@@ -335,71 +263,12 @@ namespace WebApiIndra.Services
                     }
                     conection.Close();
                 }
-                return ListaTipoSolucion;
+                return lista;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-        }
-        public string ActualizarTipoSolucion(TipoSolucion entidad)
-        {
-            try
-            {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conection.Open();
-
-                    using (SqlCommand command = new SqlCommand("ActualizarTipoSolucion", conection))
-                    {
-                        string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
-                        string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
-
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
-                        command.Parameters.AddWithValue("@SOL_Descripcion", descripcion);
-                        command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
-                        command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
-                        command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
-                        command.Parameters.AddWithValue("@SOL_FechaModificacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", "EGUTIERREZ");
-                        command.ExecuteNonQuery();
-                    }
-                    conection.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-            return "ok";
-        }
-        public string EliminarTipoSolucion(TipoSolucion entidad)
-        {
-            try
-            {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conection.Open();
-
-                    using (SqlCommand command = new SqlCommand("EliminarTipoSolucion", conection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
-                        command.ExecuteNonQuery();
-                    }
-                    conection.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-            return "ok";
-        }
+        }        
     }
 }
