@@ -1,0 +1,296 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Listado de Tickets Atenndidos";
+}
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<input type="hidden" id="IdEmpleado" value="@System.Configuration.ConfigurationManager.AppSettings["IdEmpleado"]" />
+<input type="hidden" id="IdRol" value="@System.Configuration.ConfigurationManager.AppSettings["IdRol"]" />
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        listarEstado = function (TEN_ID) {
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Encuesta/ListadoTicketAtencido",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var options = "";
+                        for (var i = 0; i < data.length; i++) {
+                            $("#TIC_EST_ID").append("<option value=" + data[i].EST_ID + ">" + data[i].EST_Descripcion + "</option>");
+                        }
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+
+        listarEstado();
+
+        $("#consultar").on("click", function () {
+            $("#tblGrilla").dataTable().api().ajax.reload();
+        });
+
+		function llenarTablaGrilla() {
+            tblGrilla = $("#tblGrilla")
+				.DataTable({
+					"bLengthChange": false,
+					"bFilter": false,
+					"PaginationType": "full_numbers",
+					"processing": true,
+					"bServerSide": true,
+                    "sAjaxSource": $("#UrlServicio").val() + '/api/Encuesta/ListadoTicketAtendido',
+					"select": true,
+					"pageLength": 10,
+					responsive: true,
+					language: {
+						"sProcessing": "Procesando...",
+						"sLengthMenu": "Mostrar _MENU_ registros",
+						"sZeroRecords": "No se encontraron resultados",
+						"sEmptyTable": "Ningún dato disponible en esta tabla",
+						"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+						"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+						"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+						"sInfoPostFix": "",
+						"sSearch": "Buscar:",
+						"sUrl": "",
+						"sInfoThousands": ",",
+						"sLoadingRecords": "Cargando...",
+						"oPaginate": {
+							"sFirst": "Primero",
+							"sLast": "Último",
+							"sNext": "Next",
+							"sPrevious": "Prev"
+						},
+						"oAria": {
+							"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+							"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+						}
+					},
+					"fnServerData": function (url, odata, callback) {
+                        //debugger;
+                        //console.log(odata);
+                        //console.log(callback);
+						entidad = {};
+						var PageSize = 10;
+						var PrimerRegistro = odata[3].value;;
+						var CurrentPage = PrimerRegistro / PageSize;
+
+
+						entidad.iPageSize = PageSize;
+                        entidad.iCurrentPage = (CurrentPage>0)?CurrentPage + 1:0;
+                        entidad.pvSortColumn = "TIC_ID";
+                        entidad.pvSortOrder = "DESC";
+
+                        entidad.TIC_ID = $("#TIC_ID").val();
+                        entidad.EMP_RazonSocial = $("#EMP_RazonSocial").val();
+                        entidad.TIC_FechaInicio = $("#TIC_FechaInicio").val();
+                        entidad.TIC_FechaFin = $("#TIC_FechaFin").val();
+                        entidad.TIC_EST_ID = $("#TIC_EST_ID").val();
+                        entidad.TIC_EMP_ID = 1; //Cambiar por login
+                        entidad.TIC_SOL_ID = 1; //Cambiar por login
+                        
+						$.ajax({
+							"url": url,
+							"dataSrc": "",
+							"data": entidad,
+							"success":
+								function (response) {
+									if (response.length == 0) {
+										callback({
+											data: response,
+											recordsTotal: 0,
+											recordsFiltered: 0,
+
+										})
+									} else {
+										callback({
+											data: response,
+											recordsTotal: response[0].iTotalRecords,
+											recordsFiltered: response[0].iTotalRecords,
+
+										})
+									};
+
+
+									$(".encuesta").click(function () {
+                                        var id = $(this).attr("id");
+										window.location.href = '/Encuesta/Responder/' + id;
+									});
+
+									$(".eliminar").click(function () {
+										id = $(this).attr("id");
+
+										$.confirm({
+											title: 'Mensaje de confirmación!',
+											content: "¿Estas seguro que deseas eliminar el tipo de encuesta <b>Nro. "+id+"</b>?",
+											buttons: {
+												confirm: {
+													text: "SI",
+													btnClass: 'btn-blue',
+													action: function () {
+														$.ajax({
+															url: $("#UrlServicio").val() + "/api/TipoEncuesta/EliminarTipoEncuesta",
+															type: "POST",
+															dataType: "json",
+															data: { TEN_ID: id },
+															success: function (data) {
+																$("#tblGrilla").dataTable().api().ajax.reload();
+															},
+															error: function (xhr, ajaxOptions, thrownError) {
+																console.log(xhr.status);
+																console.log(thrownError);
+															}
+														});
+													}
+												},
+												cancel: {
+													text: "NO",
+													btnClass: 'btn-danger',
+													action: function () {
+														$("#tblGrilla").dataTable().api().ajax.reload();
+													}
+												}
+											}
+										});
+                                    });
+
+                                    $(".pregunta").click(function () {
+
+                                        var id = $(this).attr("id");
+
+                                        $("#TEN_ID").val(id);
+
+                                        listarPregunta(id);
+
+                                        $('#modal_pregunta').modal('show');
+                                    })
+
+								},
+							//,
+							"contentType": "application/x-www-form-urlencoded; charset=utf-8",
+							"dataType": "json",
+							"type": "POST",
+							"cache": false,
+							"error": function (resultado) {
+								console.log(resultado);
+								alert("DataTables warning: JSON data from server failed to load or be parsed. " +
+									"This is most likely to be caused by a JSON formatting error.");
+							},
+						});
+					},
+
+					"aoColumns": [
+						{ "title": "Nro. Ticket", "bSortable": false, bVisible: true, "data": "TIC_ID" },
+						{ "title": "Empresa", "bSortable": false, bVisible: true, "data": "EMP_RazonSocial" },
+                        { "title": "Usuario Solicitante", "bSortable": false, bVisible: true, "data": "USU_Nombre" },
+                        { "title": "Fecha Registro", "bSortable": false, bVisible: true, "data": "TIC_FechaRegistro" },
+                        { "title": "Usuario Responsable", "bSortable": false, bVisible: true, "data": "RES_Nombre" },
+                        { "title": "Estado", "bSortable": false, bVisible: true, "data": "EST_Descrpcion" },
+                        { "title": "Acciones", "bSortable": false, bVisible: true, "data": "ltAcciones" }
+					],
+					"columnDefs": [
+
+					]
+				});
+		}
+
+        llenarTablaGrilla();
+
+    })
+</script>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <form role="form">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-sm-4">
+                            <div class="form-group">
+                                <label for="Buscar">Nro. Ticket:</label>
+                                <input type="text" class="form-control" id="TIC_ID" name="TIC_ID" placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-sm-4">
+                            <div class="form-group">
+                                <label for="Buscar">&nbsp;</label><br />
+                                <a href="#" class="btn btn-default btn-md" id="consultar">Consultar&nbsp;<span class="glyphicon glyphicon-search"></span></a>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="tblGrilla" class="table table-bordered" cellspacing="0" /></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+
+<div class="modal fade" id="modal_pregunta" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">Agegar y/o Editar Pregunta</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="nombre">Buscar Pregunta:</label>
+                            <input type="text" class="form-control" id="PRE_Descripcion" name="PRE_Descripcion" autocomplete="off" placeholder="Buscar Pregunta">
+                            <input type="hidden" class="form-control" id="TEN_ID" name="TEN_ID" autocomplete="off" placeholder="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Pregunta</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="content_pregunta">
+                                <tr>
+                                    <td colspan="3">No existe preguntas relacionadas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+

@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Responder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Responder Encuesta Ticket Nro. " + ViewBag.TIC_ID;
+}
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<input type="hidden" id="IdEmpleado" value="@System.Configuration.ConfigurationManager.AppSettings["IdEmpleado"]" />
+<input type="hidden" id="IdRol" value="@System.Configuration.ConfigurationManager.AppSettings["IdRol"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_pregunta">
+                <div class="box-body">
+                    
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary btn-lg">Aceptar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="@Url.Action("Index", "Encuesta")" class="btn btn-default btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function () {
+
+    listarPregunta = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Encuesta/ListadoPreguntaEncuesta",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                var html = "";
+
+                if (data != null) {
+                    for (var i = 0; i < data.length; i++) {
+                        
+                        html += "<p>" + parseInt(i + 1) + "." + data[i].PRE_Descripcion + "</p>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID+"_1' value='1' required='required'>&nbsp;&nbsp;1</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_2' value='2' required='required'>&nbsp;&nbsp;2</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_3' value='3' required='required'>&nbsp;&nbsp;3</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_4' value='4' required='required'>&nbsp;&nbsp;4</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_5' value='5' required='required'>&nbsp;&nbsp;5</label>";
+
+                        //console.log(data[i].PRE_Descripcion);
+
+                    }
+                } else {
+                    html += "<h3>No hay preguntas para este periodo</h3>";
+                }
+                $("#form_pregunta .box-body").html(html);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarPregunta();
+})
+</script>
+

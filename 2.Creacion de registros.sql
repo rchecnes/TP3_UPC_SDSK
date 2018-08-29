@@ -76,7 +76,7 @@ SELECT * FROM UsuarioResponsable
 go
 
 INSERT INTO TipoEncuesta(TEN_Nombre,TEN_AnioVigencia) VALUES('Encuesta General',2018)
-INSERT INTO TipoEncuesta(TEN_Nombre,TEN_AnioVigencia) VALUES('Encuesta de Satisfacción',2030)
+INSERT INTO TipoEncuesta(TEN_Nombre,TEN_AnioVigencia) VALUES('Encuesta de Satisfacción',2019)
 go
 INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('¿Que tan satisfecho está con la atención?',1,1)
 INSERT INTO Pregunta(PRE_Descripcion,PRE_TipoControl,PRE_FlagActivo) VALUES('Volvería utilizar la mesa de ayuda?',2,1)
