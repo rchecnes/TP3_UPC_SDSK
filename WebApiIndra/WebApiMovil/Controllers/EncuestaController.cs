@@ -45,5 +45,19 @@ namespace WebApiMovil.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [ActionName("ResponderEncuesta")]
+        public string ResponderEncuesta(EncuestaRespuesta entidad)
+        {
+            try
+            {
+                return encuestaService.ResponderEncuesta(entidad);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }

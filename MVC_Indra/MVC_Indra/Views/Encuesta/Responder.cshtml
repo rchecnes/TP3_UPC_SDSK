@@ -41,11 +41,11 @@ $(document).ready(function () {
                     for (var i = 0; i < data.length; i++) {
                         
                         html += "<p>" + parseInt(i + 1) + "." + data[i].PRE_Descripcion + "</p>";
-                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID+"_1' value='1' required='required'>&nbsp;&nbsp;1</label>";
-                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_2' value='2' required='required'>&nbsp;&nbsp;2</label>";
-                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_3' value='3' required='required'>&nbsp;&nbsp;3</label>";
-                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_4' value='4' required='required'>&nbsp;&nbsp;4</label>";
-                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_PRE_ID + "' id='RES" + data[i].TEP_PRE_ID +"_5' value='5' required='required'>&nbsp;&nbsp;5</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_ID + "' id='RES" + data[i].TEP_ID + "_1' TEP_ID='" + data[i].TEP_ID+"' value='1' required='required'>&nbsp;&nbsp;1</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_ID + "' id='RES" + data[i].TEP_ID + "_2' TEP_ID='" + data[i].TEP_ID +"' value='2' required='required'>&nbsp;&nbsp;2</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_ID + "' id='RES" + data[i].TEP_ID + "_3' TEP_ID='" + data[i].TEP_ID +"' value='3' required='required'>&nbsp;&nbsp;3</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_ID + "' id='RES" + data[i].TEP_ID + "_4' TEP_ID='" + data[i].TEP_ID +"' value='4' required='required'>&nbsp;&nbsp;4</label>";
+                        html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type='radio' name='RES" + data[i].TEP_ID + "' id='RES" + data[i].TEP_ID + "_5' TEP_ID='" + data[i].TEP_ID +"' value='5' required='required'>&nbsp;&nbsp;5</label>";
 
                         //console.log(data[i].PRE_Descripcion);
 
@@ -63,6 +63,70 @@ $(document).ready(function () {
     }
 
     listarPregunta();
+
+    $("#form_pregunta").on("submit", function (event) {
+
+        event.preventDefault();
+        
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+			content: "¿Estas seguro de enviar la respuesta?",
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+                    action: function () {
+
+                        
+                        var Pregunta = [];
+                        $("#form_pregunta input[type=radio]:checked").each(function () {
+                            
+                            var preg = { TEP_ID: $(this).attr('TEP_ID'), TEP_Respuesta: $(this).val() };
+
+                            Pregunta.push(preg);
+                        });
+
+                        if (Pregunta.length > 0) {
+
+                            var procesoData = {
+                                'ERE_TEP_ID': 1,
+                                'Pregunta': Pregunta,
+                                ENC_Titulo: 'Prueba',
+                                ENC_Descripcion: 'Prueba',
+                                ENC_TUS_ID: 1,//parametro
+                                ENC_EMP_ID: 1,//parametro
+                                TIC_ID:@ViewBag.TIC_ID,
+                                ENC_UsuarioCreacion: 'RCHECNES'//parametro
+                            };
+
+                            $.ajax({
+                                url: $("#UrlServicio").val() + "/api/Encuesta/ResponderEncuesta",
+                                type: "POST",
+                                data: procesoData,//$("#form_registro").serialize(),
+                                success: function (data) {
+                                    window.location.href = "@Url.Action("Index", "Responsable")";
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    console.log(xhr.status);
+                                    console.log(thrownError);
+                                }
+                            });
+                        } else {
+                            alert("No hay respuesta ingresadas!");
+                        }
+                        
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblGrilla").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});
+    })
 })
 </script>
 

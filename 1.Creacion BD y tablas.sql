@@ -8,6 +8,7 @@ drop table HistorialTicket;
 drop table Atencion;
 drop table Resultado;
 drop table Ticket;
+drop table EncuestaRespuesta;
 drop table Encuesta;
 drop table TipoEncuestaPregunta;
 drop table Pregunta;
@@ -181,9 +182,9 @@ ENC_EMP_ID INTEGER FOREIGN KEY REFERENCES Empresa(EMP_Id),
 ENC_FlagEnvio BIT DEFAULT 0,
 ENC_FlagActivo BIT DEFAULT 1,
 ENC_FechaCrecion	DATETIME,
-ENC_FechaModificacion	DATETIME,
+ENC_FechaModificacion	DATETIME NULL,
 ENC_UsuarioCreacion	VARCHAR(25),
-ENC_UsuarioModificacion	VARCHAR(25)
+ENC_UsuarioModificacion	VARCHAR(25) NULL
 )
 go
 
@@ -202,6 +203,16 @@ TIC_FechaCierre	DATE,
 TIC_EST_ID	INT FOREIGN KEY REFERENCES Estado(EST_ID),
 TIC_ENC_ID	INT NULL FOREIGN KEY REFERENCES Encuesta,
 TIC_FlagActivo	BIT DEFAULT 1
+)
+go
+
+CREATE TABLE EncuestaRespuesta
+(
+ERE_ID INT identity(1,1) Primary Key,
+ERE_ENC_ID int Foreign Key References Encuesta(ENC_ID),
+ERE_TEP_Id int Foreign Key References TipoEncuestaPregunta(TEP_Id),
+ERE_Respuesta SMALLINT,
+ERE_FechaRespuesta DATETIME
 )
 go
 

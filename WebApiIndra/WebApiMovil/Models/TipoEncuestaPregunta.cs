@@ -11,17 +11,25 @@ namespace WebApiMovil.Models
     {
         [DataMember]
         public int TEP_ID { get; set; }
+
         [DataMember]
         public int TEP_PRE_ID { get; set; }
+
         [DataMember]
         public int TEP_TEN_ID { get; set; }
+
         [DataMember]
         public int TEP_FlagActivo { get; set; }
+
         [DataMember]
         public string PRE_Descripcion { get; set; }
+
         [DataMember]
         public int PRE_TipoControl { get; set; }
 
-        
+        [DataMember]
+        public int TEP_Respuesta { get; set; }
+
+
     }
 }

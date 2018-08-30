@@ -244,6 +244,7 @@
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\Pregunta.cs" />
     <Compile Include="Models\Prioridad.cs" />
+    <Compile Include="Models\EncuestaRespuesta.cs" />
     <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TipoEncuesta.cs" />
