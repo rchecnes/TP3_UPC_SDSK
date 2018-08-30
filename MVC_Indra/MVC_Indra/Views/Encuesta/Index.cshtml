@@ -9,33 +9,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        listarEstado = function (TEN_ID) {
-            $.ajax({
-                url: $("#UrlServicio").val() + "/api/Encuesta/ListadoTicketAtencido",
-                type: "POST",
-                dataType: "json",
-                success: function (data) {
-                    if (data.length > 0) {
-                        var options = "";
-                        for (var i = 0; i < data.length; i++) {
-                            $("#TIC_EST_ID").append("<option value=" + data[i].EST_ID + ">" + data[i].EST_Descripcion + "</option>");
-                        }
-                    }
-
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-        }
-
-        listarEstado();
-
-        $("#consultar").on("click", function () {
-            $("#tblGrilla").dataTable().api().ajax.reload();
-        });
-
 		function llenarTablaGrilla() {
             tblGrilla = $("#tblGrilla")
 				.DataTable({

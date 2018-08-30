@@ -53,6 +53,10 @@ go
 SELECT * FROM UsuarioCliente
 go
 
+INSERT INTO TipoUsuario (TUS_Descripcion)VALUES('Clientes');
+INSERT INTO TipoUsuario (TUS_Descripcion)VALUES('Analista');
+go
+
 INSERT INTO Cargo(CAR_Descripcion) VALUES('Especialista TI')
 INSERT INTO Cargo(CAR_Descripcion) VALUES('Técnico Operador')
 INSERT INTO Cargo(CAR_Descripcion) VALUES('Técnico TI')

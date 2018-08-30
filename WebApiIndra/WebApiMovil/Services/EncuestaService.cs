@@ -198,24 +198,27 @@ namespace WebApiMovil.Services
             {
                 using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
+
                     conection.Open();
 
                     List<TipoEncuestaPregunta> pregunta = entidad.Pregunta;                   
 
                     //1.Insertamos la Encuesta
                     string sqlencuesta = "INSERT INTO Encuesta(ENC_Titulo,ENC_Descripcion,ENC_TEN_Id, ENC_TUS_ID, ENC_EMP_ID, ENC_FechaCrecion, ENC_UsuarioCreacion)VALUES" +
-                                         "('"+entidad.ENC_Titulo + "','" + entidad.ENC_Descripcion + "'," + entidad.ERE_ENC_ID + "," + entidad.ENC_TUS_ID + "," + entidad.ENC_EMP_ID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.ENC_UsuarioCreacion + "')";
+                                         "('"+entidad.ENC_Titulo + "','" + entidad.ENC_Descripcion + "'," + entidad.ENC_TEN_Id + "," + entidad.ENC_TUS_ID + "," + entidad.ENC_EMP_ID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.ENC_UsuarioCreacion + "')";
                     using (SqlCommand command = new SqlCommand(sqlencuesta, conection))
                     {
                         command.ExecuteReader();
+                        command.Dispose();
                     }
+                    
 
                     //2. Consultamos el ultimo ID de la Encuesta
                     int ENC_ID = 0;
                     string sqllastid = "SELECT MAX(ENC_ID)AS ENC_ID FROM Encuesta";
-                    using (SqlCommand command = new SqlCommand(sqllastid, conection))
+                    using (SqlCommand command2 = new SqlCommand(sqllastid, conection))
                     {
-                        using (SqlDataReader dr = command.ExecuteReader())
+                        using (SqlDataReader dr = command2.ExecuteReader())
                         {
                             if (dr.HasRows)
                             {
@@ -232,17 +235,17 @@ namespace WebApiMovil.Services
                     {
                         string sqlin =  "INSERT INTO EncuestaRespuesta(ERE_ENC_ID,ERE_TEP_ID,ERE_Respuesta,ERE_FechaRespuesta)VALUES" +
                                         "('"+ ENC_ID + "','" + pregunta[i].TEP_ID + "','" + pregunta[i].TEP_Respuesta + "','" + DateTime.Now + "')";
-                        using (SqlCommand command = new SqlCommand(sqlin, conection))
+                        using (SqlCommand command3 = new SqlCommand(sqlin, conection))
                         {
-                            command.ExecuteReader();
+                            command3.ExecuteReader();
                         }
                     }
 
                     //Actuaizamos el ticket con el numero de la encuesta
                     string sqlup = "UPDATE Ticket SET TIC_ENC_ID="+ ENC_ID + "  WHERE TIC_ID=" + entidad.TIC_ID;
-                    using (SqlCommand command = new SqlCommand(sqlup, conection))
+                    using (SqlCommand command4 = new SqlCommand(sqlup, conection))
                     {
-                        command.ExecuteReader();
+                        command4.ExecuteReader();
                     }
 
 

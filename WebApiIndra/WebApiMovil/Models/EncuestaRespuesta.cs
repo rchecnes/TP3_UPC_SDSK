@@ -16,6 +16,9 @@ namespace WebApiMovil.Models
         public int ERE_ENC_ID { get; set; }
 
         [DataMember]
+        public int ENC_TEN_Id { get; set; }        
+
+        [DataMember]
         public DateTime ERE_FechaRespuesta { get; set; }
 
         [DataMember]
