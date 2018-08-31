@@ -31,6 +31,9 @@ namespace WebApiMovil.Models
         public int TIC_USU_ID { get; set; }
 
         [DataMember]
+        public string USU_IDLogin { get; set; }
+
+        [DataMember]
         public string USU_Nombre { get; set; }
 
         [DataMember]

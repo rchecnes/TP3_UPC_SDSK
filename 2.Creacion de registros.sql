@@ -98,7 +98,11 @@ INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_Fl
 go
 
 INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
-VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,1)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
 go
 SELECT * FROM Ticket
 go

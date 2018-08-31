@@ -13,9 +13,13 @@
 
             <!-- form start -->
             <form role="form" id="form_pregunta">
-                <div class="box-body">
-                    
-                </div>
+				<div class="box-body">
+					<p><b>USUARIO: </b><label id="USU_ID" style="font-weight: 100"></label></p>
+					<p><b>Nombre: </b><label id="USU_Nombre" style="font-weight: 100"></label></p>
+					<p><b>Descripción del Ticket: </b><label id="TIC_Descripcion" style="font-weight: 100"></label></p>
+					<p><b><u>Estimado Usuario debe responder las siguientes preguntas:</u></b></p>
+					<div id="lista_pregunta"></div>
+				</div>
                 <!-- /.box-body -->
 
                 <div class="box-footer" style="text-align: center;">
@@ -28,6 +32,30 @@
 </div>
 <script>
 $(document).ready(function () {
+
+	mostrarDatosTicket = function () {
+		$.ajax({
+			url: $("#UrlServicio").val() + "/api/Ticket/EditarTicket",
+			type: "POST",
+			dataType: "json",
+			data: { TIC_ID:@ViewBag.TIC_ID },
+			success: function (data) {
+				var html = "";
+
+				if (data != null) {
+					$("#USU_ID").html(data[0].TIC_USU_ID);
+					$("#USU_Nombre").html(data[0].USU_Nombre);
+					$("#TIC_Descripcion").html(data[0].TIC_Descripcion);
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				console.log(xhr.status);
+				console.log(thrownError);
+			}
+		});
+	}
+
+	mostrarDatosTicket();
 
     listarPregunta = function () {
         $.ajax({
@@ -53,7 +81,7 @@ $(document).ready(function () {
                 } else {
                     html += "<h3>No hay preguntas para este periodo</h3>";
                 }
-                $("#form_pregunta .box-body").html(html);
+				$("#form_pregunta #lista_pregunta").html(html);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.status);
@@ -105,7 +133,7 @@ $(document).ready(function () {
                                 type: "POST",
                                 data: procesoData,//$("#form_registro").serialize(),
                                 success: function (data) {
-                                    window.location.href = "@Url.Action("Index", "Responsable")";
+                                    window.location.href = "@Url.Action("Index", "Encuesta")";
                                 },
                                 error: function (xhr, ajaxOptions, thrownError) {
                                     console.log(xhr.status);

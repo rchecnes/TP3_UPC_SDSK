@@ -269,6 +269,49 @@ namespace WebApiIndra.Services
             {
                 throw (ex);
             }
-        }        
+        }
+        public List<Ticket> EditarTicket(Ticket entidad)
+        {
+            List<Ticket> Lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    string sqltik = "SELECT * FROM Ticket t " +
+                                    " INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID)"+
+                                    " WHERE TIC_ID=" + entidad.TIC_ID;
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection))
+                    {
+                        
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                Lista = new List<Ticket>();
+                                while (dr.Read())
+                                {
+                                    Ticket item = new Ticket();
+                                    item.TIC_ID = dr.GetInt32(dr.GetOrdinal("TIC_ID"));
+                                    item.TIC_Descripcion = dr.GetString(dr.GetOrdinal("TIC_Descripcion"));
+                                    item.TIC_USU_ID = dr.GetInt32(dr.GetOrdinal("TIC_USU_ID"));
+                                    item.USU_Nombre = dr.GetString(dr.GetOrdinal("USU_Nombre"));
+                                    Lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
     }
 }

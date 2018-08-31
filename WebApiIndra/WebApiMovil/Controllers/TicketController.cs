@@ -75,5 +75,19 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost]
+        [ActionName("EditarTicket")]
+        public List<Ticket> EditarTicket(Ticket entidad)
+        {
+            try
+            {
+                return ticketService.EditarTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        
     }
 }

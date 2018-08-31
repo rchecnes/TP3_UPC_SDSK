@@ -24,7 +24,8 @@ namespace WebApiMovil.Services
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
-                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3 AND t.TIC_EMP_ID="+entidad.TIC_EMP_ID+ " AND t.TIC_SOL_ID="+ entidad.TIC_SOL_ID;
+                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3 AND t.TIC_EMP_ID=" + entidad.TIC_EMP_ID + " AND t.TIC_SOL_ID=" + entidad.TIC_SOL_ID +
+                                   " AND t.TIC_ENC_ID IS NULL";
 
                     string condition = "";
                     if (entidad.TIC_ID != 0)
@@ -79,7 +80,8 @@ namespace WebApiMovil.Services
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
-                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3";
+                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3"+
+                                   " AND t.TIC_ENC_ID IS NULL";
                     using (SqlCommand command = new SqlCommand(querytot + condition, conection))
                     {
                         using (SqlDataReader dr = command.ExecuteReader())
@@ -194,39 +196,37 @@ namespace WebApiMovil.Services
         public string ResponderEncuesta(EncuestaRespuesta entidad)
         {
 
-            try
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
             {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+
+                try
                 {
-
-                    conection.Open();
-
+                
                     List<TipoEncuestaPregunta> pregunta = entidad.Pregunta;                   
 
                     //1.Insertamos la Encuesta
                     string sqlencuesta = "INSERT INTO Encuesta(ENC_Titulo,ENC_Descripcion,ENC_TEN_Id, ENC_TUS_ID, ENC_EMP_ID, ENC_FechaCrecion, ENC_UsuarioCreacion)VALUES" +
                                          "('"+entidad.ENC_Titulo + "','" + entidad.ENC_Descripcion + "'," + entidad.ENC_TEN_Id + "," + entidad.ENC_TUS_ID + "," + entidad.ENC_EMP_ID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.ENC_UsuarioCreacion + "')";
-                    using (SqlCommand command = new SqlCommand(sqlencuesta, conection))
+                    using (SqlCommand command = new SqlCommand(sqlencuesta, conection, tran))
                     {
-                        command.ExecuteReader();
-                        command.Dispose();
+                        command.ExecuteNonQuery();
                     }
                     
 
                     //2. Consultamos el ultimo ID de la Encuesta
                     int ENC_ID = 0;
                     string sqllastid = "SELECT MAX(ENC_ID)AS ENC_ID FROM Encuesta";
-                    using (SqlCommand command2 = new SqlCommand(sqllastid, conection))
+                    using (SqlCommand command = new SqlCommand(sqllastid, conection, tran))
                     {
-                        using (SqlDataReader dr = command2.ExecuteReader())
+                        using (SqlDataReader dr = command.ExecuteReader())
                         {
-                            if (dr.HasRows)
+                            while (dr.Read())
                             {
-                                while (dr.Read())
-                                {
-                                    ENC_ID = dr.GetInt32(dr.GetOrdinal("ENC_ID"));
-                                }
+                                ENC_ID = dr.GetInt32(dr.GetOrdinal("ENC_ID"));
                             }
+                            
                         }
                     }
 
@@ -235,27 +235,29 @@ namespace WebApiMovil.Services
                     {
                         string sqlin =  "INSERT INTO EncuestaRespuesta(ERE_ENC_ID,ERE_TEP_ID,ERE_Respuesta,ERE_FechaRespuesta)VALUES" +
                                         "('"+ ENC_ID + "','" + pregunta[i].TEP_ID + "','" + pregunta[i].TEP_Respuesta + "','" + DateTime.Now + "')";
-                        using (SqlCommand command3 = new SqlCommand(sqlin, conection))
+                        using (SqlCommand command = new SqlCommand(sqlin, conection, tran))
                         {
-                            command3.ExecuteReader();
+                            command.ExecuteNonQuery();
                         }
                     }
 
                     //Actuaizamos el ticket con el numero de la encuesta
                     string sqlup = "UPDATE Ticket SET TIC_ENC_ID="+ ENC_ID + "  WHERE TIC_ID=" + entidad.TIC_ID;
-                    using (SqlCommand command4 = new SqlCommand(sqlup, conection))
+                    using (SqlCommand command = new SqlCommand(sqlup, conection, tran))
                     {
-                        command4.ExecuteReader();
+                        command.ExecuteNonQuery();
                     }
 
-
+                    tran.Commit();
                     conection.Close();
+                    return "ok";
                 }
-                return "ok";
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
             }
         }
     }
