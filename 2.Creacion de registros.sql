@@ -97,12 +97,12 @@ go
 INSERT INTO ENCUESTA(ENC_Nombre,ENC_Descripcion,ENC_FlagActivo,ENC_TEN_ID,ENC_FlagEnvio) VALUES('Encuesta 2','Encuesta de satisfacción anual',1,1,0)*/
 go
 
-INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
-VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
-INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
-VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
-INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID)
-VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3);
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID, TIC_RES_ID)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3,1);
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID, TIC_RES_ID)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3,1);
+INSERT INTO Ticket(TIC_PRI_ID,TIC_PROB_ID,TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_FechaCierre, TIC_EST_ID, TIC_RES_ID)
+VALUES(1,1,1,1,1,1,'Prueba',GETDATE(),null,3,1);
 go
 SELECT * FROM Ticket
 go

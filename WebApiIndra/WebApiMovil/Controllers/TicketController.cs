@@ -20,12 +20,12 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [ActionName("ListadoTicket")]
-        public List<Ticket> ListadoTicket(Ticket entidad)
+        [ActionName("ListadoGrillaTicket")]
+        public List<Ticket> ListadoGrillaTicket(Ticket entidad)
         {
             try
             {
-                return ticketService.ListadoTicket(entidad);
+                return ticketService.ListadoGrillaTicket(entidad);
             }
             catch (Exception)
             {
@@ -62,6 +62,20 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [ActionName("ListadoServicio")]
+        public List<Servicio> ListadoServicio()
+        {
+            try
+            {
+                return ticketService.ListadoServicio();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
         [ActionName("ListadoSolucion")]
         public List<TipoSolucion> ListadoSolucion()
         {
@@ -88,6 +102,76 @@ namespace WebApi.Controllers
                 throw;
             }
         }
-        
+
+        [HttpPost]
+        [ActionName("ListadoEmpresa")]
+        public List<Empresa> ListadoEmpresa(Empresa entidad)
+        {
+            try
+            {
+                return ticketService.ListadoEmpresa(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoUsuarioSolicitante")]
+        public List<UsuarioCliente> ListadoUsuarioSolicitante(Empresa entidad)
+        {
+            try
+            {
+                return ticketService.ListadoUsuarioSolicitante(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoSelectTipoSolucion")]
+        public List<TipoSolucion> ListadoSelectTipoSolucion()
+        {
+            try
+            {
+                return ticketService.ListadoSelectTipoSolucion();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoSelectUsuarioResponsable")]
+        public List<UsuarioResponsable> ListadoSelectUsuarioResponsable(UsuarioResponsable entidad)
+        {
+            try
+            {
+                return ticketService.ListadoSelectUsuarioResponsable(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("InsertarTicket")]
+        public string InsertarTicket(Ticket entidad)
+        {
+            try
+            {
+                return ticketService.InsertarTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

@@ -16,6 +16,9 @@ namespace WebApiMovil.Models
         public int TIC_PROB_ID { get; set; }
 
         [DataMember]
+        public int TIC_PRI_ID { get; set; }
+        
+        [DataMember]
         public int TIC_SOL_ID { get; set; }
 
         [DataMember]

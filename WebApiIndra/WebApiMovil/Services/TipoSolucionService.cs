@@ -363,7 +363,6 @@ namespace WebApiIndra.Services
 
             return "ok";
         }
-
         public string EliminarTipoSolucion(TipoSolucion entidad)
         {
             try

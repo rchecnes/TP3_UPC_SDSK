@@ -11,7 +11,7 @@ namespace WebApiIndra.Services
 {
     public class TicketService
     {
-        public List<Ticket> ListadoTicket(Ticket entidad)
+        public List<Ticket> ListadoGrillaTicket(Ticket entidad)
         {
             List<Ticket> Lista = null;
             try
@@ -264,6 +264,216 @@ namespace WebApiIndra.Services
                     conection.Close();
                 }
                 return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<Empresa> ListadoEmpresa(Empresa entidad)
+        {
+            List<Empresa> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM Empresa WHERE EMP_RazonSocial LIKE '%" + entidad.EMP_RazonSocial+"%'", conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<Empresa>();
+                                while (dr.Read())
+                                {
+                                    Empresa item = new Empresa();
+                                    item.EMP_ID = dr.GetInt32(dr.GetOrdinal("EMP_ID"));
+                                    item.EMP_RUC = dr.GetString(dr.GetOrdinal("EMP_RUC"));
+                                    item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
+                                    item.label = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
+                                    item.value = dr.GetInt32(dr.GetOrdinal("EMP_ID"));
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<UsuarioCliente> ListadoUsuarioSolicitante(Empresa entidad)
+        {
+            List<UsuarioCliente> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM UsuarioCliente WHERE USU_EMP_ID="+entidad.EMP_ID, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<UsuarioCliente>();
+                                while (dr.Read())
+                                {
+                                    UsuarioCliente item = new UsuarioCliente();
+                                    item.USU_ID = dr.GetInt32(dr.GetOrdinal("USU_ID"));
+                                    item.USU_Nombre = dr.GetString(dr.GetOrdinal("USU_Nombre"));
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<Servicio> ListadoServicio()
+        {
+            List<Servicio> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM Servicio", conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<Servicio>();
+                                while (dr.Read())
+                                {
+                                    Servicio item = new Servicio();
+                                    item.SER_ID = dr.GetInt32(dr.GetOrdinal("SER_ID"));
+                                    item.SER_Descripcion = dr.GetString(dr.GetOrdinal("SER_Descripcion"));
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<TipoSolucion> ListadoSelectTipoSolucion()
+        {
+            List<TipoSolucion> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM TipoSolucion WHERE SOL_FlagActivo=1", conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<TipoSolucion>();
+                                while (dr.Read())
+                                {
+                                    TipoSolucion item = new TipoSolucion();
+                                    item.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_ID"));
+                                    item.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<UsuarioResponsable> ListadoSelectUsuarioResponsable(UsuarioResponsable entidad)
+        {
+            List<UsuarioResponsable> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM UsuarioResponsable WHERE RES_FlagActivo=1 AND RES_Nombre LIKE '%"+entidad.RES_Nombre+"%'", conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<UsuarioResponsable>();
+                                while (dr.Read())
+                                {
+                                    UsuarioResponsable item = new UsuarioResponsable();
+                                    item.RES_ID = dr.GetInt32(dr.GetOrdinal("RES_ID"));
+                                    item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
+                                    item.label = dr.GetString(dr.GetOrdinal("RES_Nombre"));
+                                    item.value = dr.GetInt32(dr.GetOrdinal("RES_ID"));
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public string InsertarTicket(Ticket entidad)
+        {
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    string sqltik = "INSERT INTO Ticket " +
+                                    " (TIC_PRI_ID, TIC_PROB_ID, TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_RES_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_EST_ID) VALUES" +
+                                    "('"+entidad.TIC_PRI_ID+ "', '" + entidad.TIC_PROB_ID + "','1','" + entidad.TIC_SER_ID + "','" + entidad.TIC_EMP_ID + "','" + entidad.TIC_USU_ID + "','" + entidad.TIC_RES_ID + "','" + entidad.TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "','1')";
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    conection.Close();
+                }
+                return "ok";
             }
             catch (Exception ex)
             {

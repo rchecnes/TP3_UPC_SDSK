@@ -37,5 +37,11 @@ namespace WebApiMovil.Models
 
         [DataMember]
         public string NIV_Descripcion { get; set; }
+
+        [DataMember]
+        public int value { get; set; }
+
+        [DataMember]
+        public string label { get; set; }
     }
 }

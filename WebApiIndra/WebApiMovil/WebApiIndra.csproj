@@ -236,6 +236,7 @@
     <Compile Include="Models\Cargo.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Cliente.cs" />
+    <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\Encargado.cs" />
     <Compile Include="Models\Equipo.cs" />
     <Compile Include="Models\Estado.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Models\Prioridad.cs" />
     <Compile Include="Models\EncuestaRespuesta.cs" />
     <Compile Include="Models\Responsable.cs" />
+    <Compile Include="Models\Servicio.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TipoEncuesta.cs" />
     <Compile Include="Models\TipoEncuestaPregunta.cs" />
@@ -253,6 +255,7 @@
     <Compile Include="Models\TipoSolucion.cs" />
     <Compile Include="Models\Trabajador.cs" />
     <Compile Include="Models\Ubigeo.cs" />
+    <Compile Include="Models\UsuarioCliente.cs" />
     <Compile Include="Models\UsuarioResponsable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\OAuthAppProvider.cs" />

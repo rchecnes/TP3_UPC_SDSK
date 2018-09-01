@@ -308,7 +308,6 @@ namespace WebApiMovil.Services
 
             return "ok";
         }
-
         public string EliminarUsuarioResponsable(UsuarioResponsable entidad)
         {
             try
