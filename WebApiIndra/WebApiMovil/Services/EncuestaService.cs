@@ -24,7 +24,7 @@ namespace WebApiMovil.Services
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
-                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3 AND t.TIC_EMP_ID=" + entidad.TIC_EMP_ID + " AND t.TIC_SOL_ID=" + entidad.TIC_SOL_ID +
+                                   "WHERE t.TIC_FlagActivo=1 AND t.TIC_EST_ID=3 AND t.TIC_USU_ID=" + entidad.TIC_USU_ID +
                                    " AND t.TIC_ENC_ID IS NULL";
 
                     string condition = "";

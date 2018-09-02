@@ -57,9 +57,9 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label for="nombre">Usuario Responsable:</label>
-                                <input type="text" class="form-control" id="RES_Nombre" name="RES_Nombre" autocomplete="off" placeholder="Buscar Responsable" required>
-                                <input type="hidden" class="form-control" id="TIC_RES_ID" name="TIC_RES_ID" autocomplete="off" placeholder="Buscar Empresa">
+                                <label for="nombre">Usuario Responsable:</label><br />
+                                <label>@System.Configuration.ConfigurationManager.AppSettings["USUS_Login"]</label>
+                                <input type="hidden" class="form-control" id="TIC_RES_ID" name="TIC_RES_ID" autocomplete="off" value="@System.Configuration.ConfigurationManager.AppSettings["USUS_ID"]">
                             </div>
                         </div>
                     </div>
@@ -75,8 +75,8 @@
                 <!-- /.box-body -->
 
                 <div class="box-footer" style="text-align: center;">
-                    <button type="submit" class="btn btn-primary btn-lg">Aceptar</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="@Url.Action("Index", "Responsable")" class="btn btn-default btn-lg">Cancelar</a>
+                    <button type="submit" class="btn btn-primary btn-lg">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="@Url.Action("Index", "Ticket")" class="btn btn-default btn-lg">Cerrar</a>
                 </div>
 </form>
         </div>

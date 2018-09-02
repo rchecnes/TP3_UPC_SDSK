@@ -28,6 +28,9 @@ namespace WebApiMovil.Models
         public int TIC_EMP_ID { get; set; }
 
         [DataMember]
+        public string EMP_Nombre { get; set; }
+
+        [DataMember]
         public string EMP_RazonSocial { get; set; }
 
         [DataMember]

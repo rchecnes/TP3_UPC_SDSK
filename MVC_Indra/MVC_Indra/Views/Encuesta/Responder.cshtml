@@ -5,8 +5,6 @@
     ViewBag.TitlePag = "Responder Encuesta Ticket Nro. " + ViewBag.TIC_ID;
 }
 <input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
-<input type="hidden" id="IdEmpleado" value="@System.Configuration.ConfigurationManager.AppSettings["IdEmpleado"]" />
-<input type="hidden" id="IdRol" value="@System.Configuration.ConfigurationManager.AppSettings["IdRol"]" />
 <div class="row">
     <div class="col-lg-12">
         <div class="box box-primary">
@@ -16,6 +14,7 @@
 				<div class="box-body">
 					<p><b>USUARIO: </b><label id="USU_ID" style="font-weight: 100"></label></p>
 					<p><b>Nombre: </b><label id="USU_Nombre" style="font-weight: 100"></label></p>
+                    <input type="hidden" name="TIC_EMP_ID" id="TIC_EMP_ID"/>
 					<p><b>Descripción del Ticket: </b><label id="TIC_Descripcion" style="font-weight: 100"></label></p>
 					<p><b><u>Estimado Usuario debe responder las siguientes preguntas:</u></b></p>
 					<div id="lista_pregunta"></div>
@@ -45,7 +44,8 @@ $(document).ready(function () {
 				if (data != null) {
 					$("#USU_ID").html(data[0].TIC_USU_ID);
 					$("#USU_Nombre").html(data[0].USU_Nombre);
-					$("#TIC_Descripcion").html(data[0].TIC_Descripcion);
+                    $("#TIC_Descripcion").html(data[0].TIC_Descripcion);
+                    $("#TIC_EMP_ID").val(data[0].TIC_EMP_ID);
 				}
 			},
 			error: function (xhr, ajaxOptions, thrownError) {
@@ -122,10 +122,10 @@ $(document).ready(function () {
                                 'Pregunta': Pregunta,
                                 ENC_Titulo: 'Prueba',
                                 ENC_Descripcion: 'Prueba',
-                                ENC_TUS_ID: 1,//parametro
-                                ENC_EMP_ID: 1,//parametro
+                                ENC_TUS_ID: 1,//Cliente
+                                ENC_EMP_ID: $("#TIC_EMP_ID").val(),//parametro
                                 TIC_ID:@ViewBag.TIC_ID,
-                                ENC_UsuarioCreacion: 'RCHECNES'//parametro
+                                ENC_UsuarioCreacion: "@System.Configuration.ConfigurationManager.AppSettings["USUS_Login"]"
                             };
 
                             $.ajax({

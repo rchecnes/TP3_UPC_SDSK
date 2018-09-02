@@ -21,10 +21,10 @@ namespace WebApiIndra.Services
                     conection.Open();
 
                     string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY " + entidad.pvSortColumn + " " + entidad.pvSortOrder + ") as row FROM dbo.Ticket t " +
-                                   "INNER JOIN TipoSolucion ts ON(t.TIC_SOL_ID=ts.SOL_ID) " +
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
+                                   "INNER JOIN UsuarioResponsable ur ON(t.TIC_RES_ID=ur.RES_ID) " +
                                    "WHERE t.TIC_FlagActivo=1";
 
                     string condition = "";
@@ -75,11 +75,11 @@ namespace WebApiIndra.Services
 
                     //Hacemos un conteo de los registro
                     int totRecord = 0;
-                    string querytot = "SELECT COUNT(ts.SOL_ID)AS Cantidad FROM dbo.Ticket t " +
-                                   "INNER JOIN TipoSolucion ts ON(t.TIC_SOL_ID=ts.SOL_ID) " +
+                    string querytot = "SELECT COUNT(t.TIC_ID)AS Cantidad FROM dbo.Ticket t " +
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
+                                   "INNER JOIN UsuarioResponsable ur ON(t.TIC_RES_ID=ur.RES_ID) " +
                                    "WHERE t.TIC_FlagActivo=1";
                     using (SqlCommand command = new SqlCommand(querytot + condition, conection))
                     {
@@ -116,7 +116,7 @@ namespace WebApiIndra.Services
                                     }*/
                                     item.TIC_FechaRegistro = dr.GetDateTime(dr.GetOrdinal("TIC_FechaRegistro")).ToString("dd/MM/yyyy");
                                     item.EST_Descrpcion = dr.GetString(dr.GetOrdinal("EST_Descripcion"));
-                                    item.RES_Nombre = "ANONIMO";
+                                    item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
 
                                     string editar = "<a title='Editar' href='#' class='editar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";                                    
                                     string abrir = "<a title='Abrir Ticket' href='#' class='abrir' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-ok fa-1x'></span></a>";
@@ -457,27 +457,57 @@ namespace WebApiIndra.Services
         }
         public string InsertarTicket(Ticket entidad)
         {
-            try
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
             {
-                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+
+                try
                 {
-                    conection.Open();
-
+                    
                     string sqltik = "INSERT INTO Ticket " +
-                                    " (TIC_PRI_ID, TIC_PROB_ID, TIC_SOL_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_RES_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_EST_ID) VALUES" +
-                                    "('"+entidad.TIC_PRI_ID+ "', '" + entidad.TIC_PROB_ID + "','1','" + entidad.TIC_SER_ID + "','" + entidad.TIC_EMP_ID + "','" + entidad.TIC_USU_ID + "','" + entidad.TIC_RES_ID + "','" + entidad.TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "','1')";
+                                    " (TIC_PRI_ID, TIC_PROB_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_RES_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_EST_ID) VALUES" +
+                                    "('" + entidad.TIC_PRI_ID + "', '" + entidad.TIC_PROB_ID + "','" + entidad.TIC_SER_ID + "','" + entidad.TIC_EMP_ID + "','" + entidad.TIC_USU_ID + "','" + entidad.TIC_RES_ID + "','" + entidad.TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "','1')";
 
-                    using (SqlCommand command = new SqlCommand(sqltik, conection))
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
                     {
                         command.ExecuteNonQuery();
                     }
+
+                    //Consultamos id del ultimo ticket
+                    int TIC_ID = 0;
+                    string sqllastid = "SELECT MAX(TIC_ID)AS TIC_ID FROM Ticket";
+                    using (SqlCommand command = new SqlCommand(sqllastid, conection, tran))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                TIC_ID = dr.GetInt32(dr.GetOrdinal("TIC_ID"));
+                            }
+
+                        }
+                    }
+
+                    //Insertamos el historico
+                    string sqlhis = "INSERT INTO HistorialTicket " +
+                                    "(HIS_TIC_ID,HIS_PRI_ID,HIS_RES_ID,HIS_FechaCambio,HIS_Descripcion)VALUES " +
+                                    "('" + TIC_ID + "','"+entidad.TIC_PRI_ID+ "','" + entidad.TIC_RES_ID + "','"+ DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.TIC_Descripcion +"')";
+                    using (SqlCommand command = new SqlCommand(sqlhis, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    tran.Commit();
                     conection.Close();
+                    return "ok";
                 }
-                return "ok";
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
             }
         }
         public List<Ticket> EditarTicket(Ticket entidad)
@@ -491,6 +521,8 @@ namespace WebApiIndra.Services
 
                     string sqltik = "SELECT * FROM Ticket t " +
                                     " INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID)"+
+                                    " INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID)" +
+                                    " INNER JOIN UsuarioResponsable ur ON(t.TIC_RES_ID=ur.RES_ID)" +
                                     " WHERE TIC_ID=" + entidad.TIC_ID;
 
                     using (SqlCommand command = new SqlCommand(sqltik, conection))
@@ -505,9 +537,16 @@ namespace WebApiIndra.Services
                                 {
                                     Ticket item = new Ticket();
                                     item.TIC_ID = dr.GetInt32(dr.GetOrdinal("TIC_ID"));
+                                    item.TIC_SER_ID = dr.GetInt32(dr.GetOrdinal("TIC_SER_ID"));
+                                    item.TIC_PROB_ID = dr.GetInt32(dr.GetOrdinal("TIC_PROB_ID"));
+                                    item.TIC_PRI_ID = dr.GetInt32(dr.GetOrdinal("TIC_PRI_ID"));
+                                    item.TIC_RES_ID = dr.GetInt32(dr.GetOrdinal("TIC_RES_ID"));
+                                    item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
                                     item.TIC_Descripcion = dr.GetString(dr.GetOrdinal("TIC_Descripcion"));
                                     item.TIC_USU_ID = dr.GetInt32(dr.GetOrdinal("TIC_USU_ID"));
                                     item.USU_Nombre = dr.GetString(dr.GetOrdinal("USU_Nombre"));
+                                    item.TIC_EMP_ID = dr.GetInt32(dr.GetOrdinal("TIC_EMP_ID"));
+                                    item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
                                     Lista.Add(item);
                                 }
                             }
@@ -517,6 +556,137 @@ namespace WebApiIndra.Services
                     conection.Close();
                 }
                 return Lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public string ActualizarTicket(Ticket entidad)
+        {
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+            {
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+                try
+                {
+                    string sqltik = "UPDATE Ticket " +
+                                    " SET TIC_PRI_ID=" + entidad.TIC_PRI_ID + ", TIC_RES_ID=" + entidad.TIC_RES_ID + ", TIC_Descripcion='" + entidad.TIC_Descripcion + "'" +
+                                    " WHERE TIC_ID=" + entidad.TIC_ID;
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    //Insertamos el historico
+                    string sqlhis = "INSERT INTO HistorialTicket" +
+                                    "(HIS_TIC_ID,HIS_PRI_ID,HIS_RES_ID,HIS_FechaCambio,HIS_Descripcion)VALUES" +
+                                    "('" + entidad.TIC_ID + "','" + entidad.TIC_PRI_ID + "','" + entidad.TIC_RES_ID + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.TIC_Descripcion + "')";
+                    using (SqlCommand command = new SqlCommand(sqlhis, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    tran.Commit();
+                    conection.Close();
+                    return "ok";
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
+            }
+        }
+        public List<TipoSolucion> ListadoTipoSolucionProblema(TipoSolucion entidad)
+        {
+            List<TipoSolucion> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM TipoSolucion WHERE SOL_PROB_ID="+entidad.SOL_PROB_ID, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<TipoSolucion>();
+                                while (dr.Read())
+                                {
+                                    TipoSolucion item = new TipoSolucion();
+                                    item.SOL_ID = dr.GetInt32(dr.GetOrdinal("SOL_ID"));
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_Nombre"))) {
+                                        item.SOL_Nombre = dr.GetString(dr.GetOrdinal("SOL_Nombre"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_RutaArchivo")))
+                                    {
+                                        item.SOL_RutaArchivo = dr.GetString(dr.GetOrdinal("SOL_RutaArchivo"));
+                                    }
+                                    if (!dr.IsDBNull(dr.GetOrdinal("SOL_NombreArchivo")))
+                                    {
+                                        item.SOL_NombreArchivo = dr.GetString(dr.GetOrdinal("SOL_NombreArchivo"));
+                                    }
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+                    conection.Close();
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<HistorialTicket> ListadoHistorialTicket(HistorialTicket entidad)
+        {
+            List<HistorialTicket> lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+
+                    string sql = "SELECT * FROM HistorialTicket ht " +
+                                 "INNER JOIN Prioridad p ON(ht.HIS_PRI_ID=p.PRI_ID) " +
+                                 "INNER JOIN UsuarioResponsable ur ON(ht.HIS_RES_ID=ur.RES_ID) " +
+                                 "WHERE HIS_TIC_ID=" + entidad.HIS_TIC_ID;
+
+                    using (SqlCommand command = new SqlCommand(sql, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                lista = new List<HistorialTicket>();
+                                while (dr.Read())
+                                {
+                                    HistorialTicket item = new HistorialTicket();
+                                    item.HIS_TIC_ID = dr.GetInt32(dr.GetOrdinal("HIS_TIC_ID"));
+                                    item.PRI_Descripcion = dr.GetString(dr.GetOrdinal("PRI_Descripcion"));
+                                    item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
+                                    if (!dr.IsDBNull(dr.GetOrdinal("HIS_Descripcion")))
+                                    {
+                                        item.HIS_Descripcion = dr.GetString(dr.GetOrdinal("HIS_Descripcion"));
+                                    }
+                                    item.HIS_FechaCambio = dr.GetDateTime(dr.GetOrdinal("HIS_FechaCambio")).ToString("dd/MM/yyyy");
+                                    
+                                    lista.Add(item);
+                                }
+                            }
+                        }
+                    }
+                    conection.Close();
+                }
+                return lista;
             }
             catch (Exception ex)
             {

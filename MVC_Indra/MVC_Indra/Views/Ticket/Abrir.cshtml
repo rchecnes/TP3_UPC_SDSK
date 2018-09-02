@@ -1,0 +1,259 @@
+﻿
+@{
+    ViewBag.Title = "Nuevo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Abrir Ticket";
+}
+
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_registro">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label for="nombre">Nro. Ticket:</label>
+                                <input type="text" class="form-control" id="TIC_TEM_ID" name="TIC_TEM_ID" autocomplete="off" disabled>
+                                <input type="hidden" class="form-control" id="TIC_ID" name="TIC_ID" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Empresa:</label>
+                                <input type="text" class="form-control" id="EMP_RazonSocial" name="EMP_RazonSocial" autocomplete="off" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="nombre">Usuario Solicitante:</label>
+                                <input type="text" class="form-control" id="USU_Nombre" name="USU_Nombre" autocomplete="off" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="nombre">Servicio:</label>
+                                <select id="TIC_SER_ID" name="TIC_SER_ID" class="form-control" required>
+                                    <option value="">[Seleccionar]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Tipo Problema:</label>
+                                <input type="hidden" name="PROB_ID" id="PROB_ID" />
+                                <select id="TIC_PROB_ID" name="TIC_PROB_ID" class="form-control" required>
+                                    <option value="">[Seleccionar]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Prioridad:</label>
+                                <select id="TIC_PRI_ID" name="TIC_PRI_ID" class="form-control" required>
+                                    <option value="">[Seleccionar]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Usuario Responsable:</label>
+                                <input type="text" class="form-control" id="RES_Nombre" name="RES_Nombre" autocomplete="off" placeholder="Buscar Responsable" required>
+                                <input type="hidden" class="form-control" id="TIC_RES_ID" name="TIC_RES_ID" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Descripción:</label>
+                                <textarea id="TIC_Descripcion" name="TIC_Descripcion" class="form-control" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="solucion" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descripción</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer" style="text-align: center;">
+                    <a href="@Url.Action("Index", "Ticket")" class="btn btn-default btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    editarTicket = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Ticket/EditarTicket",
+            type: "POST",
+            dataType: "json",
+            data: {TIC_ID:@ViewBag.TIC_ID},
+            success: function (data) {
+                $("#TIC_ID").val(data[0].TIC_ID);
+                $("#TIC_TEM_ID").val(data[0].TIC_ID);
+                $("#EMP_RazonSocial").val(data[0].EMP_RazonSocial);
+                $("#USU_Nombre").val(data[0].USU_Nombre);
+                $("#TIC_SER_ID").val(data[0].TIC_SER_ID).attr("disabled", "disabled");
+                $("#TIC_PROB_ID").val(data[0].TIC_PROB_ID).attr("disabled", "disabled");
+                $("#PROB_ID").val(data[0].TIC_PROB_ID);
+                $("#TIC_PRI_ID").val(data[0].TIC_PRI_ID).attr("disabled", "disabled");
+                $("#TIC_Descripcion").val(data[0].TIC_Descripcion).attr("disabled", "disabled");
+                $("#TIC_RES_ID").val(data[0].TIC_RES_ID).attr("disabled", "disabled");
+                $("#RES_Nombre").val(data[0].RES_Nombre).attr("disabled", "disabled");
+
+                listarTipoSolucion();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    $("#RES_Nombre").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: $("#UrlServicio").val() + '/api/Ticket/ListadoSelectUsuarioResponsable',
+                type: "POST",
+                datatype: 'JSON',
+                data: "RES_Nombre=" + request['term'],
+                success: function (data) {
+                    response($.map(data, function (el) {
+                        return el;
+                    }));
+                }
+            });
+        },
+        select: function (event, ui) {
+            $("#TIC_RES_ID").val(ui.item.RES_ID);
+            this.value = ui.item.label;
+            event.preventDefault();
+        }
+    });
+
+    listarServicio = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Ticket/ListadoServicio",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#TIC_SER_ID").append("<option value=" + data[i].SER_ID + ">" + data[i].SER_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarTipoProblema = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/TipoSolucion/ListadoTipoProblema",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#TIC_PROB_ID").append("<option value=" + data[i].PROB_ID + ">" + data[i].PROB_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarPrioridad = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Ticket/ListadoPrioridad",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.length > 0) {
+                    var options = "";
+                    for (var i = 0; i < data.length; i++) {
+                        $("#TIC_PRI_ID").append("<option value=" + data[i].PRI_ID + ">" + data[i].PRI_Descripcion + "</option>");
+                    }
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarTipoSolucion = function () {
+
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Ticket/ListadoTipoSolucionProblema",
+            type: "POST",
+            dataType: "json",
+            data: { SOL_PROB_ID: $("#PROB_ID").val()},
+            success: function (data) {
+                var html = "";
+                if (data != null) {
+                    if (data.length > 0) {
+                        var options = "";
+                        for (var i = 0; i < data.length; i++) {
+                            html += "<tr><td>" + data[i].SOL_ID + "</td><td>" + data[i].SOL_Nombre + "</td><td><a href='/Files/" + data[i].SOL_NombreArchivo + "' target='_blank'><span class='glyphicon glyphicon-download-alt'></span></a></td></tr>";
+                        }
+                    }
+                }else {
+                    html += "<tr><td colspan='3'>No hay registros para mostrar</td></tr>";
+                }
+
+                $("#solucion tbody").append(html);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    listarServicio();
+    listarTipoProblema();
+    listarPrioridad();
+    editarTicket();
+    
+
+
+});
+</script>

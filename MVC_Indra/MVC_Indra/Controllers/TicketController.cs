@@ -14,23 +14,34 @@ namespace MVC_Indra.Views
             return View();
         }
 
-        // GET: Ticket/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: Ticket/New
         public ActionResult Nuevo()
         {
             return View();
         }
 
-       
         // GET: Ticket/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Editar(int id)
         {
+            ViewBag.TIC_ID = id;
             return View();
         }
+
+        // GET: Ticket/Edit/5
+        public ActionResult Abrir(int id)
+        {
+            ViewBag.TIC_ID = id;
+            return View();
+        }
+
+        // GET: Ticket/Details/5
+        public ActionResult Atencion(int id)
+        {
+            ViewBag.TIC_ID = id;
+            return View();
+        }
+
+        
+
     }
 }

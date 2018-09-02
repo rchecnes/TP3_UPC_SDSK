@@ -47,19 +47,19 @@ go
 select * from Empresa
 go
 
-INSERT INTO UsuarioCliente(USU_IDLogin,USU_EMP_ID, USU_Nombre, USU_ApellidoPaterno, USU_ApellidoMaterno, USU_Telefono, USU_Email)
-values('RMiranda',1, 'Ricardo', 'Miranda', 'Galvez', '2523495','Ricardo.Miranda@PacificoVida.com.pe')
+INSERT INTO UsuarioCliente(USU_Login,USU_Password,USU_EMP_ID, USU_Nombre, USU_ApellidoPaterno, USU_ApellidoMaterno, USU_Telefono, USU_Email)
+values('rmiranda','123456',1, 'Ricardo', 'Miranda', 'Galvez', '2523495','Ricardo.Miranda@PacificoVida.com.pe')
 go
 SELECT * FROM UsuarioCliente
 go
 
-INSERT INTO TipoUsuario (TUS_Descripcion)VALUES('Clientes');
-INSERT INTO TipoUsuario (TUS_Descripcion)VALUES('Analista');
+INSERT INTO TipoUsuario (TUS_ID,TUS_Descripcion)VALUES(1,'Clientes');
+INSERT INTO TipoUsuario (TUS_ID,TUS_Descripcion)VALUES(2,'Analista');
 go
 
-INSERT INTO Cargo(CAR_Descripcion) VALUES('Especialista TI')
-INSERT INTO Cargo(CAR_Descripcion) VALUES('Técnico Operador')
-INSERT INTO Cargo(CAR_Descripcion) VALUES('Técnico TI')
+INSERT INTO Cargo(CAR_ID,CAR_Descripcion) VALUES(1,'Especialista TI')
+INSERT INTO Cargo(CAR_ID,CAR_Descripcion) VALUES(2,'Técnico Operador')
+INSERT INTO Cargo(CAR_ID,CAR_Descripcion) VALUES(3,'Técnico TI')
 go
 SELECT * FROM Cargo
 go
@@ -71,10 +71,10 @@ go
 SELECT * FROM NIVEL
 go
 
-INSERT INTO UsuarioResponsable(RES_Login, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
-values('JCaceres', 2, 'Javier', 'Caceres', 'Gonzales', 'JavierCaceres@indra.com.pe',1)
-INSERT INTO UsuarioResponsable(RES_Login, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
-values('JCampos', 2, 'Jorge', 'Campos', 'Medina', 'JorgeCampos@indra.com.pe',2)
+INSERT INTO UsuarioResponsable(RES_Login,RES_Password,RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
+values('jcaceres','123456' , 2, 'Javier', 'Caceres', 'Gonzales', 'JavierCaceres@indra.com.pe',1)
+INSERT INTO UsuarioResponsable(RES_Login,RES_Password, RES_CAR_ID,RES_Nombre, RES_ApellidoPaterno, RES_ApellidoMaterno, RES_Email,RES_NIV_ID)
+values('jcampos', '123456',2, 'Jorge', 'Campos', 'Medina', 'JorgeCampos@indra.com.pe',2)
 go
 SELECT * FROM UsuarioResponsable
 go

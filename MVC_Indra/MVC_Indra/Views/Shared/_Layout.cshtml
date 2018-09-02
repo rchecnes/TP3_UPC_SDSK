@@ -78,7 +78,7 @@
 						<li class="dropdown user user-menu">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 								<img src="~/Images/user2-160x160.jpg" class="user-image" alt="User Image">
-								<span class="hidden-xs">Bienvenido <b>@System.Configuration.ConfigurationManager.AppSettings["NomEmpleado"] (@System.Configuration.ConfigurationManager.AppSettings["NomRol"])</b></span>
+								<span class="hidden-xs">Bienvenido, <b>@System.Configuration.ConfigurationManager.AppSettings["USUS_Nombre"] (@System.Configuration.ConfigurationManager.AppSettings["USUS_CAR_Nombre"])</b></span>
 							</a>
 							<ul class="dropdown-menu">
 								<!-- User image -->
@@ -86,39 +86,26 @@
 									<img src="~/Images/user2-160x160.jpg" class="img-circle" alt="User Image">
 
 									<p>
-										<b>@System.Configuration.ConfigurationManager.AppSettings["NomEmpleado"]</b>
+										CARGO: <b>@System.Configuration.ConfigurationManager.AppSettings["USUS_CAR_Nombre"]</b>
 									</p>
+                                    <p>
+                                        @System.Configuration.ConfigurationManager.AppSettings["USUS_Tipo"]
+                                    </p>
 								</li>
-								<!-- Menu Body -->
-								<li class="user-body">
-									<div class="row">
-										<div class="col-xs-4 text-center">
-											<a href="#">Followers</a>
-										</div>
-										<div class="col-xs-4 text-center">
-											<a href="#">Sales</a>
-										</div>
-										<div class="col-xs-4 text-center">
-											<a href="#">Friends</a>
-										</div>
-									</div>
-									<!-- /.row -->
-								</li>
+								
 								<!-- Menu Footer-->
 								<li class="user-footer">
-									<div class="pull-left">
-										<a href="#" class="btn btn-default btn-flat">Profile</a>
-									</div>
+									
 									<div class="pull-right">
-										<a href="@Url.Action("Index", "Login")" class="btn btn-default btn-flat">Sign out</a>
+										<a href="@Url.Action("Index", "Login")" class="btn btn-default btn-flat">Salir del Sistema</a>
 									</div>
 								</li>
 							</ul>
 						</li>
 						<!-- Control Sidebar Toggle Button -->
-						<li>
+						@*<li>
 							<a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-						</li>
+						</li>*@
 					</ul>
 				</div>
 			</nav>
@@ -147,11 +134,16 @@
 							</span>
 						</a>
                         <ul class="treeview-menu">
-                            <li><a href="@Url.Action("Index", "Encuesta")"><i class="fa fa-fw fa-edit"></i> Responder Encuesta</a></li>
-                            <li><a href="@Url.Action("Index", "Ticket")"><i class="fa fa-fw fa-edit"></i> Ticket</a></li>
-                            <li><a href="@Url.Action("Index", "TipoSolucion")"><i class="fa fa-fw fa-edit"></i> Base de conocimiento</a></li>
-                            <li><a href="@Url.Action("Index", "Responsable")"><i class="fa fa-fw fa-edit"></i> Técnicos</a></li>
-                            <li><a href="@Url.Action("Index", "TipoEncuesta")"><i class="fa fa-fw fa-edit"></i> Tipo de Encuesta</a></li>
+                            @if (System.Configuration.ConfigurationManager.AppSettings["USUS_Tipo"] == "USUARIO_CLIENTE") {
+
+                                <li><a href="@Url.Action("Index", "Encuesta")"><i class="fa fa-fw fa-edit"></i> Responder Encuesta</a></li>
+                             } else {
+                                <li><a href="@Url.Action("Index", "Ticket")"><i class="fa fa-fw fa-edit"></i> Ticket</a></li>
+                                <li><a href="@Url.Action("Index", "TipoSolucion")"><i class="fa fa-fw fa-edit"></i> Base de conocimiento</a></li>
+                                <li><a href="@Url.Action("Index", "Responsable")"><i class="fa fa-fw fa-edit"></i> Técnicos</a></li>
+                                <li><a href="@Url.Action("Index", "TipoEncuesta")"><i class="fa fa-fw fa-edit"></i> Tipo de Encuesta</a></li>
+
+                             }
                         </ul>
 					</li>
 
@@ -187,7 +179,7 @@
 		</footer>
 
 		<!-- Control Sidebar -->
-		<aside class="control-sidebar control-sidebar-dark">
+		@*<aside class="control-sidebar control-sidebar-dark">
 			<!-- Create the tabs -->
 			<ul class="nav nav-tabs nav-justified control-sidebar-tabs">
 				<li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -374,7 +366,7 @@
 				</div>
 				<!-- /.tab-pane -->
 			</div>
-		</aside>
+		</aside>*@
 		<!-- /.control-sidebar -->
 		<!-- Add the sidebar's background. This div must be placed
 			 immediately after the control sidebar -->

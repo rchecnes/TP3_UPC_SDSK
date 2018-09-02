@@ -4,8 +4,6 @@
     ViewBag.TitlePag = "Listado de Tickets Atendidos";
 }
 <input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
-<input type="hidden" id="IdEmpleado" value="@System.Configuration.ConfigurationManager.AppSettings["IdEmpleado"]" />
-<input type="hidden" id="IdRol" value="@System.Configuration.ConfigurationManager.AppSettings["IdRol"]" />
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -65,8 +63,7 @@
                         entidad.TIC_FechaInicio = $("#TIC_FechaInicio").val();
                         entidad.TIC_FechaFin = $("#TIC_FechaFin").val();
                         entidad.TIC_EST_ID = $("#TIC_EST_ID").val();
-                        entidad.TIC_EMP_ID = 1; //Cambiar por login
-                        entidad.TIC_SOL_ID = 1; //Cambiar por login
+                        entidad.TIC_USU_ID = @System.Configuration.ConfigurationManager.AppSettings["USUS_ID"];
                         
 						$.ajax({
 							"url": url,
@@ -94,56 +91,8 @@
 									$(".encuesta").click(function () {
                                         var id = $(this).attr("id");
 										window.location.href = '/Encuesta/Responder/' + id;
-									});
-
-									$(".eliminar").click(function () {
-										id = $(this).attr("id");
-
-										$.confirm({
-											title: 'Mensaje de confirmación!',
-											content: "¿Estas seguro que deseas eliminar el tipo de encuesta <b>Nro. "+id+"</b>?",
-											buttons: {
-												confirm: {
-													text: "SI",
-													btnClass: 'btn-blue',
-													action: function () {
-														$.ajax({
-															url: $("#UrlServicio").val() + "/api/TipoEncuesta/EliminarTipoEncuesta",
-															type: "POST",
-															dataType: "json",
-															data: { TEN_ID: id },
-															success: function (data) {
-																$("#tblGrilla").dataTable().api().ajax.reload();
-															},
-															error: function (xhr, ajaxOptions, thrownError) {
-																console.log(xhr.status);
-																console.log(thrownError);
-															}
-														});
-													}
-												},
-												cancel: {
-													text: "NO",
-													btnClass: 'btn-danger',
-													action: function () {
-														$("#tblGrilla").dataTable().api().ajax.reload();
-													}
-												}
-											}
-										});
                                     });
-
-                                    $(".pregunta").click(function () {
-
-                                        var id = $(this).attr("id");
-
-                                        $("#TEN_ID").val(id);
-
-                                        listarPregunta(id);
-
-                                        $('#modal_pregunta').modal('show');
-                                    })
-
+                                    
 								},
 							//,
 							"contentType": "application/x-www-form-urlencoded; charset=utf-8",
@@ -175,6 +124,9 @@
 
         llenarTablaGrilla();
 
+        $("#consultar").click(function () {
+            $("#tblGrilla").dataTable().api().ajax.reload();
+        });
     })
 </script>
 

@@ -148,6 +148,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EncuestaController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PruebaController.cs" />
     <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\TipoEncuestaController.cs" />
@@ -258,9 +259,12 @@
     <Content Include="Views\TipoEncuesta\Editar.cshtml" />
     <Content Include="Views\Ticket\Index.cshtml" />
     <Content Include="Views\Ticket\Nuevo.cshtml" />
-    <Content Include="Views\Ticket\Edit.cshtml" />
+    <Content Include="Views\Ticket\Editar.cshtml" />
     <Content Include="Views\Encuesta\Index.cshtml" />
     <Content Include="Views\Encuesta\Responder.cshtml" />
+    <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Ticket\Abrir.cshtml" />
+    <Content Include="Views\Ticket\Atencion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

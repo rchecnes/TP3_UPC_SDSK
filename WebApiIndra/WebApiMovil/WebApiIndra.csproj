@@ -222,6 +222,7 @@
     <Compile Include="Controllers\AsignarController.cs" />
     <Compile Include="Controllers\EncuestaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
     <Compile Include="Controllers\TipoEncuestaController.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="Models\Encargado.cs" />
     <Compile Include="Models\Equipo.cs" />
     <Compile Include="Models\Estado.cs" />
+    <Compile Include="Models\HistorialTicket.cs" />
     <Compile Include="Models\Nivel.cs" />
     <Compile Include="Models\Paginacion.cs" />
     <Compile Include="Models\Plan.cs" />
@@ -255,6 +257,7 @@
     <Compile Include="Models\TipoSolucion.cs" />
     <Compile Include="Models\Trabajador.cs" />
     <Compile Include="Models\Ubigeo.cs" />
+    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\UsuarioCliente.cs" />
     <Compile Include="Models\UsuarioResponsable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -265,6 +268,7 @@
     <Compile Include="Services\TicketService.cs" />
     <Compile Include="Services\TipoEncuestaService.cs" />
     <Compile Include="Services\TipoSolucionService.cs" />
+    <Compile Include="Services\UsuarioService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +331,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Asignar\" />
+    <Folder Include="Views\Login\" />
     <Folder Include="Views\TicketService\" />
     <Folder Include="Views\TipoSolucion\" />
   </ItemGroup>

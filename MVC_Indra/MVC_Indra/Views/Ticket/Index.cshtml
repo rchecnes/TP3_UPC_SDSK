@@ -32,6 +32,46 @@
 
         listarEstado();
 
+        listarHistorialTicket = function (id) {
+
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Ticket/ListadoHistorialTicket",
+                type: "POST",
+                dataType: "json",
+                data: { "HIS_TIC_ID": id },
+                success: function (data) {
+
+                    if (data != null) {
+                        if (data.length > 0) {
+                            var html = '';
+                            for (var i = 0; i < data.length; i++) {
+
+                                html += "<tr>";
+                                html += "<td>" + data[i].HIS_TIC_ID + "</td>";
+                                html += "<td>" + data[i].PRI_Descripcion + "</td>";
+                                html += "<td>" + data[i].RES_Nombre + "</td>";
+                                html += "<td>" + data[i].HIS_Descripcion + "</td>";
+                                html += "<td>" + data[i].HIS_FechaCambio + "</td>";
+                                html += "<td>0</td>";
+                                html += "<td align='center'><span class='glyphicon glyphicon-user fa-1x'></span></td>";
+                                html += "</tr>";
+                            }
+
+                            $("#content_historico").html(html);
+                        }
+                    } else {
+                        $("#content_historico").html('<tr><td colspan="3">No existe historico para el Ticket</td></tr>');
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+
+        }
+
         $("#consultar").on("click", function () {
             $("#tblGrilla").dataTable().api().ajax.reload();
         });
@@ -119,55 +159,27 @@
 									$(".editar").click(function () {
                                         var id = $(this).attr("id");
 										window.location.href = '/Ticket/Editar/' + id;
-									});
-
-									$(".eliminar").click(function () {
-										id = $(this).attr("id");
-
-										$.confirm({
-											title: 'Mensaje de confirmación!',
-											content: "¿Estas seguro que deseas eliminar el tipo de encuesta <b>Nro. "+id+"</b>?",
-											buttons: {
-												confirm: {
-													text: "SI",
-													btnClass: 'btn-blue',
-													action: function () {
-														$.ajax({
-															url: $("#UrlServicio").val() + "/api/TipoEncuesta/EliminarTipoEncuesta",
-															type: "POST",
-															dataType: "json",
-															data: { TEN_ID: id },
-															success: function (data) {
-																$("#tblGrilla").dataTable().api().ajax.reload();
-															},
-															error: function (xhr, ajaxOptions, thrownError) {
-																console.log(xhr.status);
-																console.log(thrownError);
-															}
-														});
-													}
-												},
-												cancel: {
-													text: "NO",
-													btnClass: 'btn-danger',
-													action: function () {
-														$("#tblGrilla").dataTable().api().ajax.reload();
-													}
-												}
-											}
-										});
                                     });
 
-                                    $(".pregunta").click(function () {
+                                    $(".abrir").click(function () {
+                                        var id = $(this).attr("id");
+                                        window.location.href = '/Ticket/Abrir/' + id;
+                                    });
+
+                                    $(".atencion").click(function () {
+                                        var id = $(this).attr("id");
+                                        window.location.href = '/Ticket/Atencion/' + id;
+                                    });
+
+                                    $(".historial").click(function () {
 
                                         var id = $(this).attr("id");
 
-                                        $("#TEN_ID").val(id);
+                                        listarHistorialTicket(id);
 
-                                        listarPregunta(id);
-
-                                        $('#modal_pregunta').modal('show');
+                                        $('#modal_historial_ticket').modal('show');
                                     })
+
 
 								},
 							//,
@@ -199,6 +211,9 @@
 		}
 
         llenarTablaGrilla();
+
+        
+        
 
     })
 </script>
@@ -271,36 +286,32 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal_pregunta" style="display: none;">
+<div class="modal fade" id="modal_historial_ticket" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
-                <h4 class="modal-title">Agegar y/o Editar Pregunta</h4>
+                <h4 class="modal-title">Historial Ticket</h4>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label for="nombre">Buscar Pregunta:</label>
-                            <input type="text" class="form-control" id="PRE_Descripcion" name="PRE_Descripcion" autocomplete="off" placeholder="Buscar Pregunta">
-                            <input type="hidden" class="form-control" id="TEN_ID" name="TEN_ID" autocomplete="off" placeholder="">
-                        </div>
-                    </div>
-                </div>
+                
                 <div class="row">
                     <div class="col-lg-12">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Pregunta</th>
-                                    <th>Acciones</th>
+                                    <th>Nro. Ticket</th>
+                                    <th>Prioridad</th>
+                                    <th>Responsable</th>
+                                    <th>Descripcion</th>
+                                    <th>Fecha Cambio</th>
+                                    <th>Nro. Resultados</th>
+                                    <th>&nbsp;</th>
                                 </tr>
                             </thead>
-                            <tbody id="content_pregunta">
+                            <tbody id="content_historico">
                                 <tr>
                                     <td colspan="3">No existe preguntas relacionadas</td>
                                 </tr>

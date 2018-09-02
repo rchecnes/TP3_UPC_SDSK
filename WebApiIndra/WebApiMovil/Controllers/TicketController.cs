@@ -173,5 +173,47 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost]
+        [ActionName("ActualizarTicket")]
+        public string ActualizarTicket(Ticket entidad)
+        {
+            try
+            {
+                return ticketService.ActualizarTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoTipoSolucionProblema")]
+        public List<TipoSolucion> ListadoTipoSolucionProblema(TipoSolucion entidad)
+        {
+            try
+            {
+                return ticketService.ListadoTipoSolucionProblema(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoHistorialTicket")]
+        public List<HistorialTicket> ListadoHistorialTicket(HistorialTicket entidad)
+        {
+            try
+            {
+                return ticketService.ListadoHistorialTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

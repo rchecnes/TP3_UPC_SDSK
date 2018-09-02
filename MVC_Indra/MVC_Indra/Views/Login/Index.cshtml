@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+<div class="login-logo">
+    <a href="/Login/index"><b>INDRA</b></a>
+</div>
+<!-- /.login-logo -->
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="login-box-body">
+    <p class="login-box-msg">INGRESAR AL SISTEMA</p>
+    <div id="error_msj"></div>    
+    <form action="../../index2.html" method="post" id="form_login">
+        <div class="form-group has-feedback">
+            <input type="text" class="form-control" id="USUS_Login" name="USUS_Login" placeholder="User Name" required autocomplete="off">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="password" class="form-control" id="USUS_Password" name="USUS_Password" placeholder="Password" required autocomplete="off">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="row">
+            <div class="col-xs-8">
+                <div class="checkbox icheck">
+                    <label>
+                        <!--<input type="checkbox"> Remember Me-->
+                    </label>
+                </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-xs-4">
+                <button type="submit" class="btn btn-primary btn-block btn-flat">Ingresar</button>
+            </div>
+            <!-- /.col -->
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#form_login").submit(function (env) {
+
+            env.preventDefault();
+
+            $.ajax({
+                url: $("#UrlServicio").val() + "/api/Usuario/ValidarUsuario",
+                type: "POST",
+                dataType: "json",
+                data: $("#form_login").serialize(),
+                success: function (data) {
+                    if (data == null || data[0].NomEmpleado == "") {
+                        $("#USUS_Login").val("").focus();
+                        $("#USUS_Password").val("");
+                        var error = "<div class='alert alert-danger alert-dismissible'><button type = 'button' class='close' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-warning'></i>Alert!</h4>El usuario ingresado no existe en el sistema y/o revise los datos de acceso</div>";
+                        $("#error_msj").html(error);
+
+                        @*window.location.href = "@Url.Action("Index", "Login")";*@
+                    } else {
+                        $("#error_msj").hide("slow");                        
+
+                        var ruta = '@Url.Action("Update", "Login",null)/?USUS_ID=' + data[0].USUS_ID+'&USUS_Login=' + data[0].USUS_Login + "&USUS_Nombre=" + data[0].USUS_Nombre + "&USUS_CAR_ID=" + data[0].USUS_CAR_ID + "&USUS_CAR_Nombre=" + data[0].USUS_CAR_Nombre + "&USUS_Tipo=" + data[0].USUS_Tipo;
+
+                        window.location.href = ruta;
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        })
+    })
+</script>
