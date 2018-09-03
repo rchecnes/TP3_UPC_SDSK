@@ -1,0 +1,281 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Listado de SLA";
+}
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<script type="text/javascript">
+    $(document).ready(function () {
+
+		function llenarTablaGrilla() {
+            tblGrilla = $("#tblGrilla")
+				.DataTable({
+					"bLengthChange": false,
+					"bFilter": false,
+					"PaginationType": "full_numbers",
+					"processing": true,
+					"bServerSide": true,
+                    "sAjaxSource": $("#UrlServicio").val() + '/api/Contrato/ListadoContrato',
+					"select": true,
+					"pageLength": 10,
+					responsive: true,
+					language: {
+						"sProcessing": "Procesando...",
+						"sLengthMenu": "Mostrar _MENU_ registros",
+						"sZeroRecords": "No se encontraron resultados",
+						"sEmptyTable": "Ningún dato disponible en esta tabla",
+						"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+						"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+						"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+						"sInfoPostFix": "",
+						"sSearch": "Buscar:",
+						"sUrl": "",
+						"sInfoThousands": ",",
+						"sLoadingRecords": "Cargando...",
+						"oPaginate": {
+							"sFirst": "Primero",
+							"sLast": "Último",
+							"sNext": "Next",
+							"sPrevious": "Prev"
+						},
+						"oAria": {
+							"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+							"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+						}
+					},
+					"fnServerData": function (url, odata, callback) {
+                        //debugger;
+                        //console.log(odata);
+                        //console.log(callback);
+						entidad = {};
+						var PageSize = 10;
+						var PrimerRegistro = odata[3].value;;
+						var CurrentPage = PrimerRegistro / PageSize;
+
+
+						entidad.iPageSize = PageSize;
+                        entidad.iCurrentPage = (CurrentPage>0)?CurrentPage + 1:0;
+                        entidad.pvSortColumn = "CON_ID";
+                        entidad.pvSortOrder = "DESC";
+
+                        entidad.EMP_RazonSocial = $("#EMP_RazonSocial").val();
+
+						$.ajax({
+							"url": url,
+							"dataSrc": "",
+							"data": entidad,
+							"success":
+								function (response) {
+									if (response.length == 0) {
+										callback({
+											data: response,
+											recordsTotal: 0,
+											recordsFiltered: 0,
+
+										})
+									} else {
+										callback({
+											data: response,
+											recordsTotal: response[0].iTotalRecords,
+											recordsFiltered: response[0].iTotalRecords,
+
+										})
+									};
+
+
+									$(".editar").click(function () {
+                                        var id = $(this).attr("id");
+										window.location.href = '/Contrato/Editar/' + id;
+                                    });
+
+                                    $(".eliminar").click(function () {
+                                        id = $(this).attr("id");
+
+                                        $.confirm({
+                                            title: 'Mensaje de confirmación!',
+                                            content: '¿Estas seguro que deseas eliminar el contrato <b>Nro.' + id + '</b>?',
+                                            buttons: {
+                                                confirm: {
+                                                    text: "SI",
+                                                    btnClass: 'btn-blue',
+                                                    action: function () {
+                                                        $.ajax({
+                                                            url: $("#UrlServicio").val() + "/api/Contrato/EliminarContrato",
+                                                            type: "POST",
+                                                            dataType: "json",
+                                                            data: { CON_ID: id },
+                                                            success: function (data) {
+                                                                $("#tblGrilla").dataTable().api().ajax.reload();
+                                                            },
+                                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                                console.log(xhr.status);
+                                                                console.log(thrownError);
+                                                            }
+                                                        });
+                                                    }
+                                                },
+                                                cancel: {
+                                                    text: "NO",
+                                                    btnClass: 'btn-danger',
+                                                    action: function () {
+                                                        $("#tblAccesorioDev").dataTable().api().ajax.reload();
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    $(".addsla").click(function () {
+
+                                        var id = $(this).attr("id");
+
+                                        $("#CON_ID").val(id);
+
+                                        //listarPregunta(id);
+
+                                        $('#modal_pregunta').modal('show');
+                                    })
+
+								},
+							//,
+							"contentType": "application/x-www-form-urlencoded; charset=utf-8",
+							"dataType": "json",
+							"type": "POST",
+							"cache": false,
+							"error": function (resultado) {
+								console.log(resultado);
+								alert("DataTables warning: JSON data from server failed to load or be parsed. " +
+									"This is most likely to be caused by a JSON formatting error.");
+							},
+						});
+					},
+
+					"aoColumns": [
+						{ "title": "Nro. Contrato", "bSortable": false, bVisible: true, "data": "CON_ID" },
+						{ "title": "Empresa", "bSortable": false, bVisible: true, "data": "EMP_RazonSocial" },
+                        { "title": "Vigencia Hasta", "bSortable": false, bVisible: true, "data": "CON_FechaFinContrato" },
+                        { "title": "Acciones", "bSortable": false, bVisible: true, "data": "ltAcciones" }
+					],
+					"columnDefs": [
+
+					]
+				});
+		}
+
+        llenarTablaGrilla();
+
+        $("#consultar").click(function () {
+            $("#tblGrilla").dataTable().api().ajax.reload();
+        });
+    })
+</script>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <form role="form">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-2 col-sm-2 col-sm-4">
+                            <div class="form-group">
+                                <label for="Buscar">Buscar Empresa:</label>
+                                <input type="text" class="form-control" id="EMP_RazonSocial" name="EMP_RazonSocial" placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<p>
+    <a href="#" class="btn btn-default btn-md" id="consultar">Consultar&nbsp;<span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;&nbsp;
+    <a href="@Url.Action("Nuevo", "Contrato")" class="btn btn-primary btn-md">Nuevo&nbsp;<span class="glyphicon glyphicon-plus"></span></a>
+</p>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="tblGrilla" class="table table-bordered" cellspacing="0" /></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+
+<div class="modal fade" id="modal_pregunta" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">Agegar y/o Editar Pregunta</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="nombre">SLA:</label>
+                            <select id="CSL_SLA_ID" name="CSL_SLA_ID" class="form-control" required>[Seleccionar]</select>
+                            <input type="hidden" class="form-control" id="CON_ID" name="CON_ID" autocomplete="off" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="nombre">Servicio:</label>
+                            <select id="CSL_SER_ID" name="CSL_SER_ID" class="form-control" required>[Seleccionar]</select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="nombre">Porcentaje Medicion:</label>
+                            <input type="text" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="nombre">Penalidad:</label>
+                            <input type="text" id="CSL_Penalidad" name="CSL_Penalidad" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+                <p><a href="#" class="btn btn-primary btn-md" id="agregar_sla">Agregar SLA&nbsp;<span class="glyphicon glyphicon-plus"></span></a></p>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Pregunta</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="content_pregunta">
+                                <tr>
+                                    <td colspan="3">No existe SLA relacionadas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+

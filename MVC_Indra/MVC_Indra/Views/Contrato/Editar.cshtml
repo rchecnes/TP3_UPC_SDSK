@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewBag.Title = "Nuevo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Editar Contrato";
+}
+
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_registro">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Empresa:</label>
+                                <input type="text" class="form-control" id="EMP_RazonSocial" name="EMP_RazonSocial" autocomplete="off" placeholder="Buscar Empresa">
+                                <input type="hidden" class="form-control" id="CON_ID" name="CON_ID" autocomplete="off" value="@ViewBag.CON_ID">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Fecha Inicio Contrato:</label>
+                                <input type="date" id="CON_FechaInicioContrato" name="CON_FechaInicioContrato" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Fecha Fin Contrato:</label>
+                                <input type="date" id="CON_FechaFinContrato" name="CON_FechaFinContrato" class="form-control" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary btn-lg">Grabar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="@Url.Action("Index", "Contrato")" class="btn btn-default btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    editarContrato = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Contrato/EditarContrato",
+            type: "POST",
+            dataType: "json",
+            data: {CON_ID:@ViewBag.CON_ID},
+            success: function (data) {
+                $("#EMP_RazonSocial").val(data[0].EMP_RazonSocial).attr("disabled","disabled");                
+                $("#CON_FechaInicioContrato").val(data[0].CON_FechaInicioContrato);
+                $("#CON_FechaFinContrato").val(data[0].CON_FechaFinContrato);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    editarContrato();
+
+    $("#form_registro").submit(function (event) {
+        event.preventDefault();
+
+		$.confirm({
+			title: 'Mensaje de confirmación!',
+            content: "¿Está seguro de Grabar el SLA?",
+			buttons: {
+				confirm: {
+					text: "SI",
+					btnClass: 'btn-blue',
+					action: function () {
+						$.ajax({
+                            url: $("#UrlServicio").val() + "/api/Contrato/ActualizarContrato",
+							type: "POST",
+                            data: $("#form_registro").serialize() +"&CON_UsuarioModificacion=@System.Configuration.ConfigurationManager.AppSettings["USUS_Login"]",
+							success: function (data) {
+								window.location.href = "@Url.Action("Index", "Contrato")";
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								console.log(xhr.status);
+								console.log(thrownError);
+							}
+						});
+					}
+				},
+				cancel: {
+					text: "NO",
+					btnClass: 'btn-danger',
+					action: function () {
+						//$("#tblGrilla").dataTable().api().ajax.reload();
+					}
+				}
+			}
+		});
+    });
+
+});
+</script>

@@ -4,6 +4,9 @@ go*/
 USE Indra;
 GO
 
+drop table ContratoSLA;
+drop table Contrato;
+drop table SLA;
 drop table HistorialTicket;
 drop table Atencion;
 drop table Resultado;
@@ -256,3 +259,36 @@ HIS_Descripcion VARCHAR(500),
 HIS_RutaInforme	VARCHAR(100) NULL
 )
 go
+CREATE TABLE Contrato
+(
+CON_ID	INTEGER IDENTITY(1,1) PRIMARY KEY,
+CON_EMP_ID	INTEGER FOREIGN KEY REFERENCES Empresa(EMP_ID),
+CON_FechaInicioContrato DATETIME,
+CON_FechaFinContrato	DATETIME,
+CON_FechaCreacion DATETIME,
+CON_FechaModificacion	DATETIME NULL,
+CON_UsuarioCreacion	VARCHAR(25),
+CON_UsuarioModificacion	VARCHAR(25) NULL,
+CON_FlagActivo BIT DEFAULT 1
+)
+go
+CREATE TABLE SLA
+(
+SLA_ID INTEGER IDENTITY(1,1) PRIMARY KEY,
+SLA_Descripcion	VARCHAR(200),
+SLA_NomSistema VARCHAR(50)
+)
+go
+CREATE TABLE ContratoSLA
+(
+CSL_ID	INTEGER IDENTITY(1,1) PRIMARY KEY,
+CSL_CON_ID INTEGER FOREIGN KEY REFERENCES Contrato(CON_ID),
+CSL_SLA_ID INTEGER FOREIGN KEY REFERENCES SLA(SLA_ID),
+CSL_SER_ID INTEGER FOREIGN KEY REFERENCES Servicio(SER_ID),
+CSL_PorcentajeMedicion	DECIMAL,
+CSL_Penalidad			DECIMAL,
+CSL_FechaCreacion DATETIME,
+CSL_FechaModificacion	DATETIME NULL,
+CSL_UsuarioCreacion	VARCHAR(25),
+CSL_UsuarioModificacion	VARCHAR(25) NULL
+)

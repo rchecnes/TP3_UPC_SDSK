@@ -112,6 +112,12 @@ VALUES('Se realizó la instalación del programa office sin mayores problemas',0)
 go
 select * from Resultado
 go
+INSERT INTO SLA(SLA_Descripcion, SLA_NomSistema)
+VALUES('Tiempo Atencion Menor a 10 minutos','TEMP_ATE_M10M'),
+('Nivel resolucion primer contacto','NRESOL_PRI_CONTACTO'),
+('LLamadas escaladas menor a 5 minutos','LLAM_ESCA_M5M')
+go
+select * from Resultado
 /*
 INSERT INTO Atencion(ATE_TIC_ID, ATE_RES_ID, ATE_RST_ID,ATE_FechaAsignacion, ATE_FechaInicio, ATE_FechaFin, ATE_FechaCierre, ATE_FechaAtencion,ATE_FechaRegistro)
 VALUES(1,1,1,GETDATE()-5, GETDATE()-4, GETDATE()-3,GETDATE(), GETDATE()-1, GETDATE())
