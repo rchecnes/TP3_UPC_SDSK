@@ -77,7 +77,7 @@ namespace WebApiMovil.Services
                                     string editar = "<a title='Editar' href='#' class='editar' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";
                                     string eliminar = "<a title='Eliminar Ticket' href='#' class='eliminar' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>";
                                     string addsla = "<a title='Agregar SLA' href='#' class='addsla' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-th-list fa-1x'></span></a>";
-                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + addsla;
+                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + addsla + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar;
 
                                     //Paginado
                                     item.sEcho = 2;
@@ -224,6 +224,147 @@ namespace WebApiMovil.Services
                 {
 
                     using (SqlCommand command = new SqlCommand("DELETE FROM Contrato WHERE CON_ID="+entidad.CON_ID, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    tran.Commit();
+                    conection.Close();
+                    return "ok";
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
+            }
+        }
+        public List<Sla> ListadoSLA()
+        {
+            List<Sla> Lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+                    //Fin totalizado
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM SLA", conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                Lista = new List<Sla>();
+                                while (dr.Read())
+                                {
+                                    Sla item = new Sla();
+                                    item.SLA_ID = dr.GetInt32(dr.GetOrdinal("SLA_ID"));
+                                    item.SLA_Descripcion = dr.GetString(dr.GetOrdinal("SLA_Descripcion"));
+                                    Lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+
+                    conection.Close();
+                }
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public List<ContratoSLA> ListadoContratoSLA(ContratoSLA entidad)
+        {
+            List<ContratoSLA> Lista = null;
+            try
+            {
+                using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conection.Open();
+                    //Fin totalizado
+                    string sql = "SELECT * FROM ContratoSLA csa INNER JOIN SLA s ON(csa.CSL_SLA_ID=s.SLA_ID)" +
+                                  " INNER JOIN Servicio sr ON(csa.CSL_SER_ID=sr.SER_ID)";
+                    using (SqlCommand command = new SqlCommand(sql, conection))
+                    {
+                        using (SqlDataReader dr = command.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                Lista = new List<ContratoSLA>();
+                                while (dr.Read())
+                                {
+                                    ContratoSLA item = new ContratoSLA();
+                                    item.CSL_ID = dr.GetInt32(dr.GetOrdinal("CSL_ID"));
+                                    item.CSL_CON_ID = dr.GetInt32(dr.GetOrdinal("CSL_CON_ID"));
+                                    item.SLA_Descripcion = dr.GetString(dr.GetOrdinal("SLA_Descripcion"));
+                                    item.SER_Descripcion = dr.GetString(dr.GetOrdinal("SER_Descripcion"));
+                                    item.CSL_PorcentajeMedicion = dr.GetDecimal(dr.GetOrdinal("CSL_PorcentajeMedicion"));
+                                    item.CSL_Penalidad = dr.GetDecimal(dr.GetOrdinal("CSL_Penalidad"));
+                                    Lista.Add(item);
+                                }
+                            }
+                        }
+
+                    }
+
+                    conection.Close();
+                }
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public string InsertarContratoSLA(ContratoSLA entidad)
+        {
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+            {
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+
+                try
+                {
+
+                    string sqltik = "INSERT INTO ContratoSLA " +
+                                    " (CSL_CON_ID, CSL_SLA_ID, CSL_SER_ID, CSL_PorcentajeMedicion, CSL_Penalidad, CSL_UsuarioCreacion, CSL_FechaCreacion) VALUES" +
+                                    "('" + entidad.CSL_CON_ID + "', '" + entidad.CSL_SLA_ID + "','" + entidad.CSL_SER_ID + "','" + entidad.CSL_PorcentajeMedicion + "','" + entidad.CSL_Penalidad + "','" + entidad.CSL_UsuarioCreacion + "','" + DateTime.Now.ToString("yyyy-MM-dd")+"')";
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    tran.Commit();
+                    conection.Close();
+                    return "ok";
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
+            }
+        }
+        public string EliminarContratoSLA(ContratoSLA entidad)
+        {
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+            {
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+
+                try
+                {
+
+                    string sqltik = "DELETE FROM ContratoSLA WHERE CSL_ID=" + entidad.CSL_ID;
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
                     {
                         command.ExecuteNonQuery();
                     }

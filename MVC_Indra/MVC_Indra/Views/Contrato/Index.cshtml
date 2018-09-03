@@ -129,7 +129,7 @@
 
                                         var id = $(this).attr("id");
 
-                                        $("#CON_ID").val(id);
+										$("#CSL_CON_ID").val(id);
 
                                         //listarPregunta(id);
 
@@ -166,7 +166,115 @@
 
         $("#consultar").click(function () {
             $("#tblGrilla").dataTable().api().ajax.reload();
-        });
+		});
+
+		listarServicio = function () {
+			$.ajax({
+				url: $("#UrlServicio").val() + "/api/Ticket/ListadoServicio",
+				type: "POST",
+				dataType: "json",
+				success: function (data) {
+					if (data.length > 0) {
+						var options = "";
+						for (var i = 0; i < data.length; i++) {
+							$("#CSL_SER_ID").append("<option value=" + data[i].SER_ID + ">" + data[i].SER_Descripcion + "</option>");
+						}
+					}
+
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+
+		listarSLa = function () {
+
+			$.ajax({
+				url: $("#UrlServicio").val() + "/api/Contrato/ListadoSLA",
+				type: "POST",
+				dataType: "json",
+				success: function (data) {
+					if (data.length > 0) {
+						var options = "";
+						for (var i = 0; i < data.length; i++) {
+							$("#CSL_SLA_ID").append("<option value=" + data[i].SLA_ID + ">" + data[i].SLA_Descripcion + "</option>");
+						}
+					}
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+
+		listarContratoSLa = function () {
+
+			$.ajax({
+				url: $("#UrlServicio").val() + "/api/Contrato/ListadoContratoSLA",
+				type: "POST",
+				dataType: "json",
+				data: { CSL_CON_ID:$("#CON_ID").val()},
+				success: function (data) {
+					var html = "";
+					if (data != null) {
+						for (var i = 0; i < data.length; i++) {
+							html += '<tr><td>' + data[i].SLA_Descripcion + '</td><td>' + data[i].CSL_PorcentajeMedicion + '</td><td>' + data[i].CSL_Penalidad + '</td>';
+							html += '<td><a href="#" onClick="eliminarSLA(' + data[i].CSL_ID +')"><span class="glyphicon glyphicon-trash fa-1x"></span></a></td>';
+							html += '</tr > ';
+						}
+					} else {
+						html += '<tr><td colspan="3">No existe SLA para este contrato</td></tr>';
+					}
+
+					$("#content_sla").html(html);
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+
+		eliminarSLA = function (CSL_ID) {
+			$.ajax({
+				url: $("#UrlServicio").val() + "/api/Contrato/EliminarContratoSLA",
+				type: "POST",
+				dataType: "json",
+				data: { CSL_ID: CSL_ID },
+				success: function (data) {
+					listarContratoSLa();
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+		
+		$("#form_add_sla").submit(function (env) {
+			env.preventDefault();
+
+			$.ajax({
+				url: $("#UrlServicio").val() + "/api/Contrato/InsertarContratoSLA",
+				type: "POST",
+				dataType: "json",
+				data: $("#form_add_sla").serialize() + "&CSL_CON_ID=" + $("#CON_ID").val(),
+				success: function (data) {
+					listarContratoSLa();
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		});
+
+		listarServicio();
+		listarSLa();
+		listarContratoSLa();
     })
 </script>
 
@@ -219,50 +327,59 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
-                <h4 class="modal-title">Agegar y/o Editar Pregunta</h4>
+                <h4 class="modal-title">Agegar y/o SLA</h4>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label for="nombre">SLA:</label>
-                            <select id="CSL_SLA_ID" name="CSL_SLA_ID" class="form-control" required>[Seleccionar]</select>
-                            <input type="hidden" class="form-control" id="CON_ID" name="CON_ID" autocomplete="off" placeholder="">
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label for="nombre">Servicio:</label>
-                            <select id="CSL_SER_ID" name="CSL_SER_ID" class="form-control" required>[Seleccionar]</select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label for="nombre">Porcentaje Medicion:</label>
-                            <input type="text" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" class="form-control" required />
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label for="nombre">Penalidad:</label>
-                            <input type="text" id="CSL_Penalidad" name="CSL_Penalidad" class="form-control" required />
-                        </div>
-                    </div>
-                </div>
-                <p><a href="#" class="btn btn-primary btn-md" id="agregar_sla">Agregar SLA&nbsp;<span class="glyphicon glyphicon-plus"></span></a></p>
+				<form method="POST" id="form_add_sla">
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label for="nombre">SLA:</label>
+								<select id="CSL_SLA_ID" name="CSL_SLA_ID" class="form-control" required>
+									<option value="">[Seleccionar]</option>
+								</select>
+								<input type="hidden" class="form-control" id="CSL_CON_ID" name="CSL_CON_ID" autocomplete="off" placeholder="">
+								<input type="hidden" class="form-control" id="CSL_UsuarioCreacion" name="CSL_UsuarioCreacion" value="@System.Configuration.ConfigurationManager.AppSettings["USUS_Login"]">
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label for="nombre">Servicio:</label>
+								<select id="CSL_SER_ID" name="CSL_SER_ID" class="form-control" required>
+									<option value="">[Seleccionar]</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label for="nombre">Porcentaje Medicion:</label>
+								<input type="text" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" class="form-control" required />
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label for="nombre">Penalidad:</label>
+								<input type="text" id="CSL_Penalidad" name="CSL_Penalidad" class="form-control" required />
+							</div>
+						</div>
+					</div>
+					<input type="submit" class="btn btn-primary btn-md" id="agregar_sla" value="Agregar SLA" />
+				</form>
+                
                 <div class="row">
                     <div class="col-lg-12">
                         <table class="table table-bordered">
                             <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Pregunta</th>
-                                    <th>Acciones</th>
-                                </tr>
+								<tr>
+									<th>SLA</th>
+									<th>Porcentaje Medición</th>
+									<th>Penalidad</th>
+									<th>Acciones</th>
+								</tr>
                             </thead>
-                            <tbody id="content_pregunta">
+                            <tbody id="content_sla">
                                 <tr>
                                     <td colspan="3">No existe SLA relacionadas</td>
                                 </tr>

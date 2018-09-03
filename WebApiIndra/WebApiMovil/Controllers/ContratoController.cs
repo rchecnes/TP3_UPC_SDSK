@@ -87,5 +87,61 @@ namespace WebApiMovil.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [ActionName("ListadoSLA")]
+        public List<Sla> ListadoSLA()
+        {
+            try
+            {
+                return contratoService.ListadoSLA();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ListadoContratoSLA")]
+        public List<ContratoSLA> ListadoContratoSLA(ContratoSLA entidad)
+        {
+            try
+            {
+                return contratoService.ListadoContratoSLA(entidad);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("InsertarContratoSLA")]
+        public string InsertarContratoSLA(ContratoSLA entidad)
+        {
+            try
+            {
+                return contratoService.InsertarContratoSLA(entidad);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("EliminarContratoSLA")]
+        public string EliminarContratoSLA(ContratoSLA entidad)
+        {
+            try
+            {
+                return contratoService.EliminarContratoSLA(entidad);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

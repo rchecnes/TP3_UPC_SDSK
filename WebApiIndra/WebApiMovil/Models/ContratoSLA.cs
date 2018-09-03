@@ -19,13 +19,19 @@ namespace WebApiMovil.Models
         public int CSL_SLA_ID { get; set; }
 
         [DataMember]
+        public string SLA_Descripcion { get; set; }
+
+        [DataMember]
         public int CSL_SER_ID { get; set; }
 
         [DataMember]
-        public double CSL_PorcentajeMedicion { get; set; }
+        public string SER_Descripcion { get; set; }
 
         [DataMember]
-        public double CSL_Penalidad { get; set; }
+        public decimal CSL_PorcentajeMedicion { get; set; }
+
+        [DataMember]
+        public decimal CSL_Penalidad { get; set; }
 
         [DataMember]
         public string CSL_FechaCreacion { get; set; }
