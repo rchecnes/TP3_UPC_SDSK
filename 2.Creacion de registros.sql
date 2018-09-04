@@ -115,7 +115,7 @@ go
 INSERT INTO SLA(SLA_Descripcion, SLA_NomSistema)
 VALUES('Tiempo Atencion Menor a 10 minutos','TEMP_ATE_M10M'),
 ('Nivel resolucion primer contacto','NRESOL_PRI_CONTACTO'),
-('LLamadas escaladas menor a 5 minutos','LLAM_ESCA_M5M')
+('Tickets atendidos con más de 24 horas','TIC_ATE_24H')
 go
 select * from Resultado
 /*

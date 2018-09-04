@@ -288,8 +288,11 @@ namespace WebApiMovil.Services
                 {
                     conection.Open();
                     //Fin totalizado
-                    string sql = "SELECT * FROM ContratoSLA csa INNER JOIN SLA s ON(csa.CSL_SLA_ID=s.SLA_ID)" +
-                                  " INNER JOIN Servicio sr ON(csa.CSL_SER_ID=sr.SER_ID)";
+                    string sql = "SELECT * FROM ContratoSLA csa " +
+                                  " INNER JOIN SLA s ON(csa.CSL_SLA_ID=s.SLA_ID)" +
+                                  " INNER JOIN Servicio sr ON(csa.CSL_SER_ID=sr.SER_ID)" +
+                                  " WHERE csa.CSL_CON_ID=" + entidad.CSL_CON_ID;
+
                     using (SqlCommand command = new SqlCommand(sql, conection))
                     {
                         using (SqlDataReader dr = command.ExecuteReader())

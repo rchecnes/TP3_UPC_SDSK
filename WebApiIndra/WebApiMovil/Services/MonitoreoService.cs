@@ -117,7 +117,9 @@ namespace WebApiMovil.Services
                 {
                     conection.Open();
 
-                    string query = "SELECT * FROM ContratoSLA WHERE CSL_CON_ID="+entidad.CSL_CON_ID;
+                    string query = "SELECT * FROM ContratoSLA csl" +
+                                   " INNER JOIN SLA s ON(csl.CSL_SLA_ID=s.SLA_ID)" +
+                                   " WHERE CSL_CON_ID="+entidad.CSL_CON_ID;
 
                     using (SqlCommand command = new SqlCommand(query, conection))
                     {
@@ -132,9 +134,18 @@ namespace WebApiMovil.Services
                                     item.CSL_SLA_ID = dr.GetInt32(dr.GetOrdinal("CSL_SLA_ID"));
                                     item.CSL_PorcentajeMedicion = dr.GetDecimal(dr.GetOrdinal("CSL_PorcentajeMedicion"));
                                     item.CSL_Penalidad = dr.GetDecimal(dr.GetOrdinal("CSL_Penalidad"));
+                                    item.SLA_Descripcion= dr.GetString(dr.GetOrdinal("SLA_Descripcion"));
+                                    item.SLA_NomSistema = dr.GetString(dr.GetOrdinal("SLA_NomSistema"));
+                                    //item.
+                                    //Mese
+                                    string[] mes = new string[12];
+                                    mes[0] = "ENE"; mes[3] = "ABR"; mes[6] = "JUL"; mes[9] = "OCT";
+                                    mes[1] = "FEB"; mes[4] = "MAY"; mes[7] = "AGO"; mes[10] = "NOV";
+                                    mes[2] = "MAR"; mes[5] = "JUN"; mes[8] = "SEP"; mes[11] = "DIC";
 
                                     List<RepMonitoreo> Resultado = null;
-                                    string queryrep = "SELECT MONTH(TIC_FechaRegistro)as Mes FROM Ticket WHERE TIC_EMP_ID="+ entidad.CSL_EMP_ID+" GROUP BY MONTH(TIC_FechaRegistro)";
+                                    string queryrep = "SELECT MONTH(TIC_FechaRegistro)as REP_Periodo, YEAR(TIC_FechaRegistro)as REP_Anio  FROM Ticket " +
+                                                      " WHERE TIC_EMP_ID=" + entidad.CSL_EMP_ID+ " AND TIC_FechaRegistro BETWEEN '" + entidad.CON_FechaInicioContrato + "' AND '"+entidad.CON_FechaFinContrato + "' GROUP BY YEAR(TIC_FechaRegistro),MONTH(TIC_FechaRegistro)";
                                     using (SqlCommand command1 = new SqlCommand(queryrep, conection))
                                     {
                                         using (SqlDataReader dr1 = command1.ExecuteReader())
@@ -144,10 +155,26 @@ namespace WebApiMovil.Services
                                                 Resultado = new List<RepMonitoreo>();
                                                 while (dr1.Read())
                                                 {
+                                                    decimal logro = 0;
+                                                    if(dr.GetString(dr.GetOrdinal("SLA_NomSistema"))== "TEMP_ATE_M10M")
+                                                    {
+                                                        logro = 50;
+                                                    }
+                                                    else if(dr.GetString(dr.GetOrdinal("SLA_NomSistema")) == "NRESOL_PRI_CONTACTO")
+                                                    {
+                                                        logro = 20;
+                                                    }
+                                                    else if (dr.GetString(dr.GetOrdinal("SLA_NomSistema")) == "TIC_ATE_24H")
+                                                    {
+                                                        logro = 60;
+                                                    }
+
                                                     RepMonitoreo rep = new RepMonitoreo();
-                                                    rep.REP_Logro = 10;
-                                                    rep.REP_Logro = 80;
+                                                    rep.REP_Logro = logro;
+                                                    rep.REP_Cumple = (dr.GetDecimal(dr.GetOrdinal("CSL_PorcentajeMedicion"))>= logro)?1:0;
+                                                    rep.REP_Descripcion = mes[dr1.GetInt32(dr1.GetOrdinal("REP_Periodo"))-1];
                                                     rep.REP_Periodo = "08";
+                                                    rep.REP_Anio = dr1.GetInt32(dr1.GetOrdinal("REP_Anio"));
                                                     Resultado.Add(rep);
                                                 }
                                             }

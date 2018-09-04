@@ -13,10 +13,16 @@ namespace WebApiMovil.Models
         public string REP_Periodo { get; set; }
 
         [DataMember]
-        public decimal REP_Meta { get; set; }
+        public int REP_Cumple { get; set; }
 
         [DataMember]
         public decimal REP_Logro { get; set; }
+
+        [DataMember]
+        public string REP_Descripcion { get; set; }
+
+        [DataMember]
+        public int REP_Anio { get; set; }
 
     }
 }

@@ -130,9 +130,12 @@
                                         var id = $(this).attr("id");
 
 										$("#CSL_CON_ID").val(id);
-
+										listarContratoSLa();
                                         //listarPregunta(id);
-
+										$("#CSL_SLA_ID").val('');
+										$("#CSL_SER_ID").val('');
+										$("#CSL_PorcentajeMedicion").val('');
+										$("#CSL_Penalidad").val('');
                                         $('#modal_pregunta').modal('show');
                                     })
 
@@ -216,7 +219,7 @@
 				url: $("#UrlServicio").val() + "/api/Contrato/ListadoContratoSLA",
 				type: "POST",
 				dataType: "json",
-				data: { CSL_CON_ID:$("#CON_ID").val()},
+				data: { CSL_CON_ID: $("#CSL_CON_ID").val()},
 				success: function (data) {
 					var html = "";
 					if (data != null) {
@@ -263,6 +266,10 @@
 				dataType: "json",
 				data: $("#form_add_sla").serialize() + "&CSL_CON_ID=" + $("#CON_ID").val(),
 				success: function (data) {
+					$("#CSL_SLA_ID").val('');
+					$("#CSL_SER_ID").val('');
+					$("#CSL_PorcentajeMedicion").val('');
+					$("#CSL_Penalidad").val('');
 					listarContratoSLa();
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
@@ -274,7 +281,6 @@
 
 		listarServicio();
 		listarSLa();
-		listarContratoSLa();
     })
 </script>
 
@@ -355,13 +361,13 @@
 						<div class="col-lg-6">
 							<div class="form-group">
 								<label for="nombre">Porcentaje Medicion:</label>
-								<input type="text" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" class="form-control" required />
+								<input type="number" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" maxlength="3" min="10" class="form-control" required autocomplete="off"/>
 							</div>
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group">
 								<label for="nombre">Penalidad:</label>
-								<input type="text" id="CSL_Penalidad" name="CSL_Penalidad" class="form-control" required />
+								<input type="number" id="CSL_Penalidad" name="CSL_Penalidad" class="form-control" required autocomplete="off"/>
 							</div>
 						</div>
 					</div>

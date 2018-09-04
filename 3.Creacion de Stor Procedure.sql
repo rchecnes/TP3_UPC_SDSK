@@ -335,3 +335,65 @@ BEGIN
 	WHERE TEN_ID=@TEN_ID
 END 
 GO
+
+
+/**MONITOREO**/
+Create Procedure MonitoreoSLA
+@idContrato INT,
+@idEmpresa	INT,
+@idServicio	INT,
+@idSLA		INT,
+@FechaInicio	DATETIME,
+@FechaFin		DATETIME
+AS
+BEGIN
+
+DECLARE @idSLA1 INTEGER,
+		@idSLA2 INTEGER,
+		@idSLA3 INTEGER
+
+SET @idSLA1 = 1
+SET @idSLA2 = 2
+SET @idSLA3 = 3
+
+declare @table as Table(
+TIC_ID INTEGER,
+TIC_Flag bit
+)
+
+IF @idSLA = @idSLA1
+	BEGIN
+		DECLARE @TiempoMedicion INT,
+				@TotalTicket int,
+				@TotalTicketSLA int
+
+		set @TiempoMedicion = 10
+
+		insert @table
+		SELECT TIC_ID, CASE WHEN DATEDIFF(MI,A.ATE_FechaInicio, A.ATE_FechaFin) >= @TiempoMedicion THEN 0 ELSE 1 END 
+		FROM Ticket T INNER JOIN Atencion A	
+			ON T.TIC_ID = A.ATE_TIC_ID 
+				AND A.ATE_ID = (SELECT TOP 1 AT.ATE_ID FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID ORDER BY AT.ATE_ID DESC)
+			INNER JOIN Contrato C
+			ON C.CON_EMP_ID = T.TIC_EMP_ID INNER JOIN ContratoSLA CSLA
+			ON CSLA.CSL_CON_ID = C.CON_ID
+		WHERE C.CON_ID = @idContrato AND C.CON_EMP_ID = @idEmpresa
+			AND CSLA.CSL_SER_ID = @idServicio AND CSLA.CSL_SLA_ID = @idSLA
+			AND T.TIC_FechaRegistro BETWEEN @FechaInicio AND @FechaFin
+			AND T.TIC_EST_ID = 3
+		
+		SELECT @TotalTicket = COUNT(1) FROM @table
+		SELECT @TotalTicketSLA = COUNT(1) FROM @table WHERE TIC_Flag = 1
+
+		SELECT @idSLA as SLA_ID, @TotalTicketSLA/CONVERT(decimal(3,2), @TotalTicket) AS Porcentaje
+
+	END
+ELSE IF @idSLA = @idSLA2
+	BEGIN
+		SELECT @idSLA, '0.90'
+	END
+ELSE IF @idSLA = @idSLA3
+	BEGIN
+		SELECT @idSLA, '0.90'
+	END 
+END

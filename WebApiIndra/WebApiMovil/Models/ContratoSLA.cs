@@ -19,10 +19,13 @@ namespace WebApiMovil.Models
         public int CSL_SLA_ID { get; set; }
 
         [DataMember]
-        public int CSL_EMP_ID { get; set; }
+        public string SLA_Descripcion { get; set; }
 
         [DataMember]
-        public string SLA_Descripcion { get; set; }
+        public string SLA_NomSistema { get; set; }
+
+        [DataMember]
+        public int CSL_EMP_ID { get; set; }
 
         [DataMember]
         public int CSL_SER_ID { get; set; }
@@ -38,6 +41,15 @@ namespace WebApiMovil.Models
 
         [DataMember]
         public string CSL_FechaCreacion { get; set; }
+
+        [DataMember]
+        public string CON_FechaInicioContrato { get; set; }
+
+        [DataMember]
+        public string CON_FechaFinContrato { get; set; }
+
+        [DataMember]
+        public string CON_FechaCreacion { get; set; }
 
         [DataMember]
         public string CSL_FechaModificacion { get; set; }
