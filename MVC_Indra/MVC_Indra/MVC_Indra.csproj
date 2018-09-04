@@ -152,6 +152,7 @@
     <Compile Include="Controllers\PruebaController.cs" />
     <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\ContratoController.cs" />
+    <Compile Include="Controllers\MonitoreoController.cs" />
     <Compile Include="Controllers\TipoEncuestaController.cs" />
     <Compile Include="Controllers\TipoSolucionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -166,6 +167,7 @@
     <Content Include="Content\AdminTL\bbGrid.css" />
     <Content Include="Content\AdminTL\blue.css" />
     <Content Include="Content\AdminTL\bootstrap-datepicker.min.css" />
+    <Content Include="Content\AdminTL\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\AdminTL\bootstrap.min.css" />
     <Content Include="Content\AdminTL\dataTables.bootstrap.min.css" />
     <Content Include="Content\AdminTL\font-awesome.min.css" />
@@ -206,6 +208,7 @@
     <Content Include="Scripts\AdminTL\backbone-min.js" />
     <Content Include="Scripts\AdminTL\bbGrid.js" />
     <Content Include="Scripts\AdminTL\bootstrap-datepicker.min.js" />
+    <Content Include="Scripts\AdminTL\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\AdminTL\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\AdminTL\demo.js" />
     <Content Include="Scripts\AdminTL\fastclick.js" />
@@ -269,6 +272,8 @@
     <Content Include="Views\Contrato\Index.cshtml" />
     <Content Include="Views\Contrato\Nuevo.cshtml" />
     <Content Include="Views\Contrato\Editar.cshtml" />
+    <Content Include="Views\Monitoreo\Index.cshtml" />
+    <Content Include="Views\Monitoreo\Consultar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

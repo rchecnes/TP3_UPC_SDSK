@@ -223,6 +223,7 @@
     <Compile Include="Controllers\ContratoController.cs" />
     <Compile Include="Controllers\EncuestaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MonitoreoController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\ResponsableController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
@@ -235,6 +236,7 @@
     </Compile>
     <Compile Include="Models\Accesorio.cs" />
     <Compile Include="Models\Asignacion.cs" />
+    <Compile Include="Models\Atencion.cs" />
     <Compile Include="Models\Cargo.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Cliente.cs" />
@@ -251,6 +253,7 @@
     <Compile Include="Models\Pregunta.cs" />
     <Compile Include="Models\Prioridad.cs" />
     <Compile Include="Models\EncuestaRespuesta.cs" />
+    <Compile Include="Models\RepMonitoreo.cs" />
     <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Servicio.cs" />
     <Compile Include="Models\Sla.cs" />
@@ -269,6 +272,7 @@
     <Compile Include="Services\AsignarService.cs" />
     <Compile Include="Services\ContratoService.cs" />
     <Compile Include="Services\EncuestaService.cs" />
+    <Compile Include="Services\MonitoreoService.cs" />
     <Compile Include="Services\ResponsableService.cs" />
     <Compile Include="Services\TicketService.cs" />
     <Compile Include="Services\TipoEncuestaService.cs" />

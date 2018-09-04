@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "Nuevo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.TitlePag = "Consultar SLA";
+}
+
+<input type="hidden" id="UrlServicio" value="@System.Configuration.ConfigurationManager.AppSettings["UrlServicio"]" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary">
+
+            <!-- form start -->
+            <form role="form" id="form_registro">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label for="nombre">Contrato:</label>
+                                <input type="text" class="form-control" id="CON_ID" name="CON_ID" autocomplete="off" value="@ViewBag.CON_ID" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="nombre">Empresa:</label>
+                                <input type="text" class="form-control" id="EMP_RazonSocial" name="EMP_RazonSocial" autocomplete="off" placeholder="Buscar Empresa">
+                                <input type="hidden" class="form-control" id="CON_EMP_ID" name="CON_EMP_ID" >
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="nombre">Fecha Inicio Contrato:</label>
+                                <input type="date" id="CON_FechaInicioContrato" name="CON_FechaInicioContrato" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="nombre">Fecha Fin Contrato:</label>
+                                <input type="date" id="CON_FechaFinContrato" name="CON_FechaFinContrato" class="form-control" required />
+                            </div>
+                        </div>
+                    </div><br /><br /><br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="tabs">
+                                <ul>
+                                    <li><a href="#tabs-1">Tiempo Atención menor a 10min</a></li>
+                                    <li><a href="#tabs-2">Nivel resolución primer contacto</a></li>
+                                    <li><a href="#tabs-3">Tickets atendidos con más de 24 horas</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+                                </div>
+                                <div id="tabs-2">
+                                    <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                                </div>
+                                <div id="tabs-3">
+                                    <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+                                    <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer" style="text-align: center;">
+                    <a href="@Url.Action("Index", "Monitoreo")" class="btn btn-default btn-lg">Cerrar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $("#tabs").tabs();
+
+    editarContrato = function () {
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Contrato/EditarContrato",
+            type: "POST",
+            dataType: "json",
+            data: {CON_ID:@ViewBag.CON_ID},
+            success: function (data) {
+                $("#EMP_RazonSocial").val(data[0].EMP_RazonSocial).attr("disabled","disabled");
+                $("#CON_FechaInicioContrato").val(data[0].CON_FechaInicioContrato).attr("disabled", "disabled");
+                $("#CON_FechaFinContrato").val(data[0].CON_FechaFinContrato).attr("disabled", "disabled");
+                $("#CON_EMP_ID").val(data[0].CON_EMP_ID);
+                //mostrarReporte();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    editarContrato();
+
+    mostrarReporte = function () {
+
+        $.ajax({
+            url: $("#UrlServicio").val() + "/api/Monitoreo/ListadoLogroMonitoreo",
+            type: "POST",
+            data: { CSL_CON_ID: @ViewBag.CON_ID, CSL_EMP_ID: $("#CON_EMP_ID").val()},
+			success: function (data) {
+                console.log(data);
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				console.log(xhr.status);
+				console.log(thrownError);
+			}
+        });
+    }
+
+    
+});
+</script>

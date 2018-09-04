@@ -215,5 +215,19 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost]
+        [ActionName("InsertarAtencionTicket")]
+        public string InsertarAtencionTicket(Atencion entidad)
+        {
+            try
+            {
+                return ticketService.InsertarAtencionTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

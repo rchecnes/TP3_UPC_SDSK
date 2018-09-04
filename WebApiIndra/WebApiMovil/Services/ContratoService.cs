@@ -163,6 +163,7 @@ namespace WebApiMovil.Services
                                 {
                                     Contrato item = new Contrato();
                                     item.CON_ID = dr.GetInt32(dr.GetOrdinal("CON_ID"));
+                                    item.CON_EMP_ID = dr.GetInt32(dr.GetOrdinal("CON_EMP_ID"));
                                     item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
                                     item.CON_FechaInicioContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaInicioContrato")).ToString("yyyy-MM-dd");
                                     item.CON_FechaFinContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaFinContrato")).ToString("yyyy-MM-dd");                                    

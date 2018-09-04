@@ -19,6 +19,9 @@ namespace WebApiMovil.Models
         public int CSL_SLA_ID { get; set; }
 
         [DataMember]
+        public int CSL_EMP_ID { get; set; }
+
+        [DataMember]
         public string SLA_Descripcion { get; set; }
 
         [DataMember]
@@ -44,5 +47,8 @@ namespace WebApiMovil.Models
 
         [DataMember]
         public string CSL_UsuarioModificacion { get; set; }
+
+        [DataMember]
+        public List<RepMonitoreo> Medicion { get; set; }
     }
 }

@@ -114,7 +114,7 @@ namespace WebApiIndra.Services
                                     {
                                         item.CAT_Descripcion = "";
                                     }*/
-                                    item.TIC_FechaRegistro = dr.GetDateTime(dr.GetOrdinal("TIC_FechaRegistro")).ToString("dd/MM/yyyy");
+                                    item.TIC_FechaRegistro = dr.GetDateTime(dr.GetOrdinal("TIC_FechaRegistro")).ToString("dd/MM/yyyy HH:mm:ss");
                                     item.EST_Descrpcion = dr.GetString(dr.GetOrdinal("EST_Descripcion"));
                                     item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
 
@@ -691,6 +691,57 @@ namespace WebApiIndra.Services
             catch (Exception ex)
             {
                 throw (ex);
+            }
+        }
+        public string InsertarAtencionTicket(Atencion entidad)
+        {
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+            {
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+
+                try
+                {
+
+                    string sqltik = "INSERT INTO Atencion " +
+                                    " (ATE_TIC_ID, ATE_RES_ID, ATE_RST_ID, ATE_FechaInicio, ATE_FechaFin, ATE_FechaAtencion, ATE_PRI_ID,ATE_TIC_Descripcion,ATE_FechaRegistro) VALUES" +
+                                    "('" + entidad.ATE_TIC_ID + "', '" + entidad.ATE_RES_ID + "','" + entidad.ATE_RST_ID + "','" + entidad.ATE_FechaInicio + "','" + entidad.ATE_FechaFin + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "','" + entidad.ATE_PRI_ID + "','"+entidad.ATE_TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')";
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    //Insertamos el historico
+                    string sqlhis = "INSERT INTO HistorialTicket " +
+                                    "(HIS_TIC_ID,HIS_PRI_ID,HIS_RES_ID,HIS_FechaCambio,HIS_Descripcion)VALUES " +
+                                    "('" + entidad.ATE_TIC_ID + "','" + entidad.ATE_PRI_ID + "','" + entidad.ATE_RES_ID + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "','" + entidad.ATE_TIC_Descripcion + "')";
+                    using (SqlCommand command = new SqlCommand(sqlhis, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    //Actualizamos estado del ticket si ya fue resuelto
+                    if (entidad.ATE_RST_ID==1)
+                    {
+                        //Insertamos el historico
+                        string sqlupt = "UPDATE Ticket SET TIC_EST_ID=3 WHERE TIC_ID=" + entidad.ATE_TIC_ID;
+                        using (SqlCommand command = new SqlCommand(sqlupt, conection, tran))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    tran.Commit();
+                    conection.Close();
+                    return "ok";
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
             }
         }
     }
