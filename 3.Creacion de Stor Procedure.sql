@@ -338,6 +338,9 @@ GO
 
 
 /**MONITOREO**/
+IF (OBJECT_ID('MonitoreoSLA') IS NOT NULL)
+  DROP PROCEDURE MonitoreoSLA
+GO
 Create Procedure MonitoreoSLA
 @idContrato INT,
 @idEmpresa	INT,
