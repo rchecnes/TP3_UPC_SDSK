@@ -75,7 +75,7 @@ namespace WebApiMovil.Services
                                     item.CON_FechaFinContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaFinContrato")).ToString("dd/MM/yyyy");
 
                                     string editar = "<a title='Editar' href='#' class='editar' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";
-                                    string eliminar = "<a title='Eliminar Ticket' href='#' class='eliminar' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>";
+                                    string eliminar = "<a title='Eliminar SLA' href='#' class='eliminar' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-trash fa-1x'></span></a>";
                                     string addsla = "<a title='Agregar SLA' href='#' class='addsla' id='" + item.CON_ID + "'><span class='glyphicon glyphicon-th-list fa-1x'></span></a>";
                                     item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + addsla + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + eliminar;
 
@@ -165,8 +165,10 @@ namespace WebApiMovil.Services
                                     item.CON_ID = dr.GetInt32(dr.GetOrdinal("CON_ID"));
                                     item.CON_EMP_ID = dr.GetInt32(dr.GetOrdinal("CON_EMP_ID"));
                                     item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
-                                    item.CON_FechaInicioContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaInicioContrato")).ToString("yyyy-MM-dd");
-                                    item.CON_FechaFinContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaFinContrato")).ToString("yyyy-MM-dd");                                    
+                                    item.CON_FechaInicioContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaInicioContrato")).ToString("dd/MM/yyyy");
+                                    item.CON_FechaFinContrato = dr.GetDateTime(dr.GetOrdinal("CON_FechaFinContrato")).ToString("dd/MM/yyyy");
+                                    item.CON_FechaInicioContratoI = dr.GetDateTime(dr.GetOrdinal("CON_FechaInicioContrato")).ToString("yyyy-MM-dd");
+                                    item.CON_FechaFinContratoF = dr.GetDateTime(dr.GetOrdinal("CON_FechaFinContrato")).ToString("yyyy-MM-dd");
                                     Lista.Add(item);
                                 }
                             }
@@ -224,7 +226,7 @@ namespace WebApiMovil.Services
                 try
                 {
 
-                    using (SqlCommand command = new SqlCommand("DELETE FROM Contrato WHERE CON_ID="+entidad.CON_ID, conection, tran))
+                    using (SqlCommand command = new SqlCommand("UPDATE Contrato SET CON_FlagActivo=0 WHERE CON_ID=" + entidad.CON_ID, conection, tran))
                     {
                         command.ExecuteNonQuery();
                     }
@@ -241,7 +243,7 @@ namespace WebApiMovil.Services
                 }
             }
         }
-        public List<Sla> ListadoSLA()
+        public List<Sla> ListadoSLA(Contrato entidad)
         {
             List<Sla> Lista = null;
             try
@@ -251,7 +253,7 @@ namespace WebApiMovil.Services
                     conection.Open();
                     //Fin totalizado
 
-                    using (SqlCommand command = new SqlCommand("SELECT * FROM SLA", conection))
+                    using (SqlCommand command = new SqlCommand("select * from SLA where SLA_ID not in(select CSL_SLA_ID from ContratoSLA where CSL_CON_ID="+entidad.CON_ID+")", conection))
                     {
                         using (SqlDataReader dr = command.ExecuteReader())
                         {

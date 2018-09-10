@@ -600,6 +600,36 @@ namespace WebApiIndra.Services
                 }
             }
         }
+        public string ActualizarEstadoTicket(Ticket entidad)
+        {
+            using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+            {
+                conection.Open();
+                SqlTransaction tran = conection.BeginTransaction();
+                try
+                {
+                    string sqltik = "UPDATE Ticket " +
+                                    " SET TIC_EST_ID=" + entidad.TIC_EST_ID + " WHERE TIC_ID=" + entidad.TIC_ID;
+
+                    using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    
+
+                    tran.Commit();
+                    conection.Close();
+                    return "ok";
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+
+                    throw (ex);
+                }
+            }
+        }
         public List<TipoSolucion> ListadoTipoSolucionProblema(TipoSolucion entidad)
         {
             List<TipoSolucion> lista = null;
@@ -654,14 +684,12 @@ namespace WebApiIndra.Services
                 using (SqlConnection conection = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
                     conection.Open();
-
-                    string sql = "SELECT * FROM HistorialTicket ht " +
-                                 "INNER JOIN Prioridad p ON(ht.HIS_PRI_ID=p.PRI_ID) " +
-                                 "INNER JOIN UsuarioResponsable ur ON(ht.HIS_RES_ID=ur.RES_ID) " +
-                                 "WHERE HIS_TIC_ID=" + entidad.HIS_TIC_ID;
-
-                    using (SqlCommand command = new SqlCommand(sql, conection))
+                   
+                    using (SqlCommand command = new SqlCommand("ConsultarHistorialTickeT", conection))
                     {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@TIC_ID", entidad.HIS_TIC_ID);
+
                         using (SqlDataReader dr = command.ExecuteReader())
                         {
                             if (dr.HasRows)
@@ -670,14 +698,18 @@ namespace WebApiIndra.Services
                                 while (dr.Read())
                                 {
                                     HistorialTicket item = new HistorialTicket();
-                                    item.HIS_TIC_ID = dr.GetInt32(dr.GetOrdinal("HIS_TIC_ID"));
-                                    item.PRI_Descripcion = dr.GetString(dr.GetOrdinal("PRI_Descripcion"));
+                                    
+                                    item.HIS_TIC_ID = dr.GetInt32(dr.GetOrdinal("TIC_ID"));
+                                    item.ATE_ID = dr.GetInt32(dr.GetOrdinal("ATE_ID"));
+                                    item.TIC_CODE = dr.GetString(dr.GetOrdinal("TIC_Code"));
+                                    item.PRI_Descripcion = dr.GetString(dr.GetOrdinal("Pri_Descripcion"));
                                     item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
-                                    if (!dr.IsDBNull(dr.GetOrdinal("HIS_Descripcion")))
+                                    item.ATE_RST_ID = dr.GetInt32(dr.GetOrdinal("ATE_RST_Id")); 
+                                    if (!dr.IsDBNull(dr.GetOrdinal("TIC_Descripcion")))
                                     {
-                                        item.HIS_Descripcion = dr.GetString(dr.GetOrdinal("HIS_Descripcion"));
+                                        item.HIS_Descripcion = dr.GetString(dr.GetOrdinal("TIC_Descripcion"));
                                     }
-                                    item.HIS_FechaCambio = dr.GetDateTime(dr.GetOrdinal("HIS_FechaCambio")).ToString("dd/MM/yyyy");
+                                    item.HIS_FechaCambio = dr.GetDateTime(dr.GetOrdinal("ATE_FechaRegistro")).ToString("dd/MM/yyyy");
                                     
                                     lista.Add(item);
                                 }
@@ -690,7 +722,7 @@ namespace WebApiIndra.Services
             }
             catch (Exception ex)
             {
-                throw (ex);
+               throw (ex);
             }
         }
         public string InsertarAtencionTicket(Atencion entidad)

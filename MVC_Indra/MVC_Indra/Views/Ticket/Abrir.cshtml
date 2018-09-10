@@ -107,6 +107,22 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
+	actualizarEstadoTicket = function () {
+		$.ajax({
+			url: $("#UrlServicio").val() + "/api/Ticket/ActualizarEstadoTicket",
+			type: "POST",
+			dataType: "json",
+			data: {TIC_EST_ID:2, TIC_ID:@ViewBag.TIC_ID},
+			success: function (data) {
+				console.log(data);
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				console.log(xhr.status);
+				console.log(thrownError);
+			}
+		});
+	}
+
     editarTicket = function () {
         $.ajax({
             url: $("#UrlServicio").val() + "/api/Ticket/EditarTicket",
@@ -248,6 +264,7 @@ $(document).ready(function () {
         });
     }
 
+	actualizarEstadoTicket();
     listarServicio();
     listarTipoProblema();
     listarPrioridad();

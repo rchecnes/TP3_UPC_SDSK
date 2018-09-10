@@ -10,7 +10,7 @@ namespace WebApiMovil.Models
     public class RepMonitoreo
     {
         [DataMember]
-        public string REP_Periodo { get; set; }
+        public int REP_Periodo { get; set; }
 
         [DataMember]
         public int REP_Cumple { get; set; }

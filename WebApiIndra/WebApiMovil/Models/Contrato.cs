@@ -22,7 +22,13 @@ namespace WebApiMovil.Models
         public string CON_FechaInicioContrato { get; set; }
 
         [DataMember]
+        public string CON_FechaInicioContratoI { get; set; }
+
+        [DataMember]
         public string CON_FechaFinContrato { get; set; }
+
+        [DataMember]
+        public string CON_FechaFinContratoF { get; set; }
 
         [DataMember]
         public string CON_FechaCreacion { get; set; }

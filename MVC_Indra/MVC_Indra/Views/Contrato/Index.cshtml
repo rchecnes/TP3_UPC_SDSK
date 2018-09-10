@@ -130,6 +130,8 @@
                                         var id = $(this).attr("id");
 
 										$("#CSL_CON_ID").val(id);
+										listarSLa();
+										listarServicio();
 										listarContratoSLa();
                                         //listarPregunta(id);
 										$("#CSL_SLA_ID").val('');
@@ -198,13 +200,17 @@
 				url: $("#UrlServicio").val() + "/api/Contrato/ListadoSLA",
 				type: "POST",
 				dataType: "json",
+				data:{ CON_ID: $("#CSL_CON_ID").val()},
 				success: function (data) {
-					if (data.length > 0) {
-						var options = "";
-						for (var i = 0; i < data.length; i++) {
-							$("#CSL_SLA_ID").append("<option value=" + data[i].SLA_ID + ">" + data[i].SLA_Descripcion + "</option>");
+					var options = '<option value="">[Seleccionar]</option>';
+					if (data!=null) {
+						if (data.length > 0) {
+							for (var i = 0; i < data.length; i++) {
+								options += "<option value=" + data[i].SLA_ID + ">" + data[i].SLA_Descripcion + "</option>";
+							}
 						}
 					}
+					$("#CSL_SLA_ID").html(options);
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
 					console.log(xhr.status);
@@ -249,6 +255,7 @@
 				data: { CSL_ID: CSL_ID },
 				success: function (data) {
 					listarContratoSLa();
+					listarSLa();
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
 					console.log(xhr.status);
@@ -270,6 +277,7 @@
 					$("#CSL_SER_ID").val('');
 					$("#CSL_PorcentajeMedicion").val('');
 					$("#CSL_Penalidad").val('');
+					listarSLa();
 					listarContratoSLa();
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
@@ -278,9 +286,7 @@
 				}
 			});
 		});
-
-		listarServicio();
-		listarSLa();
+		
     })
 </script>
 

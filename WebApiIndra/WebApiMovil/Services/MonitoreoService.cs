@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -145,7 +146,7 @@ namespace WebApiMovil.Services
 
                                     List<RepMonitoreo> Resultado = null;
                                     string queryrep = "SELECT MONTH(TIC_FechaRegistro)as REP_Periodo, YEAR(TIC_FechaRegistro)as REP_Anio  FROM Ticket " +
-                                                      " WHERE TIC_EMP_ID=" + entidad.CSL_EMP_ID+ " AND TIC_FechaRegistro BETWEEN '" + entidad.CON_FechaInicioContrato + "' AND '"+entidad.CON_FechaFinContrato + "' GROUP BY YEAR(TIC_FechaRegistro),MONTH(TIC_FechaRegistro)";
+                                                      " WHERE TIC_EMP_ID=" + entidad.CSL_EMP_ID+ " AND format(TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN '" + entidad.CON_FechaInicioContrato + "' AND '"+entidad.CON_FechaFinContrato + "' GROUP BY YEAR(TIC_FechaRegistro),MONTH(TIC_FechaRegistro)";
                                     using (SqlCommand command1 = new SqlCommand(queryrep, conection))
                                     {
                                         using (SqlDataReader dr1 = command1.ExecuteReader())
@@ -158,22 +159,76 @@ namespace WebApiMovil.Services
                                                     decimal logro = 0;
                                                     if(dr.GetString(dr.GetOrdinal("SLA_NomSistema"))== "TEMP_ATE_M10M")
                                                     {
-                                                        logro = 50;
+                                                        using (SqlCommand command100 = new SqlCommand("MonitoreoSLA", conection))
+                                                        {
+                                                            command100.CommandType = CommandType.StoredProcedure;
+                                                            command100.Parameters.AddWithValue("@IdContrato", entidad.CSL_CON_ID);
+                                                            command100.Parameters.AddWithValue("@SlaNomSistema", "TEMP_ATE_M10M");
+                                                            command100.Parameters.AddWithValue("@Anio", dr1.GetInt32(dr1.GetOrdinal("REP_Anio")));
+                                                            command100.Parameters.AddWithValue("@Mes", dr1.GetInt32(dr1.GetOrdinal("REP_Periodo")));
+                                                            using (SqlDataReader dr100 = command100.ExecuteReader())
+                                                            {
+                                                                if (dr100.HasRows)
+                                                                {
+                                                                    while (dr100.Read())
+                                                                    {
+                                                                        logro = dr100.GetDecimal(dr100.GetOrdinal("Porcentaje"));
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        }
                                                     }
                                                     else if(dr.GetString(dr.GetOrdinal("SLA_NomSistema")) == "NRESOL_PRI_CONTACTO")
                                                     {
-                                                        logro = 20;
+                                                        using (SqlCommand command100 = new SqlCommand("MonitoreoSLA", conection))
+                                                        {
+                                                            command100.CommandType = CommandType.StoredProcedure;
+                                                            command100.Parameters.AddWithValue("@IdContrato", entidad.CSL_CON_ID);
+                                                            command100.Parameters.AddWithValue("@SlaNomSistema", "NRESOL_PRI_CONTACTO");
+                                                            command100.Parameters.AddWithValue("@Anio", dr1.GetInt32(dr1.GetOrdinal("REP_Anio")));
+                                                            command100.Parameters.AddWithValue("@Mes", dr1.GetInt32(dr1.GetOrdinal("REP_Periodo")));
+                                                            using (SqlDataReader dr100 = command100.ExecuteReader())
+                                                            {
+                                                                if (dr100.HasRows)
+                                                                {
+                                                                    while (dr100.Read())
+                                                                    {
+                                                                        logro = dr100.GetDecimal(dr100.GetOrdinal("Porcentaje"));
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        }
                                                     }
                                                     else if (dr.GetString(dr.GetOrdinal("SLA_NomSistema")) == "TIC_ATE_24H")
                                                     {
-                                                        logro = 60;
+                                                        using (SqlCommand command100 = new SqlCommand("MonitoreoSLA", conection))
+                                                        {
+                                                            command100.CommandType = CommandType.StoredProcedure;
+                                                            command100.Parameters.AddWithValue("@IdContrato", entidad.CSL_CON_ID);
+                                                            command100.Parameters.AddWithValue("@SlaNomSistema", "TIC_ATE_24H");
+                                                            command100.Parameters.AddWithValue("@Anio", dr1.GetInt32(dr1.GetOrdinal("REP_Anio")));
+                                                            command100.Parameters.AddWithValue("@Mes", dr1.GetInt32(dr1.GetOrdinal("REP_Periodo")));
+                                                            using (SqlDataReader dr100 = command100.ExecuteReader())
+                                                            {
+                                                                if (dr100.HasRows)
+                                                                {
+                                                                    while (dr100.Read())
+                                                                    {
+                                                                        logro = dr100.GetDecimal(dr100.GetOrdinal("Porcentaje"));
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        }
                                                     }
 
                                                     RepMonitoreo rep = new RepMonitoreo();
-                                                    rep.REP_Logro = logro;
-                                                    rep.REP_Cumple = (dr.GetDecimal(dr.GetOrdinal("CSL_PorcentajeMedicion"))>= logro)?1:0;
+                                                    rep.REP_Logro = Math.Round(logro,2);
+                                                    rep.REP_Cumple = (dr.GetDecimal(dr.GetOrdinal("CSL_PorcentajeMedicion"))<= logro)?1:0;
                                                     rep.REP_Descripcion = mes[dr1.GetInt32(dr1.GetOrdinal("REP_Periodo"))-1];
-                                                    rep.REP_Periodo = "08";
+                                                    rep.REP_Periodo = dr1.GetInt32(dr1.GetOrdinal("REP_Periodo"));
                                                     rep.REP_Anio = dr1.GetInt32(dr1.GetOrdinal("REP_Anio"));
                                                     Resultado.Add(rep);
                                                 }

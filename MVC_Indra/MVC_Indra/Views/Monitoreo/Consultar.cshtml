@@ -31,14 +31,14 @@
                         <div class="col-lg-3">
 							<div class="form-group">
 								<label for="nombre">Fecha Inicio Contrato:</label>
-								<input type="date" id="CON_FechaInicioContrato1" name="CON_FechaInicioContrato1" class="form-control" required />
+								<input type="text" id="CON_FechaInicioContrato1" name="CON_FechaInicioContrato1" class="form-control" required />
 								<input type="hidden" id="CON_FechaInicioContrato" name="CON_FechaInicioContrato" class="form-control" />
 							</div>
                         </div>
                         <div class="col-lg-3">
 							<div class="form-group">
 								<label for="nombre">Fecha Fin Contrato:</label>
-								<input type="date" id="CON_FechaFinContrato1" name="CON_FechaFinContrato1" class="form-control" required />
+								<input type="text" id="CON_FechaFinContrato1" name="CON_FechaFinContrato1" class="form-control" required />
 								<input type="hidden" id="CON_FechaFinContrato" name="CON_FechaFinContrato" class="form-control" />
 							</div>
                         </div>
@@ -89,8 +89,8 @@ $(document).ready(function () {
                 $("#EMP_RazonSocial").val(data[0].EMP_RazonSocial).attr("disabled","disabled");
                 $("#CON_FechaInicioContrato1").val(data[0].CON_FechaInicioContrato).attr("disabled", "disabled");
 				$("#CON_FechaFinContrato1").val(data[0].CON_FechaFinContrato).attr("disabled", "disabled");
-				$("#CON_FechaInicioContrato").val(data[0].CON_FechaInicioContrato);
-				$("#CON_FechaFinContrato").val(data[0].CON_FechaFinContrato);
+				$("#CON_FechaInicioContrato").val(data[0].CON_FechaInicioContratoI);
+				$("#CON_FechaFinContrato").val(data[0].CON_FechaFinContratoF);
                 $("#CON_EMP_ID").val(data[0].CON_EMP_ID);
                 mostrarReporte();
             },
@@ -122,14 +122,16 @@ $(document).ready(function () {
 							html1 += '<div class="col-lg-6"><b>SLA Definido: </b>' + data[i].CSL_PorcentajeMedicion + '%</div><div class="col-lg-6"><b>Penalidad Asociada Definido: </b>S/. ' + data[i].CSL_Penalidad + '</div></label>';
 							html1 += '</div>';
 
-							for (var d = 0; d < detalle.length; d++) {								
-								html1 += '<br><div class="row">';
-								html1 += '<div class="col-lg-4">';
-								var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
-								html1 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono+'</div>';
-								html1 += '</div>';
-								html1 += '</div>';
-							}							
+							if (detalle!=null) {
+								for (var d = 0; d < detalle.length; d++) {
+									html1 += '<br><div class="row">';
+									html1 += '<div class="col-lg-4">';
+									var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
+									html1 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono + '</div>';
+									html1 += '</div>';
+									html1 += '</div>';
+								}
+							}														
 							$("#tabs-1 .contenido").html(html1);
 						} else if (data[i].SLA_NomSistema == "NRESOL_PRI_CONTACTO") {
 							var html2 = '';
@@ -139,13 +141,15 @@ $(document).ready(function () {
 							html2 += '<div class="col-lg-6"><b>SLA Definido: </b>' + data[i].CSL_PorcentajeMedicion + '%</div><div class="col-lg-6"><b>Penalidad Asociada Definido: </b>S/. ' + data[i].CSL_Penalidad + '</div></label>';
 							html2 += '</div>';
 
-							for (var d = 0; d < detalle.length; d++) {
-								html2 += '<br><div class="row">';
-								html2 += '<div class="col-lg-4">';
-								var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
-								html2 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono + '</div>';
-								html2 += '</div>';
-								html2 += '</div>';
+							if (detalle != null) {
+								for (var d = 0; d < detalle.length; d++) {
+									html2 += '<br><div class="row">';
+									html2 += '<div class="col-lg-4">';
+									var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
+									html2 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono + '</div>';
+									html2 += '</div>';
+									html2 += '</div>';
+								}
 							}
 							$("#tabs-2 .contenido").html(html2);
 						} else if (data[i].SLA_NomSistema == "TIC_ATE_24H") {
@@ -155,14 +159,15 @@ $(document).ready(function () {
 							html3 += '<div class="row">';
 							html3 += '<div class="col-lg-6"><b>SLA Definido: </b>' + data[i].CSL_PorcentajeMedicion + '%</div><div class="col-lg-6"><b>Penalidad Asociada Definido: </b>S/. ' + data[i].CSL_Penalidad + '</div></label>';
 							html3 += '</div>';
-
-							for (var d = 0; d < detalle.length; d++) {
-								html3 += '<br><div class="row">';
-								html3 += '<div class="col-lg-4">';
-								var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
-								html3 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono + '</div>';
-								html3 += '</div>';
-								html3 += '</div>';
+							if (detalle != null) {
+								for (var d = 0; d < detalle.length; d++) {
+									html3 += '<br><div class="row">';
+									html3 += '<div class="col-lg-4">';
+									var icono = (detalle[d].REP_Cumple == 1) ? "<span class='glyphicon glyphicon-thumbs-up fa-1x' style='color:green'></span>" : "<span class='glyphicon glyphicon-thumbs-down fa-1x' style='color:red'></span>";
+									html3 += '<div><span style="font-size:16px"><b>Logro ' + detalle[d].REP_Descripcion + ' ' + detalle[d].REP_Anio + ': ' + detalle[d].REP_Logro + '% </b></span>' + icono + '</div>';
+									html3 += '</div>';
+									html3 += '</div>';
+								}
 							}
 							$("#tabs-3 .contenido").html(html3);
 						}

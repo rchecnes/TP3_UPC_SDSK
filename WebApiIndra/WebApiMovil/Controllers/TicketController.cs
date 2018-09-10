@@ -188,6 +188,21 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [ActionName("ActualizarEstadoTicket")]
+        public string ActualizarEstadoTicket(Ticket entidad)
+        {
+            try
+            {
+                return ticketService.ActualizarEstadoTicket(entidad);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        
+
+        [HttpPost]
         [ActionName("ListadoTipoSolucionProblema")]
         public List<TipoSolucion> ListadoTipoSolucionProblema(TipoSolucion entidad)
         {

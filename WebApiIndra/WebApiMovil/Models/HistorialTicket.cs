@@ -13,6 +13,12 @@ namespace WebApiMovil.Models
         public int HIS_ID { get; set; }
 
         [DataMember]
+        public int ATE_ID { get; set; }
+
+        [DataMember]
+        public string TIC_CODE { get; set; }
+
+        [DataMember]
         public int HIS_TIC_ID { get; set; }
 
         [DataMember]
@@ -41,5 +47,8 @@ namespace WebApiMovil.Models
 
         [DataMember]
         public int HIS_RutaInforme { get; set; }
+
+        [DataMember]
+        public int ATE_RST_ID { get; set; }
     }
 }

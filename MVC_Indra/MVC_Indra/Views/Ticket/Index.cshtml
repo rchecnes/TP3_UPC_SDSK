@@ -47,13 +47,18 @@
                             for (var i = 0; i < data.length; i++) {
 
                                 html += "<tr>";
-                                html += "<td>" + data[i].HIS_TIC_ID + "</td>";
+								html += "<td>" + data[i].TIC_CODE + "</td>";
                                 html += "<td>" + data[i].PRI_Descripcion + "</td>";
                                 html += "<td>" + data[i].RES_Nombre + "</td>";
                                 html += "<td>" + data[i].HIS_Descripcion + "</td>";
                                 html += "<td>" + data[i].HIS_FechaCambio + "</td>";
-                                html += "<td>0</td>";
-                                html += "<td align='center'><span class='glyphicon glyphicon-user fa-1x'></span></td>";
+								html += "<td>0</td>";
+								if (data[i].ATE_RST_ID == 1) {
+									html += "<td align='center'><span class='glyphicon glyphicon-user fa-1x'></span></td>";
+								} else {
+									html += "<td align='center'>&nbsp;</td>";
+								}
+                                
                                 html += "</tr>";
                             }
 

@@ -90,11 +90,11 @@ namespace WebApiMovil.Controllers
 
         [HttpPost]
         [ActionName("ListadoSLA")]
-        public List<Sla> ListadoSLA()
+        public List<Sla> ListadoSLA(Contrato entidad)
         {
             try
             {
-                return contratoService.ListadoSLA();
+                return contratoService.ListadoSLA(entidad);
             }
             catch (Exception)
             {

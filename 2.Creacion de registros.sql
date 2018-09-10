@@ -118,9 +118,3 @@ VALUES('Tiempo Atencion Menor a 10 minutos','TEMP_ATE_M10M'),
 ('Tickets atendidos con más de 24 horas','TIC_ATE_24H')
 go
 select * from Resultado
-/*
-INSERT INTO Atencion(ATE_TIC_ID, ATE_RES_ID, ATE_RST_ID,ATE_FechaAsignacion, ATE_FechaInicio, ATE_FechaFin, ATE_FechaCierre, ATE_FechaAtencion,ATE_FechaRegistro)
-VALUES(1,1,1,GETDATE()-5, GETDATE()-4, GETDATE()-3,GETDATE(), GETDATE()-1, GETDATE())
-go
-UPDATE SHMC_USUA SET COD_USUA = 'JCaceres'
-Where COD_USUA = 'ivelarde'*/

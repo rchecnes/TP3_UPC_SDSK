@@ -337,66 +337,42 @@ END
 GO
 
 
-/**MONITOREO**/
+IF (OBJECT_ID('ConsultarHistorialTicket') IS NOT NULL)
+  DROP PROCEDURE ConsultarHistorialTicket
+GO
+CREATE PROCEDURE ConsultarHistorialTicket
+@TIC_ID	INT
+AS
+BEGIN
+    SET NOCOUNT ON;  
+    SELECT RIGHT( '000000000' + RTRIM(LTRIM(t.TIC_Id)),9) AS TIC_Code, T.TIC_Id, A.ATE_ID, RES.RES_Nombre + ' ' + RES.RES_ApellidoPaterno as RES_Nombre,
+		   P.Pri_Descripcion, A.ATE_FechaRegistro,A.ATE_FechaRegistro, A.ATE_TIC_Descripcion AS TIC_Descripcion, ISNULL(A.ATE_RST_Id,0) AS ATE_RST_Id
+	FROM Ticket T LEFT JOIN Atencion A
+	ON A.ATE_TIC_Id = T.TIC_Id LEFT JOIN Prioridad P
+	ON P.PRI_Id = A.ATE_PRI_Id LEFT JOIN UsuarioResponsable RES
+	ON RES.RES_Id = A.ATE_RES_Id LEFT JOIN Resultado R
+	ON R.RST_Id = A.ATE_RST_Id
+	WHERE (A.ATE_TIC_Id = @TIC_ID OR @TIC_ID IS NULL)
+END 
+GO
+
+/**MONITOREO NUEVO**/
 IF (OBJECT_ID('MonitoreoSLA') IS NOT NULL)
   DROP PROCEDURE MonitoreoSLA
 GO
 Create Procedure MonitoreoSLA
-@idContrato INT,
-@idEmpresa	INT,
-@idServicio	INT,
-@idSLA		INT,
-@FechaInicio	DATETIME,
-@FechaFin		DATETIME
+@IdContrato INT,
+@SlaNomSistema VARCHAR(60),
+@Anio VARCHAR(4),
+@Mes VARCHAR(2)
 AS
-BEGIN
 
-DECLARE @idSLA1 INTEGER,
-		@idSLA2 INTEGER,
-		@idSLA3 INTEGER
+DECLARE @EMP_ID INT
+DECLARE @CON_FechaInicio DATE
+DECLARE @CON_FechaFin DATE
+DECLARE @Medicion DECIMAL;
+DECLARE	@TotalTicket int;
 
-SET @idSLA1 = 1
-SET @idSLA2 = 2
-SET @idSLA3 = 3
+SELECT 0 AS Porcentaje
 
-declare @table as Table(
-TIC_ID INTEGER,
-TIC_Flag bit
-)
-
-IF @idSLA = @idSLA1
-	BEGIN
-		DECLARE @TiempoMedicion INT,
-				@TotalTicket int,
-				@TotalTicketSLA int
-
-		set @TiempoMedicion = 10
-
-		insert @table
-		SELECT TIC_ID, CASE WHEN DATEDIFF(MI,A.ATE_FechaInicio, A.ATE_FechaFin) >= @TiempoMedicion THEN 0 ELSE 1 END 
-		FROM Ticket T INNER JOIN Atencion A	
-			ON T.TIC_ID = A.ATE_TIC_ID 
-				AND A.ATE_ID = (SELECT TOP 1 AT.ATE_ID FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID ORDER BY AT.ATE_ID DESC)
-			INNER JOIN Contrato C
-			ON C.CON_EMP_ID = T.TIC_EMP_ID INNER JOIN ContratoSLA CSLA
-			ON CSLA.CSL_CON_ID = C.CON_ID
-		WHERE C.CON_ID = @idContrato AND C.CON_EMP_ID = @idEmpresa
-			AND CSLA.CSL_SER_ID = @idServicio AND CSLA.CSL_SLA_ID = @idSLA
-			AND T.TIC_FechaRegistro BETWEEN @FechaInicio AND @FechaFin
-			AND T.TIC_EST_ID = 3
-		
-		SELECT @TotalTicket = COUNT(1) FROM @table
-		SELECT @TotalTicketSLA = COUNT(1) FROM @table WHERE TIC_Flag = 1
-
-		SELECT @idSLA as SLA_ID, @TotalTicketSLA/CONVERT(decimal(3,2), @TotalTicket) AS Porcentaje
-
-	END
-ELSE IF @idSLA = @idSLA2
-	BEGIN
-		SELECT @idSLA, '0.90'
-	END
-ELSE IF @idSLA = @idSLA3
-	BEGIN
-		SELECT @idSLA, '0.90'
-	END 
-END
+GO
