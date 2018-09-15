@@ -371,8 +371,59 @@ DECLARE @EMP_ID INT
 DECLARE @CON_FechaInicio DATE
 DECLARE @CON_FechaFin DATE
 DECLARE @Medicion DECIMAL;
-DECLARE	@TotalTicket int;
+DECLARE      @TotalTicket int;
 
-SELECT 0 AS Porcentaje
+SELECT @EMP_ID = CON_EMP_ID,@CON_FechaInicio=format(C.CON_FechaInicioContrato,'yyyy-MM-dd'),@CON_FechaFin=format(C.CON_FechaFinContrato,'yyyy-MM-dd')  FROM Contrato C WHERE C.CON_ID = @IdContrato;
+SELECT @TotalTicket = COUNT(1) FROM Ticket WHERE TIC_FlagActivo = 1 AND TIC_EMP_ID=@EMP_ID AND format(TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin;
 
+IF @SlaNomSistema = 'TEMP_ATE_M10M'
+       BEGIN
+             DECLARE @CUMPLE_10M INT;
+             SELECT @CUMPLE_10M=COUNT(T.TIC_ID) FROM Ticket T 
+             INNER JOIN Atencion A ON(T.TIC_ID = A.ATE_TIC_ID AND A.ATE_RST_ID=1 AND A.ATE_ID = (SELECT TOP 1 AT.ATE_ID FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID ORDER BY AT.ATE_ID DESC))
+             INNER JOIN Contrato CC ON(T.TIC_EMP_ID=CC.CON_EMP_ID)
+             WHERE T.TIC_EST_ID = 3
+             AND format(T.TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin
+             AND CC.CON_ID=@IdContrato
+             AND YEAR(T.TIC_FechaRegistro)=@Anio
+             AND MONTH(T.TIC_FechaRegistro)=@Mes
+             AND DATEDIFF(MI,A.ATE_FechaInicio, A.ATE_FechaFin)<=10
+
+             SELECT (@CUMPLE_10M/CONVERT(decimal(3,2), @TotalTicket)*100) AS Porcentaje 
+             
+       END
+ELSE IF @SlaNomSistema = 'NRESOL_PRI_CONTACTO'
+       BEGIN
+             DECLARE @CUMPLE_1ROC INT;
+             SELECT @CUMPLE_1ROC=COUNT(T.TIC_ID) FROM Ticket T 
+             INNER JOIN Atencion A ON(T.TIC_ID = A.ATE_TIC_ID AND A.ATE_RST_ID=1)
+             INNER JOIN Contrato CC ON(T.TIC_EMP_ID=CC.CON_EMP_ID)
+             WHERE T.TIC_EST_ID = 3
+             AND format(T.TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin
+             AND CC.CON_ID=@IdContrato
+             AND YEAR(T.TIC_FechaRegistro)=@Anio
+             AND MONTH(T.TIC_FechaRegistro)=@Mes
+             AND (SELECT COUNT(AT.ATE_ID) FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID AND ATE_RST_ID=1 GROUP BY AT.ATE_RES_ID)=1;
+
+             SELECT (@CUMPLE_1ROC/CONVERT(decimal(3,2), @TotalTicket)*100) AS Porcentaje
+       END
+ELSE IF @SlaNomSistema = 'TIC_ATE_24H'
+       BEGIN
+             DECLARE @CUMPLE_24H INT;
+             SELECT @CUMPLE_24H=COUNT(T.TIC_ID) FROM Ticket T 
+             INNER JOIN Atencion A ON(T.TIC_ID = A.ATE_TIC_ID AND A.ATE_RST_ID=1 AND A.ATE_ID = (SELECT TOP 1 AT.ATE_ID FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID ORDER BY AT.ATE_ID DESC))
+             INNER JOIN Contrato CC ON(T.TIC_EMP_ID=CC.CON_EMP_ID)
+             WHERE T.TIC_EST_ID = 3
+             AND format(T.TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin
+             AND CC.CON_ID=@IdContrato
+             AND YEAR(T.TIC_FechaRegistro)=@Anio
+             AND MONTH(T.TIC_FechaRegistro)=@Mes
+             AND DATEDIFF(MI,A.ATE_FechaInicio, A.ATE_FechaFin)<=1440
+
+             SELECT (@CUMPLE_24H/CONVERT(decimal(3,2), @TotalTicket)*100) AS Porcentaje
+       END
+ELSE
+       BEGIN
+             SELECT 0 AS Porcentaje
+       END
 GO
