@@ -265,27 +265,32 @@
 		}
 		
 		$("#form_add_sla").submit(function (env) {
-			env.preventDefault();
+            env.preventDefault();
 
-			$.ajax({
-				url: $("#UrlServicio").val() + "/api/Contrato/InsertarContratoSLA",
-				type: "POST",
-				dataType: "json",
-				data: $("#form_add_sla").serialize() + "&CSL_CON_ID=" + $("#CON_ID").val(),
-				success: function (data) {
-					$("#CSL_SLA_ID").val('');
-					$("#CSL_SER_ID").val('');
-					$("#CSL_PorcentajeMedicion").val('');
-					$("#CSL_Penalidad").val('');
-					listarSLa();
-					listarContratoSLa();
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					console.log(xhr.status);
-					console.log(thrownError);
-				}
-			});
-		});
+            if ($("#form_add_sla").valid()) {
+                $.ajax({
+                    url: $("#UrlServicio").val() + "/api/Contrato/InsertarContratoSLA",
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#form_add_sla").serialize() + "&CSL_CON_ID=" + $("#CON_ID").val(),
+                    success: function (data) {
+                        $("#CSL_SLA_ID").val('');
+                        $("#CSL_SER_ID").val('');
+                        $("#CSL_PorcentajeMedicion").val('');
+                        $("#CSL_Penalidad").val('');
+                        listarSLa();
+                        listarContratoSLa();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status);
+                        console.log(thrownError);
+                    }
+                });
+            }
+			
+        });
+
+        $("#form_add_sla").validate();
 		
     })
 </script>
@@ -367,7 +372,7 @@
 						<div class="col-lg-6">
 							<div class="form-group">
 								<label for="nombre">Porcentaje Medicion:</label>
-								<input type="number" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" maxlength="3" min="10" class="form-control" required autocomplete="off"/>
+								<input type="number" id="CSL_PorcentajeMedicion" name="CSL_PorcentajeMedicion" maxlength="3" min="1" max="100" class="form-control" required autocomplete="off"/>
 							</div>
 						</div>
 						<div class="col-lg-6">
@@ -377,7 +382,7 @@
 							</div>
 						</div>
 					</div>
-					<input type="submit" class="btn btn-primary btn-md" id="agregar_sla" value="Agregar SLA" />
+					<input type="submit" class="btn btn-primary btn-md submit" id="agregar_sla" value="Agregar SLA" />
 				</form>
                 
                 <div class="row">

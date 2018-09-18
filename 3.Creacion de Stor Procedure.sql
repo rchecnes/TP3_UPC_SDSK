@@ -374,7 +374,7 @@ DECLARE @Medicion DECIMAL;
 DECLARE      @TotalTicket int;
 
 SELECT @EMP_ID = CON_EMP_ID,@CON_FechaInicio=format(C.CON_FechaInicioContrato,'yyyy-MM-dd'),@CON_FechaFin=format(C.CON_FechaFinContrato,'yyyy-MM-dd')  FROM Contrato C WHERE C.CON_ID = @IdContrato;
-SELECT @TotalTicket = COUNT(1) FROM Ticket WHERE TIC_FlagActivo = 1 AND TIC_EMP_ID=@EMP_ID AND format(TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin;
+SELECT @TotalTicket = COUNT(1) FROM Ticket WHERE TIC_FlagActivo = 1 AND TIC_EMP_ID=@EMP_ID AND format(TIC_FechaRegistro,'yyyy-MM-dd') BETWEEN @CON_FechaInicio AND @CON_FechaFin AND YEAR(TIC_FechaRegistro)=@Anio AND MONTH(TIC_FechaRegistro)=@Mes;
 
 IF @SlaNomSistema = 'TEMP_ATE_M10M'
        BEGIN
