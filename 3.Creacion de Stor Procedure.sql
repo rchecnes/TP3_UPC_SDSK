@@ -117,7 +117,9 @@ CREATE PROCEDURE ActualizarTipoSolucion
 @SOL_PalabraClave text,
 @SOL_FechaModificacion datetime,
 @SOL_UsuarioModificacion varchar(50),
-@SOL_CAT_ID int
+@SOL_CAT_ID int,
+@SOL_RutaArchivo nvarchar(250),
+@SOL_NombreArchivo nvarchar(250)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -127,7 +129,9 @@ BEGIN
 	SOL_FechaModificacion=@SOL_FechaModificacion,
 	SOL_UsuarioModificacion=@SOL_UsuarioModificacion,
 	SOL_CAT_ID=@SOL_CAT_ID,
-	SOL_PROB_ID=@SOL_PROB_ID
+	SOL_PROB_ID=@SOL_PROB_ID,
+	SOL_RutaArchivo=@SOL_RutaArchivo,
+	SOL_NombreArchivo=@SOL_NombreArchivo
 	WHERE SOL_ID=@SOL_ID
 END 
 GO
@@ -403,7 +407,7 @@ ELSE IF @SlaNomSistema = 'NRESOL_PRI_CONTACTO'
              AND CC.CON_ID=@IdContrato
              AND YEAR(T.TIC_FechaRegistro)=@Anio
              AND MONTH(T.TIC_FechaRegistro)=@Mes
-             AND (SELECT COUNT(AT.ATE_ID) FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID AND ATE_RST_ID=1 GROUP BY AT.ATE_RES_ID)=1;
+             AND (SELECT TOP 1 ATE_RST_ID FROM Atencion AT WHERE AT.ATE_TIC_ID = T.TIC_ID ORDER BY AT.ATE_ID ASC)=1;
 
              SELECT (@CUMPLE_1ROC/CONVERT(decimal(3,2), @TotalTicket)*100) AS Porcentaje
        END

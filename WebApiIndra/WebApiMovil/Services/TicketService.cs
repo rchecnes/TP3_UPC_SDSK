@@ -20,7 +20,7 @@ namespace WebApiIndra.Services
                 {
                     conection.Open();
 
-                    string query = "SELECT *,ROW_NUMBER() OVER (ORDER BY " + entidad.pvSortColumn + " " + entidad.pvSortOrder + ") as row FROM dbo.Ticket t " +
+                    string query = "SELECT *,RIGHT( '000000000' + RTRIM(LTRIM(t.TIC_ID)),9) AS TIC_CODE,ROW_NUMBER() OVER (ORDER BY " + entidad.pvSortColumn + " " + entidad.pvSortOrder + ") as row FROM dbo.Ticket t " +
                                    "INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID) " +
                                    "INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID) " +
                                    "INNER JOIN Estado es ON(t.TIC_EST_ID=es.EST_ID) " +
@@ -106,6 +106,7 @@ namespace WebApiIndra.Services
                                     item.TIC_ID = dr.GetInt32(dr.GetOrdinal("TIC_ID"));
                                     item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
                                     item.USU_Nombre = dr.GetString(dr.GetOrdinal("USU_Nombre"));
+                                    item.TIC_CODE = dr.GetString(dr.GetOrdinal("TIC_CODE"));
                                     /*if (!dr.IsDBNull(dr.GetOrdinal("SOL_Descripcion")))
                                     {
                                         item.SOL_Descripcion = dr.GetString(dr.GetOrdinal("SOL_Descripcion"));
@@ -118,12 +119,15 @@ namespace WebApiIndra.Services
                                     item.EST_Descrpcion = dr.GetString(dr.GetOrdinal("EST_Descripcion"));
                                     item.RES_Nombre = dr.GetString(dr.GetOrdinal("RES_Nombre"));
 
-                                    string editar = "<a title='Editar' href='#' class='editar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";                                    
-                                    string abrir = "<a title='Abrir Ticket' href='#' class='abrir' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-ok fa-1x'></span></a>";
-                                    string atencion = "<a title='Registrar Atención' href='#' class='atencion' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-th-list fa-1x'></span></a>";
-                                    string historial = "<a title='Ver Historial del Ticket' href='#' class='historial' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-time fa-1x'></span></a>";
+                                    string editar = "";
+                                    if (dr.GetInt32(dr.GetOrdinal("TIC_EST_ID")) != 3){
+                                        editar = "<a title='Editar' href='#' class='editar' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-edit fa-1x'></span></a>";
+                                    }
+                                    string abrir = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title='Abrir Ticket' href='#' class='abrir' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-ok fa-1x'></span></a>";
+                                    string atencion = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title='Registrar Atención' href='#' class='atencion' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-th-list fa-1x'></span></a>";
+                                    string historial = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title='Ver Historial del Ticket' href='#' class='historial' id='" + item.TIC_ID + "'><span class='glyphicon glyphicon-time fa-1x'></span></a>";
 
-                                    item.ltAcciones = editar + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + abrir + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + atencion + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + historial;
+                                    item.ltAcciones = editar + abrir + atencion + historial;
 
                                     //Paginado
                                     item.sEcho = 2;
@@ -467,7 +471,7 @@ namespace WebApiIndra.Services
                     
                     string sqltik = "INSERT INTO Ticket " +
                                     " (TIC_PRI_ID, TIC_PROB_ID, TIC_SER_ID, TIC_EMP_ID, TIC_USU_ID, TIC_RES_ID, TIC_Descripcion, TIC_FechaRegistro, TIC_EST_ID) VALUES" +
-                                    "('" + entidad.TIC_PRI_ID + "', '" + entidad.TIC_PROB_ID + "','" + entidad.TIC_SER_ID + "','" + entidad.TIC_EMP_ID + "','" + entidad.TIC_USU_ID + "','" + entidad.TIC_RES_ID + "','" + entidad.TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "','1')";
+                                    "('" + entidad.TIC_PRI_ID + "', '" + entidad.TIC_PROB_ID + "','" + entidad.TIC_SER_ID + "','" + entidad.TIC_EMP_ID + "','" + entidad.TIC_USU_ID + "','" + entidad.TIC_RES_ID + "','" + entidad.TIC_Descripcion + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "','1')";
 
                     using (SqlCommand command = new SqlCommand(sqltik, conection, tran))
                     {
@@ -492,7 +496,7 @@ namespace WebApiIndra.Services
                     //Insertamos el historico
                     string sqlhis = "INSERT INTO HistorialTicket " +
                                     "(HIS_TIC_ID,HIS_PRI_ID,HIS_RES_ID,HIS_FechaCambio,HIS_Descripcion)VALUES " +
-                                    "('" + TIC_ID + "','"+entidad.TIC_PRI_ID+ "','" + entidad.TIC_RES_ID + "','"+ DateTime.Now.ToString("yyyy-MM-dd") + "','" + entidad.TIC_Descripcion +"')";
+                                    "('" + TIC_ID + "','"+entidad.TIC_PRI_ID+ "','" + entidad.TIC_RES_ID + "','"+ DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "','" + entidad.TIC_Descripcion +"')";
                     using (SqlCommand command = new SqlCommand(sqlhis, conection, tran))
                     {
                         command.ExecuteNonQuery();
@@ -519,7 +523,7 @@ namespace WebApiIndra.Services
                 {
                     conection.Open();
 
-                    string sqltik = "SELECT * FROM Ticket t " +
+                    string sqltik = "SELECT *,RIGHT( '000000000' + RTRIM(LTRIM(t.TIC_ID)),9) AS TIC_CODE FROM Ticket t " +
                                     " INNER JOIN UsuarioCliente uc ON(t.TIC_USU_ID=uc.USU_ID)"+
                                     " INNER JOIN Empresa em ON(t.TIC_EMP_ID=em.EMP_ID)" +
                                     " INNER JOIN UsuarioResponsable ur ON(t.TIC_RES_ID=ur.RES_ID)" +
@@ -546,6 +550,7 @@ namespace WebApiIndra.Services
                                     item.TIC_USU_ID = dr.GetInt32(dr.GetOrdinal("TIC_USU_ID"));
                                     item.USU_Nombre = dr.GetString(dr.GetOrdinal("USU_Nombre"));
                                     item.TIC_EMP_ID = dr.GetInt32(dr.GetOrdinal("TIC_EMP_ID"));
+                                    item.TIC_CODE= dr.GetString(dr.GetOrdinal("TIC_CODE"));
                                     item.EMP_RazonSocial = dr.GetString(dr.GetOrdinal("EMP_RazonSocial"));
                                     Lista.Add(item);
                                 }

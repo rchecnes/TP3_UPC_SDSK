@@ -166,7 +166,7 @@ $(document).ready(function () {
                                 $.ajax({
                                     url: $("#UrlServicio").val() + "/api/TipoSolucion/InsertarTipoSolucion",
                                     type: "POST",
-                                    data: $("#form_tipo_solucion").serialize() + "&SOL_NombreArchivo=" + response[0] + "&SOL_RutaArchivo=" + response[1],
+                                    data: $("#form_tipo_solucion").serialize() + "&SOL_NombreArchivo=" + response[0] + "&SOL_RutaArchivo=" + response[1] +"&SOL_UsuarioCreacion=@System.Configuration.ConfigurationManager.AppSettings["USUS_Login"]",
                                     success: function (data) {
                                         window.location.href = "@Url.Action("Index", "TipoSolucion")";
                                     },

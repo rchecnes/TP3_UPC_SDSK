@@ -233,7 +233,7 @@ namespace WebApiIndra.Services
                         command.Parameters.AddWithValue("@SOL_PalabraClave", palabraclave);
                         command.Parameters.AddWithValue("@SOL_Comentario", comentario);
                         command.Parameters.AddWithValue("@SOL_FechaCreacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", "DGUTIERREZ");
+                        command.Parameters.AddWithValue("@SOL_UsuarioCreacion", entidad.SOL_UsuarioCreacion);
                         command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
                         command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
                         command.ExecuteNonQuery();
@@ -341,6 +341,8 @@ namespace WebApiIndra.Services
                     {
                         string descripcion = (entidad.SOL_Descripcion != null) ? entidad.SOL_Descripcion : "";
                         string palabraclave = (entidad.SOL_PalabraClave != null) ? entidad.SOL_PalabraClave : "";
+                        string rutaarchivo = (entidad.SOL_RutaArchivo != null) ? entidad.SOL_RutaArchivo : "";
+                        string nombrearchivo = (entidad.SOL_NombreArchivo != null) ? entidad.SOL_NombreArchivo : "";
 
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@SOL_ID", entidad.SOL_ID);
@@ -349,7 +351,9 @@ namespace WebApiIndra.Services
                         command.Parameters.AddWithValue("@SOL_CAT_ID", entidad.SOL_CAT_ID);
                         command.Parameters.AddWithValue("@SOL_PROB_ID", entidad.SOL_PROB_ID);
                         command.Parameters.AddWithValue("@SOL_FechaModificacion", DateTime.Now);
-                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", "EGUTIERREZ");
+                        command.Parameters.AddWithValue("@SOL_UsuarioModificacion", entidad.SOL_UsuarioModificacion);
+                        command.Parameters.AddWithValue("@SOL_RutaArchivo", rutaarchivo);
+                        command.Parameters.AddWithValue("@SOL_NombreArchivo", nombrearchivo);
                         command.ExecuteNonQuery();
                     }
                     conection.Close();

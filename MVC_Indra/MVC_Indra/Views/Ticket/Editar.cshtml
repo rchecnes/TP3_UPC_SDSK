@@ -98,7 +98,7 @@ $(document).ready(function () {
             data: {TIC_ID:@ViewBag.TIC_ID},
             success: function (data) {
                 $("#TIC_ID").val(data[0].TIC_ID);
-                $("#TIC_TEM_ID").val(data[0].TIC_ID);
+                $("#TIC_TEM_ID").val(data[0].TIC_CODE);
                 $("#EMP_RazonSocial").val(data[0].EMP_RazonSocial);                
                 $("#USU_Nombre").val(data[0].USU_Nombre);
                 $("#TIC_SER_ID").val(data[0].TIC_SER_ID).attr("disabled", "disabled");
